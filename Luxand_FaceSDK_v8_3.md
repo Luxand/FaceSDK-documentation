@@ -2953,14 +2953,21 @@ Returns FSDKE_OK if successful. If a face is not found, the function returns the
 **Example:**
 
 ```cpp
-int img1;
+HImage img1;
 TFacePosition FacePosition;
 
 FSDK_Initialize("");
+FSDK_ActivateLibrary("your-license-key-here");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
-FSDK_DetectFace(img1, &FacePosition);
 
-printf("face position: %d %d %d", FacePosition.xc, FacePosition.yc, FacePosition.angle);
+int err = FSDK_DetectFace(img1, &FacePosition);
+if (err == FSDKE_OK) {
+    printf("face position: %d %d %.1f\n", FacePosition.xc, FacePosition.yc, FacePosition.angle);
+} else if (err == FSDKE_FACE_NOT_FOUND) {
+    printf("No face found in the image\n");
+}
+
+FSDK_FreeImage(img1);
 ```
 
 **Python Syntax:**
@@ -2971,14 +2978,32 @@ def FSDK.DetectFace(image: Image) -> FacePosition;
 def Image.DetectFace() -> FacePosition;
 ```
 
+Both forms are equivalent — `Image.DetectFace()` is a convenience method that calls `FSDK.DetectFace(image)` internally.
+
 **Return Value:**
 
 FacePosition object.
 
 **Exception:**
 
-- FSDK.FaceNotFound
-- FSDK.ImageTooSmall
+- FSDK.FaceNotFound — raised when no face is detected in the image
+- FSDK.ImageTooSmall — raised when the image is smaller than 20x20 pixels
+
+**Example:**
+
+```python
+from fsdk import FSDK
+
+image = FSDK.Image("test.jpg")
+
+try:
+    face = image.DetectFace()
+    print(f"face position: {face.xc} {face.yc} {face.angle:.1f}")
+except FSDK.FaceNotFound:
+    print("No face found in the image")
+
+FSDK.FreeImage(image)
+```
 
 <a id="fsdk_detectmultiplefaces-function"></a>
 ## FSDK_DetectMultipleFaces Function
@@ -3029,17 +3054,24 @@ Returns FSDKE_OK if successful. If no faces are found, the function returns the 
 **Example:**
 
 ```cpp
-int img1;
+HImage img1;
 int DetectedCount;
 TFacePosition FaceArray[50];
 
 FSDK_Initialize("");
+FSDK_ActivateLibrary("your-license-key-here");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
-FSDK_DetectMultipleFaces(img1, &DetectedCount , FaceArray, sizeof(FaceArray));
 
-for (i = 0; i < DetectedCount; i++) {
-    printf("face position: %d %d %d\n", FaceArray[i].xc, FaceArray[i].yc, FaceArray[i].angle);
+int err = FSDK_DetectMultipleFaces(img1, &DetectedCount, FaceArray, sizeof(FaceArray));
+if (err == FSDKE_OK) {
+    for (int i = 0; i < DetectedCount; i++) {
+        printf("face position: %d %d %.1f\n", FaceArray[i].xc, FaceArray[i].yc, FaceArray[i].angle);
+    }
+} else if (err == FSDKE_FACE_NOT_FOUND) {
+    printf("No faces found in the image\n");
 }
+
+FSDK_FreeImage(img1);
 ```
 
 **Python Syntax:**
@@ -3047,25 +3079,32 @@ for (i = 0; i < DetectedCount; i++) {
 ```python
 def FSDK.DetectMultipleFaces(image: Image) -> List[FacePosition];
 
-def Image.DetectMultipleFacea() -> List[FacePosition];
+def Image.DetectMultipleFaces() -> List[FacePosition];
 ```
 
 **Return Value:**
 
-The list of FacePosition objects. If faces not found an empty list is returned.
+A list of FacePosition objects. Returns an empty list if no faces are found (no exception is raised, unlike `DetectFace()`).
 
 **Exception:**
 
-FSDK.ImageTooSmall
+- FSDK.ImageTooSmall — raised when the image is smaller than 20x20 pixels
 
 **Example:**
 
 ```python
 from fsdk import FSDK
 
-FSDK.Initialize()
 image = FSDK.Image("test.jpg")
-print( *image.DetectMultipleFaces(), sep = '\n')
+faces = image.DetectMultipleFaces()
+
+if len(faces) > 0:
+    for face in faces:
+        print(f"face position: {face.xc} {face.yc} {face.angle:.1f}")
+else:
+    print("No faces found in the image")
+
+FSDK.FreeImage(image)
 ```
 
 <a id="fsdk_setfacedetectionparameters-function"></a>
@@ -4731,7 +4770,6 @@ print(f"Eyes open: {'Yes' if attrs['EyesOpen'] > 0.5 else 'No'} ({attrs['EyesOpe
 
 # Cleanup
 FSDK.FreeImage(image)
-FSDK.Finalize()
 ```
 
 <a id="interpreting-confidence-values"></a>

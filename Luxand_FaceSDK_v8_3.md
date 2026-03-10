@@ -21,8 +21,8 @@
 
 Copyright © 2005–2026 Luxand, Inc. https://www.luxand.com
 
-<a id="luxand-facesdk---overview"></a>
-# Luxand FaceSDK - Overview
+<a id="overview"></a>
+# Overview
 
 Luxand FaceSDK is a cross-platform face detection and recognition library that can be easily integrated into the customer's application. FaceSDK offers the API (Application Programming Interface) to detect and track faces and facial features, to recognize gender, age and facial expressions (if a smile is present and if the eyes are open or closed), and to recognize faces on still images and videos. FaceSDK also allows detecting faces on thermal images.
 
@@ -32,8 +32,8 @@ The SDK provides the coordinates of [70 facial feature points](#detected-facial-
 
 Luxand FaceSDK is a dynamic link library available for 32-bit and 64-bit versions of Windows and Linux, 64-bit macOS (arm64, x86_64), iOS, Android. The SDK contains interface header files and sample applications for C++, Microsoft Visual C++ 2010+, Visual Basic .NET 2010+, Microsoft C# .NET 2010+, Embracadero RAD Studio 12+, Netbeans (Java), Xcode 7+ (iOS), Android Studio (Android), Python, Flutter and React Native.
 
-<a id="luxand-facesdk---requirements"></a>
-# Luxand FaceSDK - Requirements
+<a id="requirements"></a>
+# Requirements
 
 The FaceSDK library supports the following platforms:
 
@@ -60,8 +60,8 @@ Recommended system requirements:
 
 Note that the web camera functions are available only on Windows and Linux. IP cameras are accessible on all platforms.
 
-<a id="luxand-facesdk---technical-specifications"></a>
-# Luxand FaceSDK - Technical Specifications
+<a id="technical-specifications"></a>
+# Technical Specifications
 
 The FaceSDK library has the following technical specifications:
 
@@ -166,8 +166,8 @@ The FaceSDK library has the following technical specifications:
 
 *Measured on AMD Ryzen 5 1600X processor with 12 threads, iPhone X with 6 threads, Google Pixel 2 (Snapdragon 835) with 8 threads.*
 
-<a id="luxand-facesdk---distribution"></a>
-# Luxand FaceSDK - Distribution
+<a id="distribution"></a>
+# Distribution
 
 Please download the latest version of Luxand FaceSDK from: [https://www.luxand.com/facesdk/download/](https://www.luxand.com/facesdk/download/)
 
@@ -212,8 +212,8 @@ The demo directory contains the following applications:
 | **Panorama** | A demo application that shows several panoramic images, determines the angles of the face and rotates the image. |
 | **PhotoDemo** | A demo application that receives a picture, detects a face and facial features, and, if the face is found, crops it. |
 
-<a id="luxand-facesdk---sample-applications"></a>
-# Luxand FaceSDK - Sample Applications
+<a id="sample-applications"></a>
+# Sample Applications
 
 FaceSDK is distributed with the following sample applications:
 
@@ -517,8 +517,8 @@ Updates the internal properties of a CImage instance in accordance with the Imag
 Luxand.CImage.ReloadFromHandle();
 ```
 
-<a id="luxand-facesdk---using-with-cc"></a>
-# Luxand FaceSDK - Using with C/C++
+<a id="using-with-cc"></a>
+# Using with C/C++
 
 For Microsoft Visual C++ applications, you need to include the header file `Wrappers\C\LuxandFaceSDK.h`, and the stub library file `facesdk.lib` into your project.
 
@@ -553,8 +553,8 @@ The output directory `$(OutDir)` typically refers to `Debug\` or `Release\` in t
 
 You need to redistribute the file `facesdk.dll` with your application.
 
-<a id="luxand-facesdk---using-with-delphi"></a>
-# Luxand FaceSDK - Using with Delphi
+<a id="using-with-delphi"></a>
+# Using with Delphi
 
 For Delphi applications, put `facesdk.dll` into the working directory of your application and use the `Wrappers\Delphi\LuxandFaceSDK.pas` unit in your project.
 
@@ -1027,12 +1027,13 @@ def FSDK.Finalize();
 
 None
 
----
-
 <a id="resource-cleanup-guide"></a>
-## Resource Cleanup Guide
+# Resource Cleanup Guide
 
 When your application finishes using FaceSDK, all resources should be released.
+
+<a id="cleanup-order"></a>
+## Cleanup Order
 
 Typically, the cleanup sequence is as follows:
 
@@ -1041,7 +1042,7 @@ Typically, the cleanup sequence is as follows:
 3. **Close video cameras** — call [FSDK_CloseVideoCamera](#fsdk_closevideocamera-function) for each open camera
 
 <a id="cleanup-example-c"></a>
-### Cleanup Example (C++)
+## Cleanup Example (C++)
 
 ```cpp
 // Proper cleanup sequence with error handling
@@ -1063,10 +1064,17 @@ err = FSDK_CloseVideoCamera(cameraHandle);
 if (err != FSDKE_OK) {
     printf("Warning: Failed to close camera (error %d)\n", err);
 }
+
+// Step 4: Free all image handles
+err = FSDK_FreeImage(imageHandle);
+if (err != FSDKE_OK) {
+    printf("Warning: Failed to free image (error %d)\n", err);
+}
+
 ```
 
 <a id="cleanup-example-python"></a>
-### Cleanup Example (Python)
+## Cleanup Example (Python)
 
 ```python
 # Proper cleanup sequence in Python
@@ -1088,10 +1096,15 @@ try:
 except Exception as e:
     print(f"Warning: Failed to close camera: {e}")
 
+try:
+    # Free image handle
+    FSDK.FreeImage(image_handle)
+except Exception as e:
+    print(f"Warning: Failed to free image: {e}")
 ```
 
 <a id="best-practices"></a>
-### Best Practices
+## Best Practices
 
 - **Do not call SDK functions after FSDK_Finalize** — once finalized, calling any FaceSDK function results in undefined behavior. You must call [FSDK_Initialize](#fsdk_initialize-function) again before using the library.
 - **Free images in loops** — if you process multiple images, free each `HImage` handle with [FSDK_FreeImage](#fsdk_freeimage-function) after processing to avoid accumulating memory. Do not wait until application exit.
@@ -2777,8 +2790,8 @@ None.
 
 The image will be freed automatically if it is not freed by hand.
 
-<a id="luxand-facesdk---face-detection"></a>
-# Luxand FaceSDK - Face Detection
+<a id="face-detection"></a>
+# Face Detection
 
 You can use the [FSDK_DetectFace](#fsdk_detectface-function) function to detect a frontal face in an image. The function returns the position of the face in the image. The performance and reliability of face detection is controlled by the [FSDK_SetFaceDetectionParameters](#fsdk_setfacedetectionparameters-function) and [FSDK_SetFaceDetectionThreshold](#fsdk_setfacedetectionthreshold-function) functions.
 
@@ -3144,6 +3157,95 @@ def FSDK.SetFaceDetectionParameters(handleArbitraryRotations: bool, determineFac
 
 None.
 
+---
+
+<a id="complete-face-detection-workflow"></a>
+## Complete Face Detection Workflow
+
+This section demonstrates the full workflow for loading an image and detecting all faces.
+
+<a id="complete-example-c"></a>
+### Complete Example (C++)
+
+```cpp
+// Initialize and activate the SDK
+FSDK_Initialize("");
+FSDK_ActivateLibrary("your-license-key-here");
+
+// Configure face detection parameters
+// Enable rotation handling, resize width 384
+FSDK_SetFaceDetectionParameters(true, true, 384);
+
+// Load the image
+HImage imageHandle;
+int err = FSDK_LoadImageFromFile(&imageHandle, "photo.jpg");
+if (err != FSDKE_OK) {
+    printf("Error loading image: %d\n", err);
+    return;
+}
+
+// Detect all faces in the image
+int detectedCount;
+TFacePosition faceArray[100];
+err = FSDK_DetectMultipleFaces(imageHandle, &detectedCount, faceArray, sizeof(faceArray));
+
+if (err == FSDKE_OK) {
+    printf("Detected %d face(s)\n", detectedCount);
+    for (int i = 0; i < detectedCount; i++) {
+        printf("  Face %d: center=(%d, %d), width=%d, angle=%.1f\n",
+            i + 1, faceArray[i].xc, faceArray[i].yc,
+            faceArray[i].w, faceArray[i].angle);
+    }
+} else if (err == FSDKE_FACE_NOT_FOUND) {
+    printf("No faces detected in the image\n");
+} else if (err == FSDKE_IMAGE_TOO_SMALL) {
+    printf("Error: image is too small (minimum 20x20 pixels)\n");
+}
+
+// Clean up
+FSDK_FreeImage(imageHandle);
+```
+
+<a id="complete-example-python"></a>
+### Complete Example (Python)
+
+```python
+from fsdk import FSDK
+
+# Initialize and activate the SDK
+FSDK.Initialize()
+FSDK.ActivateLibrary("your-license-key-here")
+
+# Configure face detection parameters
+# Enable rotation handling, resize width 384
+FSDK.SetFaceDetectionParameters(True, True, 384)
+
+# Load the image
+image = FSDK.Image("photo.jpg")
+
+# Detect all faces in the image
+faces = image.DetectMultipleFaces()
+
+if len(faces) > 0:
+    print(f"Detected {len(faces)} face(s)")
+    for i, face in enumerate(faces):
+        print(f"  Face {i+1}: center=({face.xc}, {face.yc}), width={face.w}, angle={face.angle:.1f}")
+else:
+    print("No faces detected in the image")
+
+# Clean up
+FSDK.FreeImage(image)
+```
+
+<a id="error-handling-notes"></a>
+### Error Handling Notes
+
+- **FSDKE_OK** — faces detected successfully
+- **FSDKE_FACE_NOT_FOUND** — no faces found in the image (not an error; the image simply contains no detectable faces)
+- **FSDKE_IMAGE_TOO_SMALL** — the image dimensions are below the minimum of 20x20 pixels
+- Always call `FSDK_FreeImage` for every loaded image to avoid memory leaks, even if detection fails
+- In Python, `DetectMultipleFaces()` returns an empty list when no faces are found (no exception is raised), while `DetectFace()` raises `FSDK.FaceNotFound`
+
 <a id="fsdk_setfacedetectionthreshold-function"></a>
 ## FSDK_SetFaceDetectionThreshold Function
 
@@ -3193,8 +3295,8 @@ def FSDK.SetFaceDetectionThreshold(threshold: int);
 
 None.
 
-<a id="luxand-facesdk---facial-feature-detection"></a>
-# Luxand FaceSDK - Facial Feature Detection
+<a id="facial-feature-detection"></a>
+# Facial Feature Detection
 
 FaceSDK provides the [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) function to detect facial features in an image and the [FSDK_DetectEyes](#fsdk_detecteyes-function) function to detect just eye centers in an image. First, these functions detect a frontal face in an image, and then detect its facial features or only eye centers. The [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function) and [FSDK_DetectEyesInRegion](#fsdk_detecteyesinregion-function) functions do not perform the face detection step and detect facial features or eye centers in a region returned by FSDK_DetectFace or FSDK_DetectMultipleFaces.
 
@@ -4253,6 +4355,10 @@ FAR and FRR are inversely related: decreasing one increases the other. The optim
 ### Complete Threshold Management Example (C++)
 
 ```cpp
+// Initialize and activate the SDK
+FSDK_Initialize("");
+FSDK_ActivateLibrary("your-license-key-here");
+
 // Identity verification with configurable threshold
 int err;
 float threshold;
@@ -4302,18 +4408,30 @@ if (similarity >= threshold) {
 ### Complete Threshold Management Example (Python)
 
 ```python
-# Identity verification with threshold management
+from fsdk import FSDK
+
+# Initialize and activate the SDK
 FSDK.Initialize()
+FSDK.ActivateLibrary("your-license-key-here")
 
 # Get threshold for desired security level
 threshold = FSDK.GetMatchingThresholdAtFAR(0.01)  # 1% false acceptance rate
 
 # Load images and extract templates
-img1 = FSDK.LoadImageFromFile("enrolled.jpg")
-img2 = FSDK.LoadImageFromFile("probe.jpg")
+try:
+    img1 = FSDK.Image("enrolled.jpg")
+    template1 = img1.GetFaceTemplate()
+except FSDK.FaceNotFound:
+    print("Error: no face detected in enrolled image")
+    exit(1)
 
-template1 = img1.GetFaceTemplate()
-template2 = img2.GetFaceTemplate()
+try:
+    img2 = FSDK.Image("probe.jpg")
+    template2 = img2.GetFaceTemplate()
+except FSDK.FaceNotFound:
+    print("Error: no face detected in probe image")
+    FSDK.FreeImage(img1)
+    exit(1)
 
 # Compare faces
 similarity = FSDK.MatchFaces(template1, template2)
@@ -4327,7 +4445,6 @@ else:
 # Clean up
 FSDK.FreeImage(img1)
 FSDK.FreeImage(img2)
-FSDK.Finalize()
 ```
 
 <a id="handling-false-positives-and-false-negatives"></a>
@@ -4594,7 +4711,6 @@ int main() {
 
     // Cleanup
     FSDK_FreeImage(image);
-    FSDK_Finalize();
     return 0;
 }
 ```
@@ -4670,7 +4786,7 @@ Note that an RGB color image is required to perform the passive liveness check, 
 <a id="active-liveness"></a>
 ## Active Liveness
 
-Active liveness check requires Tracker API, as demonstrated in the [ActiveLiveness samples](#luxand-facesdk---sample-applications). Liveness is verified by asking the user to perform a set of actions in front of the camera.
+Active liveness check requires Tracker API, as demonstrated in the [ActiveLiveness samples](#sample-applications). Liveness is verified by asking the user to perform a set of actions in front of the camera.
 
 <a id="thermal-face-detection"></a>
 ## Thermal Face Detection
@@ -6055,7 +6171,6 @@ int main() {
     FSDK_SaveTrackerMemoryToFile(tracker, "tracker_data.db");
     FSDK_CloseVideoCamera(cameraHandle);
     FSDK_FreeTracker(tracker);
-    FSDK_Finalize();
     return 0;
 }
 ```
@@ -6121,7 +6236,6 @@ except KeyboardInterrupt:
 tracker.SaveMemoryToFile("tracker_data.db")
 FSDK.CloseVideoCamera(camera)
 FSDK.FreeTracker(tracker)
-FSDK.Finalize()
 ```
 
 <a id="key-setup-considerations"></a>
@@ -6381,8 +6495,8 @@ If each subject captured by the camera appears only once, you may consider not d
 
 All tracker functions are thread safe. Note that you should avoid calling [FSDK_FeedFrame](#fsdk_feedframe-function) simultaneously on the same tracker and camera (the CameraIdx parameter) from several threads, since it will disrupt the [FSDK_GetTrackerEyes](#fsdk_gettrackereyes-function), [FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function), [FSDK_GetTrackerFacePosition](#fsdk_gettrackerfaceposition-function), [FSDK_GetTrackerFacialAttribute](#fsdk_gettrackerfacialattribute-function), [FSDK_GetSimilarIDCount](#fsdk_getsimilaridcount-function), [FSDK_GetSimilarIDList](#fsdk_getsimilaridlist-function) and [FSDK_GetAllNames](#fsdk_getallnames-function) functions. The reason is that the ID received from [FSDK_FeedFrame](#fsdk_feedframe-function) must be passed to these functions before the next [FSDK_FeedFrame](#fsdk_feedframe-function) is executed with the following frame; otherwise these functions may not perform correctly.
 
-<a id="luxand-facesdk---tracker-functions"></a>
-# Luxand FaceSDK - Tracker Functions
+<a id="tracker-functions"></a>
+# Tracker Functions
 
 <a id="fsdk_createtracker-function"></a>
 ## FSDK_CreateTracker Function
@@ -9285,8 +9399,8 @@ This section tells about changes in FaceSDK 3.0 as compared to FaceSDK 2.0. Ther
 7. The following functions have been removed from the library and will not be supported: FSDK_LocateFace, FSDK_LocateFacialFeatures, FSDK_ExtractFaceImage.
 8. The following functions are deprecated and will not be supported in the future Luxand FaceSDK versions: FSDK_GetFaceTemplateUsingFeatures.
 
-<a id="luxand-facesdk---error-codes"></a>
-# Luxand FaceSDK - Error Codes
+<a id="error-codes"></a>
+# Error Codes
 
 The FaceSDK library defines the following error codes:
 

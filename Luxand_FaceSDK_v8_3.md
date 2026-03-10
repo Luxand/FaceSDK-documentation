@@ -1064,13 +1064,6 @@ err = FSDK_CloseVideoCamera(cameraHandle);
 if (err != FSDKE_OK) {
     printf("Warning: Failed to close camera (error %d)\n", err);
 }
-
-// Step 4: Free all image handles
-err = FSDK_FreeImage(imageHandle);
-if (err != FSDKE_OK) {
-    printf("Warning: Failed to free image (error %d)\n", err);
-}
-
 ```
 
 <a id="cleanup-example-python"></a>
@@ -1095,12 +1088,6 @@ try:
     FSDK.CloseVideoCamera(camera_handle)
 except Exception as e:
     print(f"Warning: Failed to close camera: {e}")
-
-try:
-    # Free image handle
-    FSDK.FreeImage(image_handle)
-except Exception as e:
-    print(f"Warning: Failed to free image: {e}")
 ```
 
 <a id="best-practices"></a>

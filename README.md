@@ -10,7 +10,7 @@ Luxand FaceSDK provides an API to:
 - **Recognize faces** with high-speed template matching (53M+ matches/sec multi-threaded)
 - **Detect 70 facial feature points** (eyes, eyebrows, mouth, nose, face contour)
 - **Recognize gender, age, and facial expressions** (smile, open/closed eyes)
-- **Liveness detection** — distinguish live subjects from photos/videos (iBeta Level 1 & 2 certified)
+- **Liveness detection** — distinguish live subjects from photos/videos (iBeta Level 1 certified)
 - **Tracker API** — assign IDs, tag names, and recognize subjects in real-time video streams
 
 ## Supported Platforms
@@ -37,7 +37,7 @@ The full developer guide is in [`Luxand_FaceSDK_v8_3.md`](Luxand_FaceSDK_v8_3.md
 - Face detection and facial feature detection
 - Face matching and template management
 - Gender, age, and expression recognition
-- Liveness detection (including iBeta certified add-on)
+- Liveness detection (iBeta Level 1 certified)
 - Camera integration (webcam and IP cameras)
 - Tracker API for real-time video recognition
 - Multi-core support and thread safety

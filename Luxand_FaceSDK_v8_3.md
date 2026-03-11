@@ -1501,6 +1501,7 @@ Returns FSDKE_OK if successful.
 ```cpp
 int img1;
 
+FSDK_ActivateLibrary("your-license-key-here");
 FSDK_Initialize("");
 FSDK_LoadImageFromFile(&img1, "test.bmp"); // load .bmp file
 FSDK_SaveImageToFile(img1, "test.jpg"); // save as .jpg
@@ -1528,6 +1529,7 @@ None
 ```python
 from fsdk import FSDK
 
+FSDK.ActivateLibrary("your-license-key-here")
 FSDK.Initialize()
 img = FSDK.Image("test.bmp") # load .bmp file
 # if 'quality' is not defined the default or previously set value is used
@@ -2956,8 +2958,11 @@ Returns FSDKE_OK if successful. If a face is not found, the function returns the
 HImage img1;
 TFacePosition FacePosition;
 
+if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
+    printf("Failed to activate FaceSDK\n");
+    return;
+}
 FSDK_Initialize("");
-FSDK_ActivateLibrary("your-license-key-here");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
 
 int err = FSDK_DetectFace(img1, &FacePosition);
@@ -3058,8 +3063,11 @@ HImage img1;
 int DetectedCount;
 TFacePosition FaceArray[50];
 
+if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
+    printf("Failed to activate FaceSDK\n");
+    return;
+}
 FSDK_Initialize("");
-FSDK_ActivateLibrary("your-license-key-here");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
 
 int err = FSDK_DetectMultipleFaces(img1, &DetectedCount, FaceArray, sizeof(FaceArray));
@@ -3194,9 +3202,12 @@ This section demonstrates the full workflow for loading an image and detecting a
 ### Complete Example (C++)
 
 ```cpp
-// Initialize and activate the SDK
+// Activate and initialize the SDK
+if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
+    printf("Failed to activate FaceSDK\n");
+    return;
+}
 FSDK_Initialize("");
-FSDK_ActivateLibrary("your-license-key-here");
 
 // Configure face detection parameters
 // Enable rotation handling, resize width 384
@@ -3238,9 +3249,9 @@ FSDK_FreeImage(imageHandle);
 ```python
 from fsdk import FSDK
 
-# Initialize and activate the SDK
-FSDK.Initialize()
+# Activate and initialize the SDK
 FSDK.ActivateLibrary("your-license-key-here")
+FSDK.Initialize()
 
 # Configure face detection parameters
 # Enable rotation handling, resize width 384
@@ -3438,6 +3449,7 @@ Returns FSDKE_OK if successful.
 int img1;
 FSDK_Features Features;
 
+FSDK_ActivateLibrary("your-license-key-here");
 FSDK_Initialize("");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
 FSDK_DetectFacialFeatures(img1, Features);
@@ -3475,6 +3487,7 @@ If *confidenceLevel* is True the returned 'Features' objects contains the *confi
 ```python
 from fsdk import FSDK
 
+FSDK.ActivateLibrary("your-license-key-here")
 FSDK.Initialize()
 features = FSDK.Image("test.jpg").DetectFacialFeatures()
 print(f"Left eye location: {features[FSDK.FSDKP_LEFT_EYE]}")
@@ -3539,6 +3552,7 @@ int i, DetectedCount, img1;
 FSDK_Features Features;
 TFacePosition FaceArray[50];
 
+FSDK_ActivateLibrary("your-license-key-here");
 FSDK_Initialize("");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
 
@@ -3568,6 +3582,7 @@ The Features objects.
 ```python
 from fsdk import FSDK
 
+FSDK.ActivateLibrary("your-license-key-here")
 FSDK.Initialize()
 image = FSDK.Image("test.jpg")
 
@@ -4381,9 +4396,12 @@ FAR and FRR are inversely related: decreasing one increases the other. The optim
 ### Complete Threshold Management Example (C++)
 
 ```cpp
-// Initialize and activate the SDK
+// Activate and initialize the SDK
+if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
+    printf("Failed to activate FaceSDK\n");
+    return;
+}
 FSDK_Initialize("");
-FSDK_ActivateLibrary("your-license-key-here");
 
 // Identity verification with configurable threshold
 int err;
@@ -4436,9 +4454,9 @@ if (similarity >= threshold) {
 ```python
 from fsdk import FSDK
 
-# Initialize and activate the SDK
-FSDK.Initialize()
+# Activate and initialize the SDK
 FSDK.ActivateLibrary("your-license-key-here")
+FSDK.Initialize()
 
 # Get threshold for desired security level
 threshold = FSDK.GetMatchingThresholdAtFAR(0.01)  # 1% false acceptance rate
@@ -4671,17 +4689,17 @@ To extract gender, age, and expression from a face, you must first initialize th
 #include <cstdio>
 
 int main() {
-    // Step 1: Initialize FaceSDK
-    int err = FSDK_Initialize("");
+    // Step 1: Activate with your license key
+    int err = FSDK_ActivateLibrary("your-license-key-here");
     if (err != FSDKE_OK) {
-        printf("Failed to initialize FaceSDK (error %d)\n", err);
+        printf("Failed to activate FaceSDK (error %d)\n", err);
         return 1;
     }
 
-    // Step 2: Activate with your license key
-    err = FSDK_ActivateLibrary("your-license-key-here");
+    // Step 2: Initialize FaceSDK
+    err = FSDK_Initialize("");
     if (err != FSDKE_OK) {
-        printf("Failed to activate FaceSDK (error %d)\n", err);
+        printf("Failed to initialize FaceSDK (error %d)\n", err);
         return 1;
     }
 
@@ -4747,9 +4765,9 @@ int main() {
 ```python
 from fsdk import FSDK
 
-# Initialize and activate
-FSDK.Initialize()
+# Activate and initialize
 FSDK.ActivateLibrary("your-license-key-here")
+FSDK.Initialize()
 
 # Load image and detect features
 image = FSDK.LoadImageFromFile("photo.jpg")
@@ -6096,12 +6114,15 @@ Below are complete, working examples showing how to set up the Tracker API for c
 #include <chrono>
 
 int main() {
-    // Step 1: Initialize and activate FaceSDK
+    // Step 1: Activate and initialize FaceSDK
+    if (FSDK_ActivateLibrary("your-license-key") != FSDKE_OK) {
+        printf("Failed to activate FaceSDK\n");
+        return 1;
+    }
     if (FSDK_Initialize("") != FSDKE_OK) {
         printf("Failed to initialize FaceSDK\n");
         return 1;
     }
-    FSDK_ActivateLibrary("your-license-key");
 
     // Step 2: Initialize video capturing subsystem
     if (FSDK_InitializeCapturing() != FSDKE_OK) {
@@ -6207,9 +6228,9 @@ int main() {
 from fsdk import FSDK
 import time
 
-# Initialize
-FSDK.Initialize()
+# Activate and initialize
 FSDK.ActivateLibrary("your-license-key")
+FSDK.Initialize()
 FSDK.InitializeCapturing()
 
 # Create and configure tracker

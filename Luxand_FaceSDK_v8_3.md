@@ -12,7 +12,7 @@
 <br>
 <div align="center">
   <h1>Luxand FaceSDK</h1>
-  <h2>8.3</h2>
+  <h2>9.0</h2>
   <h3>Face Detection and Recognition Library</h3>
   <h3>Developer’s Guide</h3>
 </div>
@@ -24,7 +24,7 @@ Copyright © 2005–2026 Luxand, Inc. https://www.luxand.com
 <a id="overview"></a>
 # Overview
 
-Luxand FaceSDK is a cross-platform face detection and recognition library that can be easily integrated into the customer's application. FaceSDK offers the API (Application Programming Interface) to detect and track faces and facial features, to recognize gender, age and facial expressions (if a smile is present and if the eyes are open or closed), and to recognize faces on still images and videos. FaceSDK also allows detecting faces on thermal images.
+Luxand FaceSDK is a cross-platform face detection and recognition library that can be easily integrated into the customer's application. FaceSDK offers the API (Application Programming Interface) to detect and track faces and facial features, to recognize gender, age and facial expressions (if a smile is present and if the eyes are open or closed), and to recognize faces on still images and videos.
 
 FaceSDK is provided with Tracker API which allows tracking and recognizing faces in live video. Tracker API simplifies working with video streams, offering the functions to tag subjects with names and recognize them further.
 
@@ -65,32 +65,32 @@ Note that the web camera functions are available only on Windows and Linux. IP c
 
 The FaceSDK library has the following technical specifications:
 
-<a id="face-detection"></a>
+<a id="spec-face-detection"></a>
 ## Face Detection
 
-- Robust frontal face detection
+- Robust face detection
 - Detection of multiple faces in a photo
-- Detection of faces on thermal images
 - Head rotation support: -30..30 degrees of in-plane rotation and -30..30 degrees out-of-plane rotation
-- Determines in-plane face rotation angle
-- Detection speed:
-  - Realtime detection (webcam resolution, -15..15 degrees of in-plane head rotation): 0.00154 seconds (649 FPS) (AMD*), 0.00863 seconds (116 FPS) (iOS*), 0.01414 seconds (71 FPS) (Android*)
-  - Reliable detection (digital camera resolution, -30..30 degrees of in-plane head rotation): 0.0081 seconds (AMD), 0.05 seconds (iOS), 0.082 seconds (Android)
-- Returned information for each detected face: (x,y) coordinates of face center, face width and rotation angle
-- Easy configuration of face detection parameters
+- Determines the in-plane face rotation angle for every detected face, with no parameter to enable
+- Detection speed: 0.050 seconds (20 FPS) (Windows*), 0.2625 seconds (3.8 FPS) (iOS*), 0.1748 seconds (5.7 FPS) (Android*)
+- Returned information for each detected face: the detection score, the in-plane rotation angle, the bounding box, and five key points (eye centers, nose tip and mouth corners)
+- Faces are returned sorted by detection score in descending order
+- Detection speed and sensitivity are configured through the FaceDetectionPatchSize, FaceDetectionPatchMode and FaceDetectionThreshold parameters
 
-<a id="face-matching"></a>
+<a id="spec-face-matching"></a>
 ## Face Matching
 
-- Matching of two faces at given FAR (False Acceptance Rate) and FRR (False Rejection Rate)
+- Matching of two faces, returning a similarity value in the range 0..1
+- Accuracy on the LFW benchmark: 3.50 % Equal Error Rate, 0.9833 Area Under Curve, 3.97 % False Rejection Rate at a False Acceptance Rate of 0.001
 - Enrollment time:
-  - Webcam resolution, using FSDK_GetFaceTemplate: 0.01417 seconds (71 FPS) (AMD), 0.03725 seconds (27 FPS) (iOS), 0.0777 seconds (13 FPS) (Android)
+  - Whole image, using FSDK_GetFaceTemplate (detection included): 0.0584 seconds (17 FPS) (Windows*), 0.3750 seconds (2.7 FPS) (iOS*), 0.2263 seconds (4.4 FPS) (Android*)
+  - Known face, using FSDK_GetFaceTemplateInRegion (detection excluded): 0.00332 seconds (302 FPS) (Windows), 0.02182 seconds (46 FPS) (iOS), 0.02505 seconds (40 FPS) (Android)
 - Template Size: 1040 bytes
 - Matching speed:
-  - Single thread, templates per second: 5000000 (AMD), 3205128 (iOS), 242600 (Android)
-  - Multiple parallel threads, templates per second: 53763440 (AMD), 10101010 (iOS), 1096791 (Android)
+  - Single thread, templates per second: 2,145,922 (Windows), 1,809,991 (iOS), 427,350 (Android)
+  - Multiple parallel threads, templates per second: 24,038,461 (Windows, 16 threads), 5,303,614 (iOS, 6 threads), 685,753 (Android, 8 threads)
 - Returned information: facial similarity level
-- [ROC Diagram](https://www.luxand.com/facesdk/tech/FaceSDK_8_ROC1.png)
+- [ROC Diagram](https://www.luxand.com/facesdk/documentation/images/roc_curve_v9_0.png)
 
 <a id="live-video-recognition-with-tracker-api"></a>
 ## Live Video Recognition with Tracker API
@@ -104,34 +104,36 @@ The FaceSDK library has the following technical specifications:
 - Recognizes male and female genders
 - Recognizes age
 - Recognizes facial expressions
+- Reports head pan, tilt and roll angles
 - Detects whether a subject is live
 
-<a id="facial-feature-detection"></a>
+<a id="spec-facial-feature-detection"></a>
 ## Facial Feature Detection
 
 - Detection of 70 facial feature points (eyes, eyebrows, mouth, nose, face contour)
-- Detection time (using FSDK_DetectFacialFeaturesInRegion, not including face detection stage): 0.00027 seconds (3733 FPS) (AMD), 0.0003 seconds (3333 FPS) (iOS), 0.00188 seconds (531 FPS) (Android)
+- Detection time (using FSDK_DetectFacialFeaturesInRegion, not including face detection stage): 0.0405 seconds (25 FPS) (Windows*), 0.00844 seconds (118 FPS) (iOS*), 0.01518 seconds (66 FPS) (Android*)
 - Allowed head rotation: -30..30 degrees of in-plane rotation, -20..20 degrees out-of-plane rotation
-- Returned information: array of 70 (x,y) coordinates of each facial feature point
+- Returned information: array of 70 (x,y) coordinates of each facial feature point, in sub-pixel precision
 
 <a id="eye-centers-detection"></a>
 ## Eye Centers Detection
 
-- Detection of eye centers only, detection time (not including face detection stage): 0.00027 seconds (3752 FPS) (AMD), 0.00028 seconds (3571 FPS) (iOS), 0.00188 seconds (531 FPS) (Android)
-- Returned information: two (x,y) coordinates of left eye center and right eye center
+- The eye centers of every detected face are returned by the face detection functions themselves, as two of the five key points of the face, at no additional cost
+- Sub-pixel eye centers are available from the 70 facial feature points
+- Returned information: (x,y) coordinates of the left eye center and the right eye center
 
 <a id="gender-recognition"></a>
 ## Gender Recognition
 
 - Recognition of different genders
-- Gender recognition time (not including face and facial feature detection stages): 0.0039 seconds (AMD), 0.0063 seconds (iOS), 0.0122 seconds (Android)
+- Gender recognition time (not including face and facial feature detection stages): 0.00470 seconds (213 FPS) (Windows*), 0.00510 seconds (196 FPS) (iOS*), 0.00509 seconds (196 FPS) (Android*)
 - Returned information: confidence level in each gender
 
 <a id="age-recognition"></a>
 ## Age Recognition
 
-- Recognition of age
-- Age recognition time (not including face and facial feature detection stages): 0.0051 seconds (AMD), 0.0075 seconds (iOS), 0.0131 seconds (Android)
+- Recognition of age, either as a single estimate or as a distribution over eight age brackets
+- Age recognition time (not including face and facial feature detection stages): 0.00559 seconds (179 FPS) (Windows*), 0.00542 seconds (184 FPS) (iOS*), 0.00643 seconds (156 FPS) (Android*)
 - Returned information: age of a person
 - Depending on source quality and lighting conditions, error rate is +/- 5 years
 
@@ -139,32 +141,54 @@ The FaceSDK library has the following technical specifications:
 ## Facial Expression Recognition
 
 - Recognizes if the subject smiles and if the eyes are open or closed
-- Expression recognition time (not including face and facial feature detection stages): 0.0043 seconds (AMD), 0.0063 seconds (iOS), 0.0122 seconds (Android)
+- Expression recognition time (not including face and facial feature detection stages): 0.00500 seconds (200 FPS) (Windows*), 0.00492 seconds (203 FPS) (iOS*), 0.00530 seconds (189 FPS) (Android*)
 - Returned information: confidence level in each facial expression
 
-<a id="liveness-detection"></a>
+<a id="head-rotation-angles"></a>
+## Head Rotation Angles
+
+- Reports the pan, tilt and roll angles of the head, in degrees, from the detected facial features
+- Available as the Angles facial attribute, and as the Angles attribute of a tracked face
+
+<a id="spec-liveness-detection"></a>
 ## Liveness detection
 
 - Detects whether the subject is live (i.e. not a photo/video presented to the camera)
 - Works with still images and videos
-- Liveness detection time (not including face and facial feature detection stages): 0.017 seconds (AMD), 0.016 seconds (iOS), 0.034 seconds (Android)
+- An iBeta certified liveness add-on is available as a separate plugin
 - Returned information: the probability of the subject being live
 
-<a id="multi-core-support"></a>
+<a id="spec-multi-core-support"></a>
 ## Multi-Core Support
 
 - The library supports using multiple processes when executing face detection or recognition functions to maximize the performance.
+- The number of threads used inside neural inference is configurable per model.
+
+<a id="computation-backends"></a>
+## Computation Backends
+
+- Face detection, face recognition, facial feature detection and passive liveness can each run on a different computation backend: CPU, GPU, or the Android Neural Networks API.
 
 <a id="library-size"></a>
 ## Library Size
 
-- The size of the redistributables does not exceed 160 MB for each platform.
+- The size of the redistributables does not exceed 50 MB for each platform.
 
 ---
 
 **Performance Benchmarks:**
 
-*Measured on AMD Ryzen 5 1600X processor with 12 threads, iPhone X with 6 threads, Google Pixel 2 (Snapdragon 835) with 8 threads.*
+*Measured at the default parameter settings, on the CPU, with no GPU or NPU delegate enabled.*
+
+- *Windows: Windows 11 x64, 11th generation Intel Core i7-11800H at 2.30 GHz (16 threads), 32 GB RAM. Test image 512x512.*
+- *iOS: iPad (9th generation), Apple A13 Bionic, 6 cores, iPadOS 26.6.1, arm64. Median of three runs. Test image 359x480.*
+- *Android: Xiaomi 12T, MediaTek Dimensity 8100, 8 cores, Android 15, arm64-v8a. Median of three runs. Test image 359x480.*
+
+*Each platform is timed on its own benchmark application and test image, so the figures describe what to expect on that class of device rather than forming a like-for-like comparison between platforms. Face detection cost scales with image size in particular. Performance on your own hardware will differ; measure on the target device.*
+
+*On Android every FSDK_MatchFaces call crosses the JNI boundary and marshals two 1040-byte arrays for roughly two microseconds of actual work, which is what limits both the single-thread figure and the parallel scaling. Applications matching large galleries should batch the comparison on the native side.*
+
+**Recognition accuracy** was measured on the LFW benchmark using the standard `pairs.txt` protocol: 10 folds of 300 genuine and 300 impostor pairs, 6000 pairs in total.
 
 <a id="distribution"></a>
 # Distribution
@@ -324,19 +348,8 @@ This application is for the command line. The application receives a picture, de
 **Source code is available on:**
 - [Microsoft Visual C++ 2017+](https://www.luxand.com/download/samples/Portrait-VisualStudio-CPP.zip)
 
-<a id="9-thermal"></a>
-## 9. Thermal
-
-This application loads a thermal face detection model and allows you to open a grayscale thermal image (which you may have received from a thermal camera), detect faces on the image and draw frames around the detected faces.
-
-**Source code is available on:**
-- [Microsoft C# 2010+](https://www.luxand.com/download/samples/Thermal-VisualStudio-CSharp.zip)
-- [Microsoft Visual C++ 2017+](https://www.luxand.com/download/samples/Thermal-VisualStudio-CPP.zip)
-- [iOS (Objective-C)](https://www.luxand.com/download/samples/Thermal-iOS-ObjectiveC.zip)
-- [Android (Android Studio)](https://www.luxand.com/download/samples/Thermal-Android.zip)
-
-<a id="10-active-liveness"></a>
-## 10. Active Liveness
+<a id="9-active-liveness"></a>
+## 9. Active Liveness
 
 This application asks a subject looking into a camera to rotate their head and smile in a certain way to detect liveness. The active liveness detection helps prevent spoofing attacks with photos or videos by requiring user interaction.
 
@@ -349,9 +362,12 @@ This application asks a subject looking into a camera to rotate their head and s
 - [Android (Android Studio)](https://www.luxand.com/download/samples/ActiveLiveness-Android.zip)
 - [Java (NetBeans)](https://www.luxand.com/download/samples/ActiveLiveness-Java-NetBeans.zip)
 - [WebAssembly (Wasm)](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip)
+- [React + WebAssembly (Vite, TypeScript)](https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip)
 
-<a id="11-passive-liveness"></a>
-## 11. Passive Liveness
+The React version wraps the whole check in a reusable `<LivenessCheck>` component with `onPass` and `onFail` callbacks. It asks for a random sequence of actions at one of three difficulty levels (3, 5 or 8 commands), speaks each prompt aloud, verifies with the tracker that the same person stays in front of the camera for the whole session, and fails the check if the face is lost or a second face appears. Head angles and the face oval are smoothed with an exponential moving average so the overlay does not jitter. Everything runs client-side; no frame leaves the browser.
+
+<a id="10-passive-liveness"></a>
+## 10. Passive Liveness
 
 This application automatically detects the liveness of a subject looking into a camera (without any assistance from the subject). Uses AI-based analysis to detect spoofing attempts without requiring user actions.
 
@@ -363,8 +379,8 @@ This application automatically detects the liveness of a subject looking into a 
 - [Java (NetBeans)](https://www.luxand.com/download/samples/PassiveLiveness-Java-NetBeans.zip)
 - [Microsoft Visual Basic .NET 2010+](https://www.luxand.com/download/samples/PassiveLiveness-VisualStudio-VBNet.zip)
 
-<a id="12-ibeta-liveness"></a>
-## 12. IBeta Liveness
+<a id="11-ibeta-liveness"></a>
+## 11. IBeta Liveness
 
 This sample demonstrates IBeta-compliant liveness detection that analyzes faces to determine if they are real or presentation attacks (photo, video, mask, etc.). The sample includes desktop implementations for Windows and Linux, mobile implementations for iOS and Android, and advanced implementations supporting Flutter, React Native, and Python.
 
@@ -384,10 +400,10 @@ This sample demonstrates IBeta-compliant liveness detection that analyzes faces 
 - [Flutter (iOS, Android)](https://www.luxand.com/download/samples/iBeta_Liveness-Flutter.zip)
 - [React Native (iOS, Android)](https://www.luxand.com/download/samples/iBeta_Liveness-ReactNative.zip)
 
-<a id="13-advanced---python"></a>
-## 13. Advanced - Python
+<a id="12-advanced---python"></a>
+## 12. Advanced - Python
 
-This sample provides comprehensive Python implementations demonstrating various FaceSDK capabilities. The sample includes multiple Python scripts for active liveness, passive liveness, facial features detection, live recognition, lookalikes search, portrait cropping, thermal image processing, and tracker memory management. The Python wrapper allows dynamic linking with .dll/.so/.dylib and provides cross-platform support for Windows, Linux (x86, ARM), and macOS.
+This sample provides comprehensive Python implementations demonstrating various FaceSDK capabilities. The sample includes multiple Python scripts for active liveness, passive liveness, facial features detection, facial attribute and head angle recognition, live recognition, lookalikes search, portrait cropping, and tracker memory management. The Python wrapper allows dynamic linking with .dll/.so/.dylib and provides cross-platform support for Windows, Linux (x86, ARM), and macOS.
 
 **Source code is available on:**
 - [Python 3.x (Windows)](https://www.luxand.com/download/samples/Advanced-Python-Windows.zip)
@@ -395,25 +411,85 @@ This sample provides comprehensive Python implementations demonstrating various 
 
 **Included Python scripts:**
 - `ActiveLiveness.py` - Active liveness detection with user interaction.
-- `PassiveLiveness.py` - Automatic passive liveness detection.
+- `LivePassiveLiveness.py` - Automatic passive liveness detection from a camera.
 - `FacialFeatures.py` - Facial feature detection in static images (Windows only, uses GDI+).
+- `FacialAttributes.py` - Command-line gender, age and expression recognition for a still image.
 - `LiveFacialFeatures.py` - Real-time facial features from camera (Windows only).
 - `LiveFacialFeatures_tk.py` - Cross-platform real-time facial features using Tkinter.
+- `LiveFacialAttributes.py` - Real-time gender, age, age group and expression recognition from a camera (Windows only).
+- `LiveFaceAngles.py` - Real-time head pan, tilt and roll angles, read from the Angles facial attribute of the tracker (Windows only).
 - `LiveRecognition.py` - Real-time face recognition from camera (Windows only).
 - `LiveRecognition_tk.py` - Cross-platform face recognition using Tkinter.
 - `Lookalikes.py` - Find similar faces in a database.
 - `Portrait.py` - Command-line face detection and cropping.
-- `Thermal.py` - Thermal image face detection.
 - `trackerMemoryTool.py` - Tracker memory management utility.
 
-<a id="14-advanced---flutter-and-react-native"></a>
-## 14. Advanced - Flutter and React Native
+<a id="13-advanced---flutter-and-react-native"></a>
+## 13. Advanced - Flutter and React Native
 
 These samples provide multi-platform implementations for Flutter and React Native, matching the LiveRecognition capabilities for face tracking and recognition.
 
 **Source code is available on:**
 - [Flutter (iOS, Android)](https://www.luxand.com/download/samples/Advanced-Flutter.zip)
 - [React Native (iOS, Android)](https://www.luxand.com/download/samples/Advanced-ReactNative.zip)
+
+<a id="14-tracker-db-editor"></a>
+## 14. Tracker DB Editor
+
+A desktop application for inspecting and editing the memory of a tracker saved with [FSDK_SaveTrackerMemoryToFile](#fsdk_savetrackermemorytofile-function). It opens a `.dat` file in three panes: the people the tracker has remembered, the face images stored for whoever is selected, and the details of the individual face you click.
+
+What it is for:
+
+- **Review a database.** Every row carries a strip of that person's own face images, so a profile that has picked up somebody else's face is visible without opening it. Unnamed identifiers, which a tracker accumulates on its own, are hidden until you ask for them.
+- **Put it in order.** Rename people, delete faces, remove an image while keeping the face template, move faces to another person, split one profile into two, merge several into one. Every action is undoable and nothing is written until you save.
+- **Bring databases together.** Merge the memory files of several machines. The application works out who is the same person, by shared face data or by name, and shows the whole plan, conflicts included, before applying anything.
+- **Add people from photographs.** Point it at a folder of images. Each photo is matched against the people already in the database, and you get a table of where it would go and why, which you can correct before importing.
+- **Get the data out.** Export to `.dat`, `.json`, `.csv`, or a folder of PNG images per person. The CSV can be edited and imported back to rename people in bulk.
+
+It is written in Python with PySide6 and runs on Windows, Linux and macOS. A FaceSDK licence key is needed only for importing people from photographs and for the similarity figure in the inspector; opening, viewing, naming, editing, merging, exporting and saving work without a key.
+
+**Source code is available on:**
+- [GitHub](https://github.com/Luxand/TrackerDBEditor)
+
+<a id="15-liveness-server"></a>
+## 15. Liveness Server
+
+A ready-to-deploy REST service that performs single-frame passive liveness detection with the [iBeta certified liveness](#ibeta-certified-liveness-add-on) add-on. A client POSTs a JPEG and receives a liveness verdict, which lets a browser or a mobile application run a certified liveness check without embedding the add-on itself.
+
+The service ships in two packaging variants, each with an installer that reports exactly what it is about to change on the host before it does anything:
+
+- **Docker** - the service and the licence daemon run inside containers, leaving the host untouched. Requires Docker Engine with the `compose` plugin.
+- **systemd** - native Python under systemd, for hosts where Docker is not wanted or not available. The Sentinel licence daemon is installed system-wide and binds TCP/UDP port 1947.
+
+Both variants target Debian 11/12 or Ubuntu 20.04/22.04/24.04 on x86-64, and both include an nginx site configuration for serving the endpoint over HTTPS.
+
+Two separate credentials are required, and the service will not start with either one missing: a FaceSDK activation key licensed for Linux and for the iBeta liveness plugin, and the iBeta plugin licence file, which carries an expiry date. A FaceSDK key without the plugin entitlement activates the SDK but fails every liveness call.
+
+**Source code is available on:**
+- [Docker](https://www.luxand.com/download/samples/LivenessServer-Docker.zip)
+- [systemd (native Python)](https://www.luxand.com/download/samples/LivenessServer-systemd.zip)
+
+<a id="16-live-recognition-php"></a>
+## 16. Live Recognition (PHP)
+
+A server-hosted port of the WebAssembly Live Recognition page. A thin PHP front end injects the per-deployment configuration into the page, so one key and one set of options can be changed per environment without rebuilding a static file, and serves the tracker memory from a real endpoint instead of a bundled file.
+
+Face tracking, recognition and on-device liveness all run in the browser through the WebAssembly build. An optional server-side iBeta check can be layered on top by pointing the page at a [Liveness Server](#15-liveness-server) deployment, or at the Luxand Cloud liveness endpoint.
+
+It requires nginx with PHP-FPM 8.1 or newer, a domain with TLS (the camera is only available in a secure context), and a FaceSDK key issued for web use and registered for the domain being served. See the [Using with WebAssembly](#using-with-web-assembly) chapter for how web keys are bound to origins.
+
+**Source code is available on:**
+- [PHP + WebAssembly](https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip)
+
+<a id="17-head-coupled-cubes"></a>
+## 17. Head-Coupled Cubes
+
+A head-coupled perspective demo built on the WebAssembly build and three.js. The webcam tracks the position of the viewer's head and drives an off-axis projection, so the monitor stops behaving like a picture and starts behaving like a window onto a box sitting behind it: moving your head sideways lets you look around the objects inside, while turning your head in place changes almost nothing.
+
+The demo is a compact illustration of how to turn tracked eye positions into a real-world head position, and of the accuracy the tracker delivers frame to frame. It needs a browser with cross-origin isolation enabled (the `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers), because the threaded WebAssembly build depends on it.
+
+**Source code is available on:**
+- [WebAssembly (Wasm)](https://www.luxand.com/download/samples/HeadCoupledCubes-WebAssembly.zip)
 
 <a id="using-facesdk-with-programming-languages"></a>
 # Using FaceSDK with Programming Languages
@@ -458,6 +534,8 @@ Once `FaceSDK.NET.dll` is added to the references, it will be redistributed auto
 By default, the documentation refers to C/C++ declarations of FaceSDK functions. For example, the function to detect a face is referred to as FSDK_DetectFace function. To refer to this function in .NET, replace the `FSDK_` prefix with `FSDK.` namespace. Thus, the reference to this function becomes `FSDK.DetectFace` (note that webcam-specific functions are located in the `Luxand.Camera` class; refer to [Working with Web Cameras](#working-with-cameras) for details).
 
 If you are using an older version of .NET (for example, 2.0, 3.0 or 3.5) or just need a component for a specific .NET version, you may use the source code available in the `Wrappers\dotNET` directory.
+
+Projects using the wrapper built for netstandard2.0 need to add a reference to `System.Drawing.Common`.
 
 <a id="using-cimage-class-in-net"></a>
 # Using CImage class in .NET
@@ -563,7 +641,7 @@ You need to redistribute the file `facesdk.dll` with your application.
 <a id="using-with-java"></a>
 # Using with Java
 
-You need JDK 1.6 (or OpenJDK 1.6) to use FaceSDK with Java. The FaceSDK Java wrapper uses JNA (all information about JNA and the actual version can be found at https://github.com/twall/jna, but jna.jar is included in the distribution for your convenience). The FaceSDK java wrapper works with any IDE, but only Netbeans sample projects are provided with the distribution.
+You need JDK 1.8 (or OpenJDK 1.8) or later to use FaceSDK with Java. The FaceSDK Java wrapper uses JNA (all information about JNA and the actual version can be found at https://github.com/java-native-access/jna, but jna.jar is included in the distribution for your convenience). The FaceSDK java wrapper works with any IDE, but only Netbeans sample projects are provided with the distribution.
 
 <a id="setup-in-netbeans"></a>
 ## Setup in NetBeans
@@ -580,12 +658,12 @@ import Luxand.FSDK.*;
 import Luxand.FSDKCam.*;
 ```
 
-3) Put the appropriate facesdk binaries (`facesdk.dll`, `libfdsk.so` or `libfdsk.dylib`) in the project directory (or to the `/usr/lib` directory if using OpenJDK).
+3) Put the appropriate facesdk binaries (`facesdk.dll`, `libfsdk.so` or `libfsdk.dylib`) in the project directory (or to the `/usr/lib` directory if using OpenJDK).
 
-<a id="distribution"></a>
+<a id="java-distribution"></a>
 ## Distribution
 
-You need to redistribute the FaceSDK binaries (`facesdk.dll`, `libfdsk.so` or `libfdsk.dylib`) as well as `FaceSDK.jar` and `jna.jar` with your application.
+You need to redistribute the FaceSDK binaries (`facesdk.dll`, `libfsdk.so` or `libfsdk.dylib`) as well as `FaceSDK.jar` and `jna.jar` with your application.
 
 <a id="using-with-cocoa"></a>
 # Using with Cocoa
@@ -606,6 +684,8 @@ For Android Studio you need to copy the directories armeabi-v7a and arm64-v8a co
 
 The syntax of some functions on Android is different from the corresponding Java syntax due to the usage of JNI instead of JNA.
 
+Call [FSDK_Initialize](#fsdk_initialize-function) after [FSDK_ActivateLibrary](#fsdk_activatelibrary-function) and before any other function. On Android the call is required: the detection and recognition models are loaded by it, and calls made before it fail.
+
 **Note:** Only arm64 (arm64-v8a), armv7 (armeabi-v7a), x86 and x86_64 architectures are supported by FaceSDK on the Android platform.
 
 The FSDK class is provided in the binary code form only. Therefore, the "com.luxand" package name of this class cannot be changed.
@@ -613,19 +693,61 @@ The FSDK class is provided in the binary code form only. Therefore, the "com.lux
 <a id="using-with-python"></a>
 # Using with Python
 
-To use FaceSDK, you must have Python 2.7 or later installed.
+To use FaceSDK, you must have Python 3.5 or later installed.
 
-Copy the Python wrapper to your working directory, or place it in the python/lib/fsdk directory.
+The wrapper is a package named `fsdk`. Copy the whole `fsdk` directory next to your application, or anywhere else on `sys.path`.
 
-For Windows users: If using a global path folder, also copy win.py to the same wrapper directory.
+<a id="placing-the-native-binary"></a>
+## Placing the native binary
 
-To start working with FaceSDK add the import:
+The package loads the native library from a **subdirectory of the package itself**, chosen from the platform and the bitness of the running interpreter:
+
+| Platform | Path inside the `fsdk` package |
+|---|---|
+| Windows, 32-bit interpreter | `fsdk/win32/facesdk.dll` |
+| Windows, 64-bit interpreter | `fsdk/win64/facesdk.dll` |
+| Linux x86 / x86_64 | `fsdk/linux32/libfsdk.so`, `fsdk/linux64/libfsdk.so` |
+| Linux ARM | `fsdk/linux32_arm/libfsdk.so`, `fsdk/linux64_arm/libfsdk.so` |
+| macOS Intel / Apple Silicon | `fsdk/osx_x86_64/libfsdk.dylib`, `fsdk/osx_arm64/libfsdk.dylib` |
+
+The package ships these directories empty; copy the matching binary from `Binaries` into the right one. The choice is made by the **interpreter's** bitness, not the operating system's, so a 32-bit Python on 64-bit Windows loads `win32/facesdk.dll`. If the directory holds no binary, importing the package raises `Exception("FaceSDK binary '...' could not be found.")`, naming the exact path it expected; an unrecognised platform raises a similar exception listing the `FSDK_LIB` dictionary, which you can extend yourself.
+
+On Windows the package also imports a `win` module for the `HBITMAP` type used by `FSDK.LoadImageFromHBitmap` and `FSDK.SaveImageToHBitmap`. It is found either as a top-level `win` module or as `fsdk/win.py`.
+
+<a id="error-handling"></a>
+## Error handling
+
+Unlike other wrappers, no function in the Python wrapper returns an error code. Each returns its result, and raises an exception on failure. Every FaceSDK error code has its own exception class, all deriving from `FSDK.FSDK_Exception`, so you can catch one specific failure or all of them:
 
 ```python
 from fsdk import FSDK
+
+try:
+    face = FSDK.Image("photo.jpg").DetectFace()
+except FSDK.FaceNotFound:
+    print("no face in this photo")
+except FSDK.FSDK_Exception as e:
+    print("FaceSDK failed:", e)
 ```
 
-Unlike other wrappers, all functions in the Python wrapper never return error code of execution, instead the result of function is returned or None. In case of an error a corresponding exception is raised.
+The class names are the error codes in CamelCase without the `FSDKE_` prefix: `FSDKE_FACE_NOT_FOUND` becomes `FSDK.FaceNotFound`, `FSDKE_ID_NOT_FOUND` becomes `FSDK.IdNotFound`, and so on.
+
+<a id="classes"></a>
+## Classes
+
+The wrapper offers object wrappers around the FaceSDK handles, so most code never touches a raw handle:
+
+- **`FSDK.Image`** - wraps an HImage. Construct it from a file name (`FSDK.Image("photo.jpg")`), from an HBITMAP, or with no argument for an empty image; the static `FSDK.Image.FromFile`, `FromFileWithAlpha` and `FromBuffer` do the same explicitly. It carries `width`, `height` and `size` properties, the image operations (`Resize`, `ResizeXY`, `Rotate`, `Rotate90`, `RotateCenter`, `Mirror`, `Copy`, `CopyRect`, `CopyRectReplicateBorder`, `SaveToFile`, `ToBuffer`, `ImageData`), and the detection methods `DetectFace`, `DetectMultipleFaces`, `DetectFacialFeatures`, `GetFaceTemplate`, `ExtractFaceImage`, `DetectFacialAttributeUsingFace` and `DetectFacialAttributeUsingFeatures`. The underlying image is freed when the object is garbage-collected.
+- **`FSDK.Tracker`** - wraps an HTracker, with `FeedFrame`, `GetFace`, `GetFacialFeatures`, `GetFacialAttribute`, the identifier and naming calls, and `SaveToFile` / `FromFile` / `GetMemory` / `FromMemory` for tracker memory.
+- **`FSDK.Camera`** - wraps a camera handle, with `Open`, `GrabFrame` and `Close`.
+- **`FSDK.Face`**, **`FSDK.Point`**, **`FSDK.PointF`**, **`FSDK.Features`**, **`FSDK.FaceTemplate`**, **`FSDK.IDSimilarity`** - the data types; see [Data types](#data-types).
+
+Parameters can be passed as keyword arguments rather than as a string:
+
+```python
+FSDK.SetParameters(FaceDetectionPatchSize=384, FaceDetectionThreshold=0.4)
+tracker.SetParameters(RecognizeFaces=False, DetectFacialFeatures=True)
+```
 
 <a id="sample-code"></a>
 ## Sample Code
@@ -647,11 +769,57 @@ Please refer to the sample at [https://www.luxand.com/download/samples/Advanced-
 <a id="using-with-web-assembly"></a>
 # Using with Web Assembly
 
+The WebAssembly build runs the whole SDK inside the browser. No image, frame or template leaves the device, so face detection, recognition and on-device liveness work without a backend.
+
+<a id="runtime-files"></a>
+## Runtime files
+
+Two builds are shipped. Load the threaded SIMD build when the browser supports it, and fall back to the plain build otherwise:
+
+| Files | When to use |
+|---|---|
+| `LuxandFSDK_simd_mt.js`, `LuxandFSDK_simd_mt.wasm` | Browsers with WebAssembly SIMD and threads. This is the fast build. |
+| `LuxandFSDK.js`, `LuxandFSDK.wasm` | Fallback for browsers without SIMD support. |
+
+The threaded build requires the page to be cross-origin isolated, so the server must send both of these headers with the page and with every file it loads:
+
+```text
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
+
+Under cross-origin isolation the page cannot pull resources from other origins, so serve the SDK files, and anything else the page needs, from your own origin. Opening the page from a `file://` URL does not work.
+
+The camera is only available in a secure context, which means HTTPS or `http://localhost`.
+
+<a id="web-license-keys"></a>
+## Web license keys
+
+A key used in the browser is issued specifically for web use and is **bound to a list of domains**. [FSDK_ActivateLibrary](#fsdk_activatelibrary-function) verifies the browser's origin against that list with Luxand's activation server on every run, over a signed one-time challenge, so the check cannot be forged, replayed or satisfied offline.
+
+This has a few practical consequences:
+
+- **The key is visible in the page, and that is expected.** Any client-side application hands its key to the browser, where it shows up in the page source and in the network log. A web key is not a shared secret: a key copied out of your page will not activate on an origin you have not registered.
+- **Register every origin before you deploy**, including the staging host and the `http://localhost` port you develop on. An unregistered origin simply fails activation, and that is the only symptom you get.
+- **Subdomains are covered only if the key was issued with subdomains enabled.** `web.example.com` is not implied by `example.com`.
+- **Serve over HTTPS from a registered domain.** Activation over plain HTTP is refused unless the key was explicitly issued to allow it, `localhost` aside.
+- **Activation is a live network call.** A browser with no route to the activation server cannot start the SDK; there is no offline mode.
+- **Never put a desktop or server license key in a web page.** Those keys are not domain-bound, and they are secrets.
+
+Request a key for web use at [https://luxand.com/facesdk/requestkey/](https://luxand.com/facesdk/requestkey/), listing the domains you will serve from.
+
+<a id="samples"></a>
+## Samples
+
 Please refer to the samples at:
 
 - [https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip)
+- [https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip](https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip)
 - [https://www.luxand.com/download/samples/LiveRecognition-WebAssembly.zip](https://www.luxand.com/download/samples/LiveRecognition-WebAssembly.zip)
+- [https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip](https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip)
 - [https://www.luxand.com/download/samples/LiveFacialFeatures-WebAssembly.zip](https://www.luxand.com/download/samples/LiveFacialFeatures-WebAssembly.zip)
+- [https://www.luxand.com/download/samples/FacialFeatures-WebAssembly.zip](https://www.luxand.com/download/samples/FacialFeatures-WebAssembly.zip)
+- [https://www.luxand.com/download/samples/HeadCoupledCubes-WebAssembly.zip](https://www.luxand.com/download/samples/HeadCoupledCubes-WebAssembly.zip)
 
 <a id="unicode-support"></a>
 # Unicode Support
@@ -672,7 +840,6 @@ The following files may be redistributed with your application:
 | iOS | `Binaries\iOS\shared\fsdk.framework` |
 | .NET | `Wrappers\dotNet\bin\FaceSDK.NET.dll` |
 | Java (on Windows / Linux / macOS) | `Wrappers\Java\FaceSDK.jar`<br>`Wrappers\Java\jna.jar` |
-| Thermal face detection | `thermal.bin` (the detection model used in Thermal samples) |
 
 <a id="usage-scenarios"></a>
 # Usage Scenarios
@@ -689,14 +856,14 @@ Otherwise, the typical scenario is as follows:
 
 3. Load images either from file, buffer, or the HBITMAP handle ([FSDK_LoadImageFromFile](#fsdk_loadimagefromfile-function), [FSDK_LoadImageFromBuffer](#fsdk_loadimagefrombuffer-function), [FSDK_LoadImageFromHBitmap](#fsdk_loadimagefromhbitmap-function) functions).
 
-4. Set face detection parameters if needed ([FSDK_SetFaceDetectionParameters](#fsdk_setfacedetectionparameters-function), [FSDK_SetFaceDetectionThreshold](#fsdk_setfacedetectionthreshold-function)).
+4. Set face detection parameters if needed ([FSDK_SetParameter](#fsdk_setparameter-function), [FSDK_SetParameters](#fsdk_setparameters-function)).
 
 5. Use FaceSDK functions:
    - Detect a face ([FSDK_DetectFace](#fsdk_detectface-function)) or multiple faces ([FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function)) in an image
    - Detect facial features if needed ([FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function), [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function))
-   - Extract a face template from the image ([FSDK_GetFaceTemplate](#fsdk_getfacetemplate-function), [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function), [FSDK_GetFaceTemplateUsingFeatures](#fsdk_getfacetemplateusingfeatures-function))
+   - Extract a face template from the image ([FSDK_GetFaceTemplate](#fsdk_getfacetemplate-function), [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function))
    - Match face templates ([FSDK_MatchFaces](#fsdk_matchfaces-function)) and acquire facial similarity level
-   - To find out if a face belongs to the same person, calculate the matching threshold at a given FAR or FRR rate ([FSDK_GetMatchingThresholdAtFAR](#fsdk_getmatchingthresholdatfar-function) and [FSDK_GetMatchingThresholdAtFRR](#fsdk_getmatchingthresholdatfrr-function) functions).
+   - To find out if a face belongs to the same person, compare the similarity against a matching threshold (see the [Recognition Accuracy and Thresholds](#recognition-accuracy-and-thresholds) section).
 
 6. Finalize the FaceSDK library ([FSDK_Finalize](#fsdk_finalize-function) function).
 
@@ -735,6 +902,8 @@ FaceSDK is a copy-protected library, and must be activated with a license key be
 You may request a temporary evaluation key from Luxand, Inc.:
 
 https://luxand.com/facesdk/requestkey/.
+
+Keys issued for use in a web browser work differently: instead of being tied to a machine, they are bound to a list of domains, and activation verifies the origin of the page with the activation server. See the [Using with WebAssembly](#web-license-keys) chapter for details.
 
 <a id="fsdk_gethardware_id-function"></a>
 ## FSDK_GetHardware_ID Function
@@ -1073,7 +1242,7 @@ if (err != FSDKE_OK) {
 # Proper cleanup sequence in Python
 try:
     # Save tracker memory
-    tracker.SaveMemoryToFile("faces.db")
+    tracker.SaveToFile("faces.db")
 except Exception as e:
     print(f"Warning: Failed to save tracker memory: {e}")
 
@@ -1139,7 +1308,7 @@ int FSDK.SetParameter(String ParameterName, String ParameterValue);
 
 **Return Value:**
 
-Returns FSDKE_OK if successful.
+Returns FSDKE_OK if successful. Returns FSDKE_INVALID_ARGUMENT if the parameter name is not recognized or the value is out of the accepted range. Returns FSDKE_CANNOT_OPEN_FILE or FSDKE_BAD_FILE_FORMAT when a model file cannot be loaded.
 
 **Python Syntax:**
 
@@ -1183,7 +1352,7 @@ function FSDK_SetParameters(Parameters: PAnsiChar; ErrorPosition: PInteger): int
 **C# Syntax:**
 
 ```csharp
-int FSDK.SetParameters(string Parameters, ref int ErrorPosition);
+int FSDK.SetParameters(string Parameters, out int ErrorPosition);
 ```
 
 **Java and Android Syntax:**
@@ -1205,7 +1374,7 @@ Returns FSDKE_OK if successful. Returns FSDKE_SYNTAX_ERROR and sets the value of
 
 ```cpp
 int err = 0;
-FSDK_SetParameters("FaceDetectionModel=thermal.bin; TrimOutOfScreenFaces=false; TrimFacesWithUncertainFacialFeatures=false", &err);
+FSDK_SetParameters("FaceDetectionThreshold=0.7; FaceDetectionPatchSize=512", &err);
 ```
 
 **Python Syntax:**
@@ -1228,9 +1397,9 @@ FSDK.SyntaxError or FSDK.InvalidArgument if parameter(s) cannot be set.
 **Examples:**
 
 ```python
-FSDK_SetParameters("FaceDetectionModel=thermal.bin;TrimOutOfScreenFaces=false;TrimFacesWithUncertainFacialFeatures=false")
+FSDK.SetParameters("FaceDetectionThreshold=0.7;FaceDetectionPatchSize=512")
 
-FSDK_SetParameters(FaceDetectionModel = "thermal.bin", TrimOutOfScreenFaces = False, TrimFacesWithUncertainFacialFeatures = False)
+FSDK.SetParameters(FaceDetectionThreshold = 0.7, FaceDetectionPatchSize = 512)
 ```
 
 ---
@@ -1240,18 +1409,116 @@ FSDK_SetParameters(FaceDetectionModel = "thermal.bin", TrimOutOfScreenFaces = Fa
 
 FaceSDK allows for setting a number of parameters with the [FSDK_SetParameter](#fsdk_setparameter-function) or [FSDK_SetParameters](#fsdk_setparameters-function) function.
 
+The parameters listed in this section configure the library globally. The Tracker API keeps its own copy of them, so a tracker is not affected by a global call: to configure a tracker, pass the same parameter names to [FSDK_SetTrackerParameter](#fsdk_settrackerparameter-function) or [FSDK_SetTrackerMultipleParameters](#fsdk_settrackermultipleparameters-function). The tracker's own defaults for these parameters are listed in [Face detection parameters](#tracker-face-detection-parameters), and it additionally accepts the tracking and recognition parameters described in the [Tracker Parameters](#tracker-parameters) section.
+
+Boolean parameters accept `true` and `false`.
+
 <a id="face-detection-parameters"></a>
 ### Face Detection Parameters
 
-Note that the Tracker API does not use the face detection parameters set with [FSDK_SetParameter](#fsdk_setparameter-function) or [FSDK_SetParameters](#fsdk_setparameters-function). Instead, you should use [FSDK_SetTrackerParameter](#fsdk_settrackerparameter-function) or [FSDK_SetTrackerMultipleParameters](#fsdk_settrackermultipleparameters-function).
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **FaceDetectionModel** | string | `default` | A path to the face detection model file to load. The value `default` switches back to the built-in face detection model. |
+| **FaceDetectionThreshold** | float, 0..1 | 0.64 | The minimum detection score a face must reach to be reported by [FSDK_DetectFace](#fsdk_detectface-function) and [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function). Raise it to reduce false positives, lower it to detect faces of poorer quality. The Tracker API uses 0.4 by default. Values outside 0..1 are rejected with FSDKE_INVALID_ARGUMENT. |
+| **FaceDetectionPatchSize** | integer > 0 | 640 | The side, in pixels, of the square patch the detector internally resizes the image to. Higher values let smaller (more distant) faces be detected, at the cost of speed. **The value must be divisible by 32, and the smallest accepted value is 64.** The Tracker API uses 256 by default. |
+| **FaceDetectionPatchMode** | `fast`, `mixed`, `full` | `fast` | How the image is covered by detection patches. `fast` resizes the image to a single patch, which is the quickest option and is well suited to webcam frames. `full` tiles the whole image with patches, which finds small faces in large images but costs proportionally more time. `mixed` picks between the two based on the ratio of the patch size to the image size. |
+| **FaceDetectionBigFaceSize** | integer > 0 | 384 | When smaller than FaceDetectionPatchSize, the detector also processes the whole image resized to this size but padded to FaceDetectionPatchSize, so that faces too large for a single patch are found. Must be greater than 0. |
+| **FaceDetectionBatchSize** | integer > 0 | 1 | The number of image patches the detection model processes in one inference call. Larger batches improve throughput on hardware that benefits from batching. Must be greater than 0. |
+| **TrimOutOfScreenFaces** | boolean | true | Determines whether faces that go beyond the edges of the image should be excluded from face detection. Use `true` when you extract face templates from the detected faces and match them. Setting the value to `false` allows you to detect faces in a larger number of cases, but such faces may yield higher false acceptance rates when matching faces. |
 
-Also note that additional face detection parameters can be set by calling the [FSDK_SetFaceDetectionParameters](#fsdk_setfacedetectionparameters-function) and [FSDK_SetFaceDetectionThreshold](#fsdk_setfacedetectionthreshold-function) functions.
+<a id="face-recognition-parameters"></a>
+### Face Recognition Parameters
 
-| Parameter | Description |
-|-----------|-------------|
-| **FaceDetectionModel** | A path to the face detection model file to load. You can use it to load thermal face detection model (see the Thermal sample application). The value "default" can be passed to switch back to the default visual face detection model. |
-| **TrimOutOfScreenFaces** | Determines whether faces that go beyond the edges of the image should be excluded from face detection. The default value is True (such faces aren't detected). Use True when you extract face templates from the detected faces and match them. Setting the value to False allows you to detect faces in a larger number of cases, but such faces may yield higher false acceptance rates when matching faces. |
-| **TrimFacesWithUncertainFacialFeatures** | Determines whether faces with uncertain facial features should not be detected. The default value is True (faces with uncertain facial features aren't detected). Should be set to False for a thermal face detection model. Use True when you extract face templates from the detected faces and match them. Setting the value to False allows you to detect faces in a larger number of cases, but such faces may yield higher false acceptance rates when matching faces. |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **FaceRecognitionModel** | string | `default` | A path to the face recognition model file to load. The value `default` switches back to the built-in model. Templates extracted with different recognition models are not interchangeable. |
+| **FaceRecognitionBatchSize** | integer > 0 | 1 | The number of faces the recognition model processes in one inference call. Increasing it improves throughput when extracting many templates at once. Must be greater than 0. |
+| **FaceRecognitionUseFlipTest** | boolean | false | Whether to also extract a template from the mirrored face and combine the two. This improves recognition accuracy on non-frontal faces and roughly doubles the template extraction time. |
+
+<a id="facial-feature-and-liveness-parameters"></a>
+### Facial Feature and Liveness Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **FacialFeaturesModel** | string | `default` | A path to the facial feature detection model file to load. The value `default` switches back to the built-in model. |
+| **LivenessModel** | string | `default` | A path to the passive liveness model file to load, or `default` for the built-in model. To use the iBeta certified liveness add-on, pass a value in the form `external:model=<name>,dataDir=<directory>`. See the [iBeta Certified Liveness](#ibeta-certified-liveness-add-on) chapter. |
+
+<a id="environment-parameter"></a>
+### Environment Parameter
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **Environment** | string | Identifies the host environment the library is embedded in. Language wrappers set it automatically before activation, so an application normally has no reason to set it. The value is accepted only once, before the library is activated; later calls are ignored. The lowercase spelling `environment` is accepted as well. |
+
+---
+
+<a id="advanced-parameters"></a>
+## Advanced Parameters
+
+The parameters in this section tune how the neural models are executed. The defaults suit most applications; change them only when profiling shows a benefit, or when targeting specific hardware.
+
+<a id="computation-backend"></a>
+### Computation Backend
+
+Each model can be executed on a different backend. The accepted values are:
+
+| Value | Meaning |
+|---|---|
+| `none` | No hardware delegate; the model runs on the built-in reference implementation. |
+| `cpu` | The optimized CPU backend. |
+| `gpu` | The GPU delegate. Available on platforms with a supported GPU runtime; on Apple platforms this is the Metal delegate. |
+| `nnapi` | The Android Neural Networks API delegate. Android only. |
+
+The default is `cpu` on platforms built with the optimized CPU backend, and `none` on those without it. `cpu` is unavailable where that backend is not built in, `gpu` where no GPU runtime is available, and `nnapi` on every platform other than Android.
+
+A name outside the four above is rejected with FSDKE_INVALID_ARGUMENT. Requesting a backend that is recognized but unavailable returns FSDKE_TENSORFLOW_NOT_INITIALIZED, and the previously selected backend stays in effect.
+
+| Parameter | Applies to |
+|-----------|------------|
+| **ComputationDelegate** | All four models at once: passive liveness, face detection, face recognition and facial features. |
+| **FaceDetectionComputationDelegate** | The face detection model only. |
+| **FaceRecognitionComputationDelegate** | The face recognition model only. |
+| **FacialFeaturesComputationDelegate** | The facial feature detection model only. |
+| **PassiveLivenessComputationDelegate** | The passive liveness model only. |
+
+**Example:**
+
+```cpp
+int err = 0;
+FSDK_SetParameters("ComputationDelegate=cpu; FaceDetectionComputationDelegate=gpu", &err);
+```
+
+<a id="per-model-thread-count"></a>
+### Per-model Thread Count
+
+These parameters set the number of threads used *inside* a model's inference. They are independent of [FSDK_SetNumThreads](#fsdk_setnumthreads-function), which controls the number of threads FaceSDK uses to process images in parallel.
+
+| Parameter | Applies to |
+|-----------|------------|
+| **ModelNumThreads** | All four models at once. |
+| **FaceDetectionNumThreads** | The face detection model only. |
+| **FaceRecognitionNumThreads** | The face recognition model only. |
+| **FacialFeaturesNumThreads** | The facial feature detection model only. |
+| **PassiveLivenessNumThreads** | The passive liveness model only. |
+
+**Example:**
+
+```cpp
+FSDK_SetParameter("ModelNumThreads", "4");
+```
+
+<a id="camera-backend-windows"></a>
+### Camera Backend (Windows)
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **CameraBackend** | `DirectShow` or `MediaFoundation` | Selects the capture backend used by the webcam functions described in the [Cameras](#working-with-cameras) chapter. The default is `DirectShow`; `MediaFoundation` requires Windows 7 or later. Any other value is rejected with FSDKE_INVALID_ARGUMENT. Windows only. Set it before calling [FSDK_InitializeCapturing](#fsdk_initializecapturing-function). This parameter cannot be set on a tracker. |
+
+**Example:**
+
+```cpp
+FSDK_SetParameter("CameraBackend", "MediaFoundation");
+```
 
 <a id="working-with-images"></a>
 # Working With Images
@@ -1293,7 +1560,7 @@ class Image(ctypes.Structure);
 
 FaceSDK provides a number of functions to load images to the internal representation from files, buffers or HBITMAP handles and to save images from the internal representation to files, buffers and HBITMAP handles. Each FSDK_LoadImageFromXXXX function creates a new HImage handle, which can be deleted using the [FSDK_FreeImage](#fsdk_freeimage-function) function.
 
-Note that when you perform multiple stages of recognition on large images (for example, when you first detect a face, and then create its template using FSDK_GetFaceTemplateInRegion), consider first resizing the image to a smaller size to speed up operations. Note that you must resize the image to dimensions no smaller than the InternalResizeWidth parameter of the FSDK_SetFaceDetectionParameters function if you perform face detection, in order to keep the same accuracy of face detection.
+Note that when you perform multiple stages of recognition on large images (for example, when you first detect a face, and then create its template using FSDK_GetFaceTemplateInRegion), consider first resizing the image to a smaller size to speed up operations. Note that you must resize the image to dimensions no smaller than the FaceDetectionPatchSize parameter if you perform face detection, in order to keep the same accuracy of face detection.
 
 <a id="fsdk_createemptyimage-function"></a>
 ## FSDK_CreateEmptyImage Function
@@ -1676,6 +1943,18 @@ function FSDK_LoadImageFromJpegBuffer(Image: PHImage; var Buffer; BufferLength: 
 int FSDK.LoadImageFromJpegBuffer(HImage Image, byte Buffer[], int BufferLength);
 ```
 
+**C# Syntax:**
+
+```csharp
+int FSDK.LoadImageFromJpegBuffer(out int Image, byte[] Buffer);
+```
+
+**CImage Syntax:**
+
+```csharp
+Luxand.CImage Luxand.CImage.LoadImageFromJpegBuffer(byte[] Buffer);
+```
+
 **Parameters:**
 
 *Image* - pointer to HImage for receiving the loaded image handle.
@@ -1687,8 +1966,6 @@ int FSDK.LoadImageFromJpegBuffer(HImage Image, byte Buffer[], int BufferLength);
 **Return Value:**
 
 Returns FSDKE_OK if successful.
-
-This function is not available in .NET and Java.
 
 **Python Syntax:**
 
@@ -1731,6 +2008,18 @@ function FSDK_LoadImageFromPngBuffer(Image: PHImage; var Buffer; BufferLength: i
 int FSDK.LoadImageFromPngBuffer(HImage Image, byte Buffer[], int BufferLength);
 ```
 
+**C# Syntax:**
+
+```csharp
+int FSDK.LoadImageFromPngBuffer(out int Image, byte[] Buffer);
+```
+
+**CImage Syntax:**
+
+```csharp
+Luxand.CImage Luxand.CImage.LoadImageFromPngBuffer(byte[] Buffer, bool WithAlpha = false);
+```
+
 **Parameters:**
 
 *Image* - pointer to HImage for receiving the loaded image handle.
@@ -1743,7 +2032,7 @@ int FSDK.LoadImageFromPngBuffer(HImage Image, byte Buffer[], int BufferLength);
 
 Returns FSDKE_OK if successful.
 
-This function is not available in .NET and Java.
+The alpha channel of the PNG image is discarded. Use [FSDK_LoadImageFromPngBufferWithAlpha](#fsdk_loadimagefrompngbufferwithalpha-function) to keep it.
 
 **Python Syntax:**
 
@@ -1762,6 +2051,153 @@ FSDK.IOError
 **Note:**
 
 If *bufferLength* is not defined, an entire *buffer* is used.
+
+<a id="fsdk_loadimagefromfilewithalpha-function"></a>
+## FSDK_LoadImageFromFileWithAlpha Function
+
+Loads an image from a file keeping its alpha channel, and provides the internal handle of this image. The image is loaded in the FSDK_IMAGE_COLOR_32BIT mode. Use [FSDK_LoadImageFromFile](#fsdk_loadimagefromfile-function) when the alpha channel is not needed.
+
+**C++ Syntax:**
+
+```cpp
+int FSDK_LoadImageFromFileWithAlpha(HImage* Image, const char* FileName);
+```
+
+**Delphi Syntax:**
+
+```pascal
+function FSDK_LoadImageFromFileWithAlpha(Image: PHImage; FileName: PAnsiChar): integer;
+```
+
+**C# Syntax:**
+
+```csharp
+int FSDK.LoadImageFromFileWithAlpha(out int Image, string FileName);
+int FSDK.LoadImageFromFileWithAlphaW(out int Image, string FileName);
+```
+
+**Java Syntax:**
+
+```java
+int FSDK.LoadImageFromFileWithAlpha(HImage Image, String FileName);
+int FSDK.LoadImageFromFileWithAlphaW(HImage Image, String FileName);
+```
+
+**CImage Syntax:**
+
+```csharp
+Luxand.CImage Luxand.CImage.LoadImageFromFileWithAlpha(string FileName);
+```
+
+**Parameters:**
+
+*Image* - pointer to HImage for receiving the loaded image handle.
+
+*FileName* - filename of the image to be loaded.
+
+**Return Value:**
+
+Returns FSDKE_OK if successful.
+
+**Python Syntax:**
+
+```python
+def FSDK.LoadImageFromFileWithAlpha(fileName: str) -> Image;
+```
+
+**Return Value:**
+
+The loaded Image object.
+
+**Exception:**
+
+FSDK.IOError
+
+<a id="fsdk_loadimagefrompngbufferwithalpha-function"></a>
+## FSDK_LoadImageFromPngBufferWithAlpha Function
+
+Loads an image from a buffer containing PNG data, keeping its alpha channel, and provides the handle of this image. The image is loaded in the FSDK_IMAGE_COLOR_32BIT mode.
+
+**C++ Syntax:**
+
+```cpp
+int FSDK_LoadImageFromPngBufferWithAlpha(HImage* Image, const unsigned char* Buffer, unsigned int BufferLength);
+```
+
+**Delphi Syntax:**
+
+```pascal
+function FSDK_LoadImageFromPngBufferWithAlpha(Image: PHImage; var Buffer; BufferLength: integer): integer;
+```
+
+**C# Syntax:**
+
+```csharp
+int FSDK.LoadImageFromPngBufferWithAlpha(out int Image, byte[] Buffer);
+```
+
+**Parameters:**
+
+*Image* - pointer to HImage for receiving the loaded image handle.
+
+*Buffer* - pointer to the buffer containing the image data in PNG format.
+
+*BufferLength* - size of buffer in bytes.
+
+**Return Value:**
+
+Returns FSDKE_OK if successful.
+
+**Python Syntax:**
+
+```python
+def FSDK.LoadImageFromPngBufferWithAlpha(buffer: bytes, bufferLength: int = None) -> Image;
+```
+
+**Return Value:**
+
+An image loaded from the png buffer.
+
+<a id="fsdk_getimagedata-function"></a>
+## FSDK_GetImageData Function
+
+Provides direct access to the pixel data of an image, without copying it into a buffer of your own. The returned pointer refers to memory owned by FaceSDK; it stays valid until the image is modified or released with [FSDK_FreeImage](#fsdk_freeimage-function).
+
+**C++ Syntax:**
+
+```cpp
+int FSDK_GetImageData(HImage Image, unsigned char** Data, int* Width, int* Height, int* ScanLine, FSDK_IMAGEMODE* ColorMode);
+```
+
+**Delphi Syntax:**
+
+```pascal
+function FSDK_GetImageData(Image: HImage; Data: PPByte; Width, Height, ScanLine: PInteger; ColorMode: PInteger): integer;
+```
+
+**C# Syntax:**
+
+```csharp
+int FSDK.GetImageData(int Image, out IntPtr Data, out int Width, out int Height, out int ScanLine, out FSDK.FSDK_IMAGEMODE ColorMode);
+```
+
+**Parameters:**
+
+*Image* - handle of the image.
+
+*Data* - receives the pointer to the first pixel of the image.
+
+*Width*, *Height* - receive the dimensions of the image in pixels.
+
+*ScanLine* - receives the distance, in bytes, between the beginnings of two consecutive rows of pixels. It is not necessarily equal to the width of a row.
+
+*ColorMode* - receives the pixel format of the image.
+
+**Return Value:**
+
+Returns FSDKE_OK if successful.
+
+Use [FSDK_SaveImageToBuffer](#fsdk_saveimagetobuffer-function) instead when you need a copy of the pixel data in a specific color mode, or when the image may be modified while you are reading it.
 
 <a id="fsdk_getimagebuffersize-function"></a>
 ## FSDK_GetImageBufferSize Function
@@ -2782,181 +3218,246 @@ The image will be freed automatically if it is not freed by hand.
 <a id="face-detection"></a>
 # Face Detection
 
-You can use the [FSDK_DetectFace](#fsdk_detectface-function) function to detect a frontal face in an image. The function returns the position of the face in the image. The performance and reliability of face detection is controlled by the [FSDK_SetFaceDetectionParameters](#fsdk_setfacedetectionparameters-function) and [FSDK_SetFaceDetectionThreshold](#fsdk_setfacedetectionthreshold-function) functions.
+Use the [FSDK_DetectFace](#fsdk_detectface-function) function to detect a face in an image, or [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function) to detect every face present. Both functions return a [TFace](#data-types) structure per face, which carries the detection score, the in-plane rotation angle, the bounding box of the face and five key points (eye centers, nose tip and mouth corners).
 
-Typical parameters for face detection are:
+The detector handles in-plane and out-of-plane rotation on its own and reports its confidence in the `score` field, so faces of poor quality can be filtered by comparing `score` against a value of your choice. The behavior of the detector is controlled with the [FSDK_SetParameter](#fsdk_setparameter-function) and [FSDK_SetParameters](#fsdk_setparameters-function) functions; when using Tracker API, use [FSDK_SetTrackerParameter](#fsdk_settrackerparameter-function) or [FSDK_SetTrackerMultipleParameters](#fsdk_settrackermultipleparameters-function) instead, and see [Face detection parameters](#tracker-face-detection-parameters) for the defaults a tracker uses.
 
-- To detect faces from a webcam in real time, call:
-  ```
-  FSDK_SetFaceDetectionParameters(false, false, 100);
+<a id="tuning-face-detection"></a>
+## Tuning Face Detection
+
+The parameters below are described in full in the [Face Detection Parameters](#face-detection-parameters) section. A tracker keeps its own copy of them, with its own defaults; see [Face detection parameters](#tracker-face-detection-parameters).
+
+| Parameter | Default | Purpose |
+|-----------|---------|---------|
+| **FaceDetectionThreshold** | 0.64 | Minimum detection score for a face to be reported. Raise it to suppress false positives, lower it to detect more faces. |
+| **FaceDetectionPatchSize** | 640 | Size of the square patch the detector works with. Larger values detect smaller faces at the cost of speed. Must be divisible by 32; minimum 64. |
+| **FaceDetectionPatchMode** | `fast` | How the image is split into patches: `fast`, `mixed` or `full`. |
+| **FaceDetectionBigFaceSize** | 384 | Lets faces too large for a single patch be found, by also processing the whole image resized to this size. |
+| **TrimOutOfScreenFaces** | true | Whether faces crossing the edges of the image are discarded. |
+| **FaceDetectionModel** | `default` | The detection model to load. |
+
+Choosing the correct patch size is essential for the correct operation of the face detection functions. The detector can only find faces down to a certain fraction of its working size. Even in a large 1000x1000 image, a face may be only 100x100 pixels; if the working size is smaller still, that face shrinks below what the detector can resolve and is not found. Webcam-resolution video is usually served well by a small working size, while images from multi-megapixel digital cameras need a larger one. The sample applications use:
+
+| Source | FaceDetectionPatchSize |
+|---|---|
+| Live webcam video (Tracker API) | 128 |
+| Still photographs, IP camera streams | 256 |
+| Large digital camera photographs | 384 |
+
+Typical settings:
+
+- To detect faces from a webcam in real time, keep the defaults, or lower the patch size to gain frame rate:
+
+  ```cpp
+  FSDK_SetParameter("FaceDetectionPatchSize", "128");
   ```
 
-- To reliably detect faces in digital camera photos, call:
+- To reliably detect small faces in digital camera photos, increase the patch size and process the image in full mode:
+
+  ```cpp
+  int err = 0;
+  FSDK_SetParameters("FaceDetectionPatchSize=512; FaceDetectionPatchMode=full", &err);
   ```
-  FSDK_SetFaceDetectionParameters(true, false, 500);
+
+- To reduce false positives, raise the detection threshold, or filter the results by `score`:
+
+  ```cpp
+  FSDK_SetParameter("FaceDetectionThreshold", "0.8");
   ```
 
 <a id="face-detection-models"></a>
 ## Face Detection Models
 
-Luxand FaceSDK allows you to switch the internal models used for face detection. You may use the switching to load improved face detection models when made available by Luxand or to switch to a thermal face detection model.
+Luxand FaceSDK allows you to switch the internal models used for face detection. You may use the switching to load improved face detection models when made available by Luxand.
 
-Use the FSDK_SetParameter or FSDK_SetParameters function to load a face detection model from a file. When using Tracker API, use the FSDK_SetTrackerParameter or FSDK_SetTrackerMultipleParameters function instead. Set the FaceDetectionModel parameter to specify the file to load a model from. Be sure to check the return value of FSDK_SetParameter or FSDK_SetParameters to confirm the file loaded correctly.
+Use the FSDK_SetParameter or FSDK_SetParameters function to load a face detection model from a file. When using Tracker API, use the FSDK_SetTrackerParameter or FSDK_SetTrackerMultipleParameters function instead. Set the FaceDetectionModel parameter to specify the file to load a model from. Confirm the file is available in the current directory and, if not, specify the full path to the file. Be sure to check the return value of FSDK_SetParameter or FSDK_SetParameters to confirm the file loaded correctly.
 
-To load a thermal face detection model, set FaceDetectionModel to `thermal.bin`. Confirm this file is available in the current directory and, if not, specify the full path to the file.
-
-To switch back to the default model (i.e., the model for visual face detection), set FaceDetectionModel to `default`. See the FaceSDK Parameters section for more information.
-
-<a id="face-detection-on-thermal-images"></a>
-## Face Detection on Thermal Images
-
-Luxand FaceSDK allows for the detection of faces on 8-bit grayscale thermal images. You typically receive such images from a thermal camera, with each pixel representing temperature.
-
-To pass the thermal image to FaceSDK, you may need to convert the temperature values of the image (which may be float or 14-bit values, for example) into 8-bit values (from 0 to 255). The absolute temperature itself is not taken into account by FaceSDK when detecting faces, only the relative difference in temperature between facial features and the background.
-
-Typically, you may normalize an image so that coldest pixel is represented by 0 and the hottest by 255. However, if you have very hot or very cold images in the background, this may lead to faces having a low contrast. Therefore, it is recommended to normalize the image so that 0 would represent the temperature of about 20 degrees Celsius and 255 the temperature of about 40 degrees Celsius (the usual range of temperatures for human faces). After this normalization, any pixels colder than 20 degrees Celsius will have the value 0, and any pixels hotter than 40 degrees Celsius will have the value of 255.
-
-If your thermal camera returns a noisy picture, you may get lower detection rates. In such cases, it is recommended to de-noise the image with a median or a Gaussian filter before passing it to FaceSDK. More information can be found on the links below:
-- [https://en.wikipedia.org/wiki/Median_filter](https://en.wikipedia.org/wiki/Median_filter)
-- [https://en.wikipedia.org/wiki/Gaussian_blur](https://en.wikipedia.org/wiki/Gaussian_blur)
-
-Try varying the face detection threshold if you get a high number of false positives or low detection rates on your camera.
-
-FaceSDK itself does not communicate with thermal cameras except when the camera is available as a standard Windows web camera. When working with a thermal camera, you need to use the camera manufacturer's API to receive images. To pass thermal images to FaceSDK, you may use the FSDK_LoadImageFromBuffer function after converting the images to an 8-bit format (and possibly normalizing the pixel values, as described above).
-
-To detect faces on thermal images, follow these steps:
-
-1. Load a face detection model by setting the FaceDetectionModel with the FSDK_SetParameter or FSDK_SetParameters function. If using Tracker API, use the FSDK_SetTrackerParameter or FSDK_SetTrackerMultipleParameters function instead.
-2. Check the return value of the above functions for error to be sure the thermal model was loaded.
-3. Set the `TrimOutOfScreenFaces` and `TrimFacesWithUncertainFacialFeatures` parameters to False using the same functions.
-4. Pass thermal images to FSDK_DetectFaces, FSDK_DetectMultipleFaces or FSDK_FeedFrame (when using Tracker API).
-
-**Example:**
-
-```cpp
-FSDK_SetParameters("FaceDetectionModel=thermal.bin; TrimOutOfScreenFaces=false; TrimFacesWithUncertainFacialFeatures=false", &err);
-```
-
-Refer to the Thermal sample application to see how faces on thermal images can be detected.
+To switch back to the built-in model, set FaceDetectionModel to `default`. See the FaceSDK Parameters section for more information.
 
 <a id="data-types"></a>
 ## Data types
 
-Luxand FaceSDK introduces the TFacePosition data type that stores the information about the position of the face. The `xc` and `yc` fields specifies the X and Y coordinates of the center of the face, `w` specifies the width of the face, and `angle` specifies the in-plane rotation angle of the face in degrees.
+Luxand FaceSDK stores the information about a detected face in the TFace data type.
+
+- `score` - the confidence of the detector, in the range 0..1. Faces are returned sorted by score in descending order.
+- `angle` - the in-plane rotation angle of the face, in degrees.
+- `bbox` - the bounding box of the face: `p0` is its top-left corner and `p1` its bottom-right corner. The box is not necessarily square.
+- `features` - five key points found by the detector: the left eye center, the right eye center, the nose tip and the two mouth corners, in this order. These are *not* the 70 facial features; to obtain those, call [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) or [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function).
+
+The key points and the bounding box use whole-pixel coordinates (TPoint). The 70 facial features use sub-pixel coordinates (TPointf).
 
 **C++ Declaration:**
 
 ```cpp
 typedef struct {
-    int xc, yc, w;
-    int padding;
-    double angle;
-} TFacePosition;
+    int x, y;
+} TPoint;
+
+typedef struct {
+    float x, y;
+} TPointf;
+
+typedef struct {
+    float score;
+    float angle;
+    struct {
+        TPoint p0, p1;
+    } bbox;
+    TPoint features[5];
+} TFace;
 ```
 
 **C# Declaration:**
 
 ```csharp
-public struct TFacePosition {
-    public int xc, yc, w;
-    public double angle;
+public struct TPoint {
+    public int x, y;
+}
+
+public struct TPointF {
+    public float x, y;
+    public TPoint ToTPoint();   // rounds to the nearest whole pixel
+}
+
+public struct TFace {
+    public float score;
+    public float angle;
+    public struct BBox { public TPoint p0, p1; }
+    public BBox bbox;
+    public TPoint[] features;   // five key points
+
+    // convenience members
+    public int left, top, right, bottom;
+    public int width, height;
+    public TPoint center;
+    public bool empty;
 }
 ```
 
 **Delphi Declaration:**
 
 ```pascal
-TFacePosition = record
-   xc, yc, w: integer;
-   padding: integer;
-   angle: double;
+TPoint = record
+   x, y: integer;
 end;
-PFacePosition = ^TFacePosition;
+
+TPointf = record
+   x, y: single;
+end;
+
+TFaceBBox = record
+   p0, p1: TPoint;
+end;
+
+TFace = record
+   score: single;
+   angle: single;
+   bbox: TFaceBBox;
+   features: array[0..4] of TPoint;
+end;
+PFace = ^TFace;
 ```
 
 **Java Declaration:**
 
-The class TFacePosition contains the following fields:
+The class TFace contains the following fields:
 
 ```java
-   public int xc, yc, w;
-   public double angle;
+   public float score;
+   public float angle;
+   public TFaceBBox bbox;      // bbox.p0, bbox.p1 of type TPoint
+   public TPoint[] features;   // five key points
 ```
 
-The class TFaces encapsulates an array of TFacePosition classses. It has the following properties:
+It also provides the convenience methods `left()`, `top()`, `right()`, `bottom()`, `width()`, `height()`, `center()` and `empty()`.
+
+**Android Declaration:**
+
+The same as the Java declaration above, except that the nested bounding box class is named BBox rather than TFaceBBox:
 
 ```java
-   public TFacePosition faces[];
+   public float score;
+   public float angle;
+   public BBox bbox;           // bbox.p0, bbox.p1 of type TPoint
+   public TPoint[] features;   // five key points
+```
+
+The class TFaces encapsulates an array of TFace classes. It has the following properties:
+
+```java
+   public TFace faces[];
    int maxFaces;
 ```
 
 **Python Declaration:**
 
 ```python
-class FSDK.FacePosition(ctypes.Structure):
-    _fields_ = ("xc", c_int), ("yc", c_int), ("w", c_int), ("_padding", c_int), ("angle", c_double)
+class FSDK.Face(ctypes.Structure):
+    _fields_ = ("score", c_float), ("angle", c_float), ("p0", Point), ("p1", Point), ("features", Point*5)
     @property
     def rect(self):
-        """ the rect of face as tuple (x1, y1, x2, y2)"""
-        x, y, w = self.xc, self.yc, self.w//2
-        return x-w, y-w, x+w, y+w
+        """ the bounding box of the face as a tuple (x1, y1, x2, y2) """
+        return self.p0.x, self.p0.y, self.p1.x, self.p1.y
+    # xc, yc, w, h are also available and describe the center and the size of the bounding box
 ```
+
+The `FSDK.FacePosition` name is kept as an alias of `FSDK.Face`, and the `xc`, `yc`, `w`, `h`, `rect`, `width()`, `height()` and `empty()` members let code written for earlier versions keep working.
 
 <a id="fsdk_detectface-function"></a>
 ## FSDK_DetectFace Function
 
-Detects a frontal face in an image and stores information about the face position into the TFacePosition structure.
+Detects a face in an image and stores the information about it into the TFace structure. If the image contains several faces, the face with the highest detection score is returned.
 
 **C++ Syntax:**
 
 ```cpp
-int FSDK_DetectFace(HImage Image, TFacePosition* FacePosition);
+int FSDK_DetectFace(HImage Image, TFace* Face);
 ```
 
 **Delphi Syntax:**
 
 ```pascal
-function FSDK_DetectFace(Image: HImage; FacePosition: PFacePosition): integer;
+function FSDK_DetectFace(Image: HImage; Face: PFace): integer;
 ```
 
 **C# Syntax:**
 
 ```csharp
-int FSDK.DetectFace(int Image, ref FSDK.TFacePosition FacePosition);
+int FSDK.DetectFace(int Image, out FSDK.TFace Face);
 ```
 
 **Java Syntax:**
 
 ```java
-int FSDK.DetectFace(HImage Image, TFacePosition.ByReference FacePosition);
+int FSDK.DetectFace(HImage Image, TFace.ByReference Face);
 ```
 
 **Android Syntax:**
 
 ```java
-int FSDK.DetectFace(HImage Image, TFacePosition FacePosition);
+int FSDK.DetectFace(HImage Image, TFace Face);
 ```
 
 **CImage Syntax:**
 
 ```csharp
-Luxand.TFacePosition Luxand.CImage.DetectFace();
+Luxand.FSDK.TFace Luxand.CImage.DetectFace();
 ```
 
 **Parameters:**
 
 - **Image** - handle of the image to detect the face in.
-- **FacePosition** - pointer to the TFacePosition structure to store information about the face position.
+- **Face** - pointer to the TFace structure to store the information about the detected face.
 
 **Return Value:**
 
-Returns FSDKE_OK if successful. If a face is not found, the function returns the FSDKE_FACE_NOT_FOUND code. If the input image is too small (less than 20x20 pixels), the functions returns FSDKE_IMAGE_TOO_SMALL.
+Returns FSDKE_OK if successful. If a face is not found, the function returns the FSDKE_FACE_NOT_FOUND code. Returns FSDKE_INVALID_ARGUMENT if the image handle is not valid.
 
 **Example:**
 
 ```cpp
 HImage img1;
-TFacePosition FacePosition;
+TFace Face;
 
 if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
     printf("Failed to activate FaceSDK\n");
@@ -2965,9 +3466,14 @@ if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
 FSDK_Initialize("");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
 
-int err = FSDK_DetectFace(img1, &FacePosition);
+int err = FSDK_DetectFace(img1, &Face);
 if (err == FSDKE_OK) {
-    printf("face position: %d %d %.1f\n", FacePosition.xc, FacePosition.yc, FacePosition.angle);
+    printf("face at (%d,%d)-(%d,%d), angle %.1f, score %.3f\n",
+        Face.bbox.p0.x, Face.bbox.p0.y, Face.bbox.p1.x, Face.bbox.p1.y,
+        Face.angle, Face.score);
+    printf("left eye: (%d,%d), right eye: (%d,%d)\n",
+        Face.features[0].x, Face.features[0].y,
+        Face.features[1].x, Face.features[1].y);
 } else if (err == FSDKE_FACE_NOT_FOUND) {
     printf("No face found in the image\n");
 }
@@ -2975,24 +3481,36 @@ if (err == FSDKE_OK) {
 FSDK_FreeImage(img1);
 ```
 
+**C# Example:**
+
+```csharp
+using (CImage image = new CImage("test.jpg"))
+{
+    FSDK.TFace face = image.DetectFace();
+
+    // the box is not square - width and height are read separately
+    Rectangle r = new Rectangle(face.left, face.top, face.width, face.height);
+    Console.WriteLine($"face box: {r}, angle {face.angle:F1}, score {face.score:F3}");
+}
+```
+
 **Python Syntax:**
 
 ```python
-def FSDK.DetectFace(image: Image) -> FacePosition;
+def FSDK.DetectFace(image: Image) -> Face;
 
-def Image.DetectFace() -> FacePosition;
+def Image.DetectFace() -> Face;
 ```
 
 Both forms are equivalent — `Image.DetectFace()` is a convenience method that calls `FSDK.DetectFace(image)` internally.
 
 **Return Value:**
 
-FacePosition object.
+Face object.
 
 **Exception:**
 
 - FSDK.FaceNotFound — raised when no face is detected in the image
-- FSDK.ImageTooSmall — raised when the image is smaller than 20x20 pixels
 
 **Example:**
 
@@ -3003,7 +3521,8 @@ image = FSDK.Image("test.jpg")
 
 try:
     face = image.DetectFace()
-    print(f"face position: {face.xc} {face.yc} {face.angle:.1f}")
+    print(f"face at {face.rect}, angle {face.angle:.1f}, score {face.score:.3f}")
+    print(f"left eye: ({face.features[0].x}, {face.features[0].y})")
 except FSDK.FaceNotFound:
     print("No face found in the image")
 
@@ -3013,24 +3532,25 @@ FSDK.FreeImage(image)
 <a id="fsdk_detectmultiplefaces-function"></a>
 ## FSDK_DetectMultipleFaces Function
 
-Detects multiple faces in an image.
+Detects multiple faces in an image. The faces are returned sorted by detection score in descending order.
 
 **C++ Syntax:**
 
 ```cpp
-int FSDK_DetectMultipleFaces(HImage Image, int* DetectedCount, TFacePosition* FaceArray, int MaxSizeInBytes);
+int FSDK_DetectMultipleFaces(HImage Image, int* DetectedCount, TFace* FaceArray, int MaxCount);
 ```
 
 **Delphi Syntax:**
 
 ```pascal
-function FSDK_DetectMultipleFaces(Image: HImage; DetectedCount: PInteger; FaceArray: PFacePositionArray; MaxSizeInBytes: integer): integer;
+function FSDK_DetectMultipleFaces(Image: HImage; DetectedCount: PInteger; FaceArray: PFaceArray; MaxCount: integer): integer;
 ```
 
 **C# Syntax:**
 
 ```csharp
-int FSDK.DetectMultipleFaces(int Image, ref int DetectedCount, out FSDK.TFacePosition[] FaceArray, int MaxSizeInBytes);
+int FSDK.DetectMultipleFaces(int Image, out FSDK.TFace[] FaceArray, int MaxCount = 256);
+int FSDK.DetectMultipleFaces(int Image, out int DetectedCount, out FSDK.TFace[] FaceArray, int MaxCount = 256);
 ```
 
 **Java and Android Syntax:**
@@ -3042,26 +3562,26 @@ int FSDK.DetectMultipleFaces(HImage Image, TFaces FaceArray);
 **CImage Syntax:**
 
 ```csharp
-Luxand.TFacePosition[] Luxand.CImage.DetectMultipleFaces();
+Luxand.FSDK.TFace[] Luxand.CImage.DetectMultipleFaces(int maxCount = 256);
 ```
 
 **Parameters:**
 
 - **Image** - handle of the image to detect faces in.
 - **DetectedCount** - count of the faces found in the image.
-- **FaceArray** - pointer to the array of TFacePosition structure to store the information about the detected faces.
-- **MaxSizeInBytes** - size of the FaceArray buffer in bytes. The function will not store more than MaxSize bytes in the buffer.
+- **FaceArray** - pointer to the array of TFace structures to store the information about the detected faces.
+- **MaxCount** - the capacity of the FaceArray buffer, measured in **faces**. The function will not store more than MaxCount faces in the buffer.
 
 **Return Value:**
 
-Returns FSDKE_OK if successful. If no faces are found, the function returns the FSDKE_FACE_NOT_FOUND code. If the input image is too small (less than 20x20 pixels), the functions returns FSDKE_IMAGE_TOO_SMALL.
+Returns FSDKE_OK if successful. If no faces are found, the function returns the FSDKE_FACE_NOT_FOUND code. Returns FSDKE_INVALID_ARGUMENT if the image handle is not valid, and FSDKE_INSUFFICIENT_BUFFER_SIZE if MaxCount is less than 1.
 
 **Example:**
 
 ```cpp
 HImage img1;
 int DetectedCount;
-TFacePosition FaceArray[50];
+TFace FaceArray[50];
 
 if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
     printf("Failed to activate FaceSDK\n");
@@ -3070,10 +3590,14 @@ if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
 FSDK_Initialize("");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
 
-int err = FSDK_DetectMultipleFaces(img1, &DetectedCount, FaceArray, sizeof(FaceArray));
+int err = FSDK_DetectMultipleFaces(img1, &DetectedCount, FaceArray,
+                                   sizeof(FaceArray) / sizeof(FaceArray[0]));
 if (err == FSDKE_OK) {
     for (int i = 0; i < DetectedCount; i++) {
-        printf("face position: %d %d %.1f\n", FaceArray[i].xc, FaceArray[i].yc, FaceArray[i].angle);
+        printf("face at (%d,%d)-(%d,%d), score %.3f\n",
+            FaceArray[i].bbox.p0.x, FaceArray[i].bbox.p0.y,
+            FaceArray[i].bbox.p1.x, FaceArray[i].bbox.p1.y,
+            FaceArray[i].score);
     }
 } else if (err == FSDKE_FACE_NOT_FOUND) {
     printf("No faces found in the image\n");
@@ -3085,18 +3609,14 @@ FSDK_FreeImage(img1);
 **Python Syntax:**
 
 ```python
-def FSDK.DetectMultipleFaces(image: Image) -> List[FacePosition];
+def FSDK.DetectMultipleFaces(image: Image) -> List[Face];
 
-def Image.DetectMultipleFaces() -> List[FacePosition];
+def Image.DetectMultipleFaces() -> List[Face];
 ```
 
 **Return Value:**
 
-A list of FacePosition objects. Returns an empty list if no faces are found (no exception is raised, unlike `DetectFace()`).
-
-**Exception:**
-
-- FSDK.ImageTooSmall — raised when the image is smaller than 20x20 pixels
+A list of Face objects. Returns an empty list if no faces are found (no exception is raised, unlike `DetectFace()`).
 
 **Example:**
 
@@ -3108,88 +3628,12 @@ faces = image.DetectMultipleFaces()
 
 if len(faces) > 0:
     for face in faces:
-        print(f"face position: {face.xc} {face.yc} {face.angle:.1f}")
+        print(f"face at {face.rect}, score {face.score:.3f}")
 else:
     print("No faces found in the image")
 
 FSDK.FreeImage(image)
 ```
-
-<a id="fsdk_setfacedetectionparameters-function"></a>
-## FSDK_SetFaceDetectionParameters Function
-
-Allows setting a number of face detection parameters to control the performance and reliability of face detector.
-
-The function allows configuring the following parameters: HandleArbitraryRotations, DetermineFaceRotationAngle and InternalResizeWidth.
-
-HandleArbitraryRotations, DetermineFaceRotationAngle can be TRUE or FALSE, while InternalResizeWidth is an integer.
-
-Other face detection parameters that can also be set using the FSDK_SetParameter or FSDK_SetParameters function.
-
-**C++ Syntax:**
-
-```cpp
-int FSDK_SetFaceDetectionParameters(bool HandleArbitraryRotations, bool DetermineFaceRotationAngle, int InternalResizeWidth);
-```
-
-**Delphi Syntax:**
-
-```pascal
-function FSDK_SetFaceDetectionParameters(HandleArbitraryRotations: boolean; DetermineFaceRotationAngle: boolean; InternalResizeWidth: integer): integer;
-```
-
-**C# Syntax:**
-
-```csharp
-int FSDK.SetFaceDetectionParameters(bool HandleArbitraryRotations, bool DetermineFaceRotationAngle, int InternalResizeWidth);
-```
-
-**Java and Android Syntax:**
-
-```java
-int FSDK.SetFaceDetectionParameters(boolean HandleArbitraryRotations, boolean DetermineFaceRotationAngle, int InternalResizeWidth);
-```
-
-**Parameters:**
-
-**HandleArbitraryRotations** - extends default in-plane face rotation angle from -15..15 degrees to -30..30 degrees.
-
-**TRUE**: extended in-plane rotation support is enabled at the cost of detection speed (3 times performance hit).
-
-**FALSE**: default fast detection -15..15 degrees.
-
-**DetermineFaceRotationAngle** - enables or disables the detection of in-plane face rotation angle.
-
-**TRUE**: detects in-plane rotation angle when detecting faces. The angle is recorded into the Angle field of the TFacePosition structure (TFacePosition is a structure returned by [FSDK_DetectFace](#fsdk_detectface-function) and [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function)).
-
-**FALSE**: disables the detection of rotation angle.
-
-*Note: Enabling face rotation angle detection slows down the detection process slightly. Set this parameter to TRUE if you are planning to call FSDK_DetectFacialFeatures or FSDK_DetectFacialFeaturesInRegion.*
-
-**InternalResizeWidth** - controls the detection speed by setting the size of the image the detection functions will work with. Choose higher value to increase detection quality, or lower value to improve the performance.
-
-*Note: By default, all images are internally resized to the width of 384 pixels. 384 pixels are a reasonable compromise between performance and detection quality. While large images are down-sized, the smaller ones are up-sized to the specified Resize Width in order to maintain constant detection speed.*
-
-<a id="choosing-the-right-value-for-internalresizewidth"></a>
-### Choosing the right value for InternalResizeWidth
-
-Choosing the correct value for the InternalResizeWidth parameter is essential for the correct operation of face detection functions of the SDK. The face detection functions can only detect faces as small as 20x20 pixels. Even if the source image is a large 1000x1000 dots one, the face on that image can be as small as 100x100 pixels. If you set InternalResizeWidth to 200, then the source image will be resized to 200x200 pixels, thus the face will only occupy 20x20 pixels. This is still enough for the SDK functions to work. If, however, you set InternalResizeWidth to 100, then the original image will become 100x100 pixels, and the face on it will only occupy 10x10 dots, which is NOT enough for the SDK functions to work with.
-
-Be extra careful when changing the default value of InternalResizeWidth. For example, webcam images can be usually detected with InternalResizeWidth set to 100, while images from multi-megapixel digital cameras require values of at least 384 or 512 pixels to work with.
-
-**Return Value:**
-
-Returns FSDKE_OK if successful.
-
-**Python Syntax:**
-
-```python
-def FSDK.SetFaceDetectionParameters(handleArbitraryRotations: bool, determineFaceRotationAngle: bool, internalResizeWidth: int);
-```
-
-**Return Value:**
-
-None.
 
 ---
 
@@ -3209,9 +3653,9 @@ if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
 }
 FSDK_Initialize("");
 
-// Configure face detection parameters
-// Enable rotation handling, resize width 384
-FSDK_SetFaceDetectionParameters(true, true, 384);
+// Configure face detection
+int errPos = 0;
+FSDK_SetParameters("FaceDetectionThreshold=0.64; FaceDetectionPatchSize=256", &errPos);
 
 // Load the image
 HImage imageHandle;
@@ -3223,24 +3667,54 @@ if (err != FSDKE_OK) {
 
 // Detect all faces in the image
 int detectedCount;
-TFacePosition faceArray[100];
-err = FSDK_DetectMultipleFaces(imageHandle, &detectedCount, faceArray, sizeof(faceArray));
+TFace faceArray[100];
+err = FSDK_DetectMultipleFaces(imageHandle, &detectedCount, faceArray,
+                               sizeof(faceArray) / sizeof(faceArray[0]));
 
 if (err == FSDKE_OK) {
     printf("Detected %d face(s)\n", detectedCount);
     for (int i = 0; i < detectedCount; i++) {
-        printf("  Face %d: center=(%d, %d), width=%d, angle=%.1f\n",
-            i + 1, faceArray[i].xc, faceArray[i].yc,
-            faceArray[i].w, faceArray[i].angle);
+        const TFace& f = faceArray[i];
+        printf("  Face %d: box=(%d,%d)-(%d,%d), size=%dx%d, angle=%.1f, score=%.3f\n",
+            i + 1,
+            f.bbox.p0.x, f.bbox.p0.y, f.bbox.p1.x, f.bbox.p1.y,
+            f.bbox.p1.x - f.bbox.p0.x, f.bbox.p1.y - f.bbox.p0.y,
+            f.angle, f.score);
     }
 } else if (err == FSDKE_FACE_NOT_FOUND) {
     printf("No faces detected in the image\n");
-} else if (err == FSDKE_IMAGE_TOO_SMALL) {
-    printf("Error: image is too small (minimum 20x20 pixels)\n");
 }
 
 // Clean up
 FSDK_FreeImage(imageHandle);
+```
+
+<a id="complete-example-csharp"></a>
+### Complete Example (C#)
+
+```csharp
+using Luxand;
+
+FSDK.ActivateLibrary("your-license-key-here");
+FSDK.InitializeLibrary();
+
+// Configure face detection
+FSDK.SetParameters("FaceDetectionThreshold=0.64; FaceDetectionPatchSize=256", out int errorPosition);
+
+using (CImage image = new CImage("photo.jpg"))
+{
+    // maxCount is a face count; the returned array is trimmed to the faces found
+    FSDK.TFace[] faces = image.DetectMultipleFaces(100);
+
+    Console.WriteLine($"Detected {faces.Length} face(s)");
+    foreach (FSDK.TFace face in faces)
+    {
+        Console.WriteLine($"  box=({face.left}, {face.top})-({face.right}, {face.bottom}), " +
+                          $"size={face.width}x{face.height}, angle={face.angle:F1}, score={face.score:F3}");
+    }
+}
+
+FSDK.FinalizeLibrary();
 ```
 
 <a id="complete-example-python"></a>
@@ -3253,9 +3727,8 @@ from fsdk import FSDK
 FSDK.ActivateLibrary("your-license-key-here")
 FSDK.Initialize()
 
-# Configure face detection parameters
-# Enable rotation handling, resize width 384
-FSDK.SetFaceDetectionParameters(True, True, 384)
+# Configure face detection
+FSDK.SetParameters(FaceDetectionThreshold=0.64, FaceDetectionPatchSize=256)
 
 # Load the image
 image = FSDK.Image("photo.jpg")
@@ -3266,7 +3739,8 @@ faces = image.DetectMultipleFaces()
 if len(faces) > 0:
     print(f"Detected {len(faces)} face(s)")
     for i, face in enumerate(faces):
-        print(f"  Face {i+1}: center=({face.xc}, {face.yc}), width={face.w}, angle={face.angle:.1f}")
+        print(f"  Face {i+1}: box={face.rect}, size={face.w}x{face.h}, "
+              f"angle={face.angle:.1f}, score={face.score:.3f}")
 else:
     print("No faces detected in the image")
 
@@ -3279,124 +3753,106 @@ FSDK.FreeImage(image)
 
 - **FSDKE_OK** — faces detected successfully
 - **FSDKE_FACE_NOT_FOUND** — no faces found in the image (not an error; the image simply contains no detectable faces)
-- **FSDKE_IMAGE_TOO_SMALL** — the image dimensions are below the minimum of 20x20 pixels
 - Always call `FSDK_FreeImage` for every loaded image to avoid memory leaks, even if detection fails
 - In Python, `DetectMultipleFaces()` returns an empty list when no faces are found (no exception is raised), while `DetectFace()` raises `FSDK.FaceNotFound`
-
-<a id="fsdk_setfacedetectionthreshold-function"></a>
-## FSDK_SetFaceDetectionThreshold Function
-
-Sets a threshold value for face detection. The default value is 5. The lowest possible value is 1.
-
-The function allows adjusting the sensitivity of the detection. If the threshold value is set to a higher value, the detector will only recognize faces with sharp, clearly defined details, thus reducing the number of false positive detections. Setting the threshold lower allows detecting more faces with less clearly defined features at the expense of increased number of false positives.
-
-**C++ Syntax:**
-
-```cpp
-int FSDK_SetFaceDetectionThreshold(int Threshold);
-```
-
-**Delphi Syntax:**
-
-```pascal
-function FSDK_SetFaceDetectionThreshold(Threshold: integer): integer;
-```
-
-**C# Syntax:**
-
-```csharp
-int FSDK.SetFaceDetectionThreshold(int Threshold);
-```
-
-**Java and Android Syntax:**
-
-```java
-int FSDK.SetFaceDetectionThreshold(int Threshold);
-```
-
-**Parameters:**
-
-**Threshold** - Threshold value.
-
-**Return Value:**
-
-Returns FSDKE_OK if successful.
-
-**Python Syntax:**
-
-```python
-def FSDK.SetFaceDetectionThreshold(threshold: int);
-```
-
-**Return Value:**
-
-None.
+- Faces whose `score` is close to the FaceDetectionThreshold value are the least reliable ones. When the quality of the result matters more than the number of faces found, discard the faces with a low score before extracting templates from them.
 
 <a id="facial-feature-detection"></a>
 # Facial Feature Detection
 
-FaceSDK provides the [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) function to detect facial features in an image and the [FSDK_DetectEyes](#fsdk_detecteyes-function) function to detect just eye centers in an image. First, these functions detect a frontal face in an image, and then detect its facial features or only eye centers. The [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function) and [FSDK_DetectEyesInRegion](#fsdk_detecteyesinregion-function) functions do not perform the face detection step and detect facial features or eye centers in a region returned by FSDK_DetectFace or FSDK_DetectMultipleFaces.
+FaceSDK provides the [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) function to detect facial features in an image. The function first detects a face in the image, and then detects its facial features. The [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function) function skips the face detection step and detects the facial features of a face already returned by [FSDK_DetectFace](#fsdk_detectface-function) or [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function).
 
-In the current version of Luxand FaceSDK the performance of [FSDK_DetectEyes](#fsdk_detecteyes-function) and [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) is the same, so there is no advantage in calling [FSDK_DetectEyes](#fsdk_detecteyes-function) instead of [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function).
+The facial features are stored in the FSDK_Features data structure. FSDK_Features is an array data type containing FSDK_FACIAL_FEATURE_COUNT (70) points with sub-pixel, floating-point coordinates. The list of facial features recognized by FaceSDK is available in the Detected Facial Features chapter.
 
-The facial features are stored in the FSDK_Features data structure. FSDK_Features is an array data type containing FSDK_FACIAL_FEATURE_COUNT points. The list of facial features recognized by FaceSDK is available in the Detected Facial Features chapter.
+<a id="eye-centers"></a>
+## Eye Centers
 
-Eye centers are saved to FSDK_Features[0] and FSDK_Features[1]. The [FSDK_DetectEyes](#fsdk_detecteyes-function) and [FSDK_DetectEyesInRegion](#fsdk_detecteyesinregion-function) functions do not change other elements of the FSDK_Features array.
+Eye centers are available in two ways:
 
-<a id="data-types"></a>
+- Every face detected by [FSDK_DetectFace](#fsdk_detectface-function) or [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function) already carries them: `Face.features[0]` is the left eye and `Face.features[1]` is the right eye, in whole-pixel coordinates. No extra call is needed, and no parameter has to be enabled.
+- The 70 facial features contain them at the FSDKP_LEFT_EYE (0) and FSDKP_RIGHT_EYE (1) indices, in sub-pixel coordinates, once [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) or [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function) has been called.
+
+When working with a live video stream, the Tracker API provides the same information through [FSDK_GetTrackerFace](#fsdk_gettrackerface-function) and [FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function).
+
+<a id="facial-feature-data-types"></a>
 ## Data Types
+
+The 70 facial features use floating-point coordinates (TPointf), while the bounding box and the five key points of [TFace](#data-types) use whole-pixel coordinates (TPoint).
 
 **C++ Declaration:**
 
 ```cpp
-typedef struct { int x,y; } TPoint;
-typedef TPoint FSDK_Features [FSDK_FACIAL_FEATURE_COUNT];
+typedef struct { int x, y; } TPoint;
+typedef struct { float x, y; } TPointf;
+typedef TPointf FSDK_Features [FSDK_FACIAL_FEATURE_COUNT];
 ```
 
 **C# Declaration:**
 
 ```csharp
-public struct TPoint {
-    public int x, y;
+public struct TPointF {
+    public float x, y;
+    public TPoint ToTPoint();   // rounds to the nearest whole pixel
 }
 ```
+
+The 70 facial features are returned as a `FSDK.TPointF[]` array.
 
 **Delphi Declaration:**
 
 ```pascal
-TPoint = record
-    x, y: integer;
+TPointf = record
+    x, y: single;
 end;
-FSDK_Features = array[0..FSDK_FACIAL_FEATURE_COUNT - 1] of TPoint;
+FSDK_Features = array[0..FSDK_FACIAL_FEATURE_COUNT - 1] of TPointf;
 PFSDK_Features = ^FSDK_Features;
 ```
 
-**Java and Android Declaration:**
+**Java Declaration:**
 
-The class TPoint has the following properties:
+The class TPointf has the following properties:
 
 ```java
-public int x, y;
+public float x, y;
 ```
+
+It also provides the `toTPoint()` method, which rounds the coordinates to the nearest whole pixel.
 
 The class FSDK_Features has the following property:
 
 ```java
-public TPoint features[];
+public TPointf features[];
+```
+
+**Android Declaration:**
+
+The same as the Java declaration above, except that the floating-point point class is named TPointF, with a capital F:
+
+```java
+public class TPointF {
+    public float x, y;
+    public TPoint toTPoint();   // rounds to the nearest whole pixel
+}
+
+public class FSDK_Features {
+    public TPointF features[];
+}
 ```
 
 **Python Declaration:**
 
 ```python
-class Point(ctypes.Structure):
-    fields_ = ("x", c_int), ("y", c_int)
-Features = Point*FSDK.FSDK_FACIAL_FEATURE_COUNT
+class PointF(ctypes.Structure):
+    _fields_ = ("x", c_float), ("y", c_float)
+Features = PointF*FSDK.FSDK_FACIAL_FEATURE_COUNT
 ```
+
+**Note on arithmetic:** the feature coordinates are floating-point values. Expressions such as `(f1.x + f2.x) / 2`, which used to truncate to an integer, now produce a fractional result. Round or cast the coordinates before passing them to a drawing API that expects whole pixels.
 
 <a id="fsdk_detectfacialfeatures-function"></a>
 ## FSDK_DetectFacialFeatures Function
 
-Detects a frontal face in an image and detects its facial features.
+Detects a face in an image and detects its facial features.
 
 **C++ Syntax:**
 
@@ -3413,7 +3869,7 @@ function FSDK_DetectFacialFeatures(Image: HImage; FacialFeatures: PFSDK_Features
 **C# Syntax:**
 
 ```csharp
-int FSDK.DetectFacialFeatures(int Image, out FSDK.TPoint[] FacialFeatures);
+int FSDK.DetectFacialFeatures(int Image, out FSDK.TPointF[] FacialFeatures);
 ```
 
 **Java Syntax:**
@@ -3431,7 +3887,7 @@ int FSDK.DetectFacialFeatures(HImage Image, FSDK_Features FacialFeatures);
 **CImage Syntax:**
 
 ```csharp
-FSDK.TPoint[] Luxand.CImage.DetectFacialFeatures();
+FSDK.TPointF[] Luxand.CImage.DetectFacialFeatures();
 ```
 
 **Parameters:**
@@ -3446,16 +3902,16 @@ Returns FSDKE_OK if successful.
 **Example:**
 
 ```cpp
-int img1;
+HImage img1;
 FSDK_Features Features;
 
 FSDK_ActivateLibrary("your-license-key-here");
 FSDK_Initialize("");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
-FSDK_DetectFacialFeatures(img1, Features);
+FSDK_DetectFacialFeatures(img1, &Features);
 
-printf("Left eye location: (%d, %d)\n", Features[FSDKP_LEFT_EYE].x, Features[FSDKP_LEFT_EYE].y);
-printf("Right eye location: (%d, %d)\n", Features[FSDKP_RIGHT_EYE].y, Features[FSDKP_RIGHT_EYE].y);
+printf("Left eye location: (%.1f, %.1f)\n", Features[FSDKP_LEFT_EYE].x, Features[FSDKP_LEFT_EYE].y);
+printf("Right eye location: (%.1f, %.1f)\n", Features[FSDKP_RIGHT_EYE].x, Features[FSDKP_RIGHT_EYE].y);
 ```
 
 **Python Syntax:**
@@ -3463,7 +3919,7 @@ printf("Right eye location: (%d, %d)\n", Features[FSDKP_RIGHT_EYE].y, Features[F
 ```python
 def FSDK.DetectFacialFeatures(image: Image) -> Features;
 
-def Image.DetectFacialFeatures(image: Image, facePosition: FacePosition = None, *, confidenceLevels = False) -> Features;
+def Image.DetectFacialFeatures(face: Face = None) -> Features;
 ```
 
 **Return Value:**
@@ -3476,11 +3932,9 @@ FSDK.FaceNotFound
 
 **Note:**
 
-If *facePosition* is None the function detects a frontal face in an image and returns its facial features.
+If *face* is None the function detects a face in the image and returns its facial features.
 
-If *facePosition* is defined the function detects facial features of a specific face in a region returned by FSDK.DetectFace or FSDK.DetectMultipleFace.
-
-If *confidenceLevel* is True the returned 'Features' objects contains the *confidenceLevel* attribute represented by an array of floats that holds confidence levels of each facial feature.
+If *face* is given the function detects the facial features of that specific face, as returned by FSDK.DetectFace or FSDK.DetectMultipleFaces.
 
 **Python Example:**
 
@@ -3497,48 +3951,48 @@ print(f"Right eye location: {features[FSDK.FSDKP_RIGHT_EYE]}")
 <a id="fsdk_detectfacialfeaturesinregion-function"></a>
 ## FSDK_DetectFacialFeaturesInRegion Function
 
-Detects facial features in an image region returned by FSDK_DetectFace or FSDK_DetectMultipleFaces. This function can be useful if an approximate face size is known, or to detect facial features of a specific face returned by FSDK_DetectMultipleFaces.
+Detects facial features of a face returned by FSDK_DetectFace or FSDK_DetectMultipleFaces. This function skips the face detection step, so it is the efficient way to obtain the facial features of a specific face out of several detected ones.
 
 **C++ Syntax:**
 
 ```cpp
-int FSDK_DetectFacialFeaturesInRegion(HImage Image, TFacePosition* FacePosition, FSDK_Features* FacialFeatures);
+int FSDK_DetectFacialFeaturesInRegion(HImage Image, const TFace* Face, FSDK_Features* FacialFeatures);
 ```
 
 **Delphi Syntax:**
 
 ```pascal
-function FSDK_DetectFacialFeaturesInRegion(Image: HImage; FacePosition: PFacePosition; FacialFeatures: PFSDK_Features): integer;
+function FSDK_DetectFacialFeaturesInRegion(Image: HImage; Face: PFace; FacialFeatures: PFSDK_Features): integer;
 ```
 
 **C# Syntax:**
 
 ```csharp
-int FSDK.DetectFacialFeaturesInRegion(int Image, ref FSDK.TFacePosition FacePosition, out FSDK.TPoint[] FacialFeatures);
+int FSDK.DetectFacialFeaturesInRegion(int Image, in FSDK.TFace Face, out FSDK.TPointF[] FacialFeatures);
 ```
 
 **Java Syntax:**
 
 ```java
-int FSDK.DetectFacialFeaturesInRegion(HImage Image, TFacePosition FacePosition, FSDK_Features.ByReference FacialFeatures);
+int FSDK.DetectFacialFeaturesInRegion(HImage Image, TFace Face, FSDK_Features.ByReference FacialFeatures);
 ```
 
 **Android Syntax:**
 
 ```java
-int FSDK.DetectFacialFeaturesInRegion(HImage Image, TFacePosition FacePosition, FSDK_Features FacialFeatures);
+int FSDK.DetectFacialFeaturesInRegion(HImage Image, TFace Face, FSDK_Features FacialFeatures);
 ```
 
-**C# Syntax:**
+**CImage Syntax:**
 
 ```csharp
-FSDK.TPoint[] Luxand.CImage.DetectFacialFeaturesInRegion(ref FSDK.TFacePosition FacePosition);
+FSDK.TPointF[] Luxand.CImage.DetectFacialFeaturesInRegion(in FSDK.TFace Face);
 ```
 
 **Parameters:**
 
 - **Image** - handle of the image facial features should be detected in.
-- **FacePosition** - pointer to the face position structure.
+- **Face** - pointer to the TFace structure describing the face.
 - **FacialFeatures** - pointer to the FSDK_Features array for receiving the detected facial features.
 
 **Return Value:**
@@ -3548,34 +4002,52 @@ Returns FSDKE_OK if successful.
 **Example:**
 
 ```cpp
-int i, DetectedCount, img1;
+int i, DetectedCount;
+HImage img1;
 FSDK_Features Features;
-TFacePosition FaceArray[50];
+TFace FaceArray[50];
 
 FSDK_ActivateLibrary("your-license-key-here");
 FSDK_Initialize("");
 FSDK_LoadImageFromFile(&img1, "test.jpg");
 
-FSDK_DetectMultipleFaces(img1, &DetectedCount , FaceArray, sizeof(FaceArray));
+FSDK_DetectMultipleFaces(img1, &DetectedCount, FaceArray,
+                         sizeof(FaceArray) / sizeof(FaceArray[0]));
 
 for (i = 0; i < DetectedCount; i++) {
-    FSDK_DetectFacialFeaturesInRegion(img1, FaceArray[i], Features);
-    printf("Left eye location: (%d, %d)\n", Features[FSDKP_LEFT_EYE].x, Features[FSDKP_LEFT_EYE].y);
-    printf("Right eye location: (%d, %d)\n", Features[FSDKP_RIGHT_EYE].x, Features[FSDKP_RIGHT_EYE].y);
+    FSDK_DetectFacialFeaturesInRegion(img1, &FaceArray[i], &Features);
+    printf("Left eye location: (%.1f, %.1f)\n", Features[FSDKP_LEFT_EYE].x, Features[FSDKP_LEFT_EYE].y);
+    printf("Right eye location: (%.1f, %.1f)\n", Features[FSDKP_RIGHT_EYE].x, Features[FSDKP_RIGHT_EYE].y);
+}
+```
+
+**C# Example:**
+
+```csharp
+using (CImage image = new CImage("test.jpg"))
+{
+    foreach (FSDK.TFace face in image.DetectMultipleFaces())
+    {
+        FSDK.TPointF[] features = image.DetectFacialFeaturesInRegion(face);
+
+        // the coordinates are floating point; round them for an integer drawing API
+        FSDK.TPoint eye = features[(int)FSDK.FacialFeatures.FSDKP_LEFT_EYE].ToTPoint();
+        Console.WriteLine($"Left eye location: ({eye.x}, {eye.y})");
+    }
 }
 ```
 
 **Python Syntax:**
 
 ```python
-def FSDK.DetectFacialFeaturesInRegion(image: Image, facePosition: FacePosition) -> Features;
+def FSDK.DetectFacialFeaturesInRegion(image: Image, face: Face) -> Features;
 
-def Image.DetectFacialFeatures(image: Image, facePosition: FacePosition = None, *, confidenceLevels = False) -> Features;
+def Image.DetectFacialFeatures(face: Face = None) -> Features;
 ```
 
 **Return Value:**
 
-The Features objects.
+The Features object.
 
 **Python Example:**
 
@@ -3586,144 +4058,99 @@ FSDK.ActivateLibrary("your-license-key-here")
 FSDK.Initialize()
 image = FSDK.Image("test.jpg")
 
-for fpos in image.DetectMultipleFaces():
-    features = image.DetectFacialFeatures(image, fpos, confidenceLevel = True)
-    print("Left eye location:", features[FSDK.FSDKP_LEFT_EYE], "confidence =", features.confidenceLevels[FSDK.FSDKP_LEFT_EYE])
-    print("Right eye location:", features[FSDK.FSDKP_RIGHT_EYE], "confidence =", features.confidenceLevels[FSDK.FSDKP_RIGHT_EYE])
+for face in image.DetectMultipleFaces():
+    features = image.DetectFacialFeatures(face)
+    print("Left eye location:", features[FSDK.FSDKP_LEFT_EYE])
+    print("Right eye location:", features[FSDK.FSDKP_RIGHT_EYE])
 ```
 
-<a id="fsdk_detecteyes-function"></a>
-## FSDK_DetectEyes Function
+<a id="fsdk_extractfaceimage-function"></a>
+## FSDK_ExtractFaceImage Function
 
-Detects a frontal face in an image and detects its eye centers.
+Extracts a normalized face image of the given size out of a source image, using the detected facial features to align the face. The function also returns the facial features translated into the coordinate system of the extracted image.
+
+Use it to produce uniform face thumbnails for a database, for a user interface, or as input to your own processing.
 
 **C++ Syntax:**
 
 ```cpp
-int FSDK_DetectEyes(HImage Image, FSDK_Features* FacialFeatures);
+int FSDK_ExtractFaceImage(HImage Image, FSDK_Features* FacialFeatures, int Width, int Height, HImage* ExtractedFaceImage, FSDK_Features* ResizedFeatures);
 ```
 
 **Delphi Syntax:**
 
 ```pascal
-function FSDK_DetectEyes(Image: HImage; FacialFeatures: PFSDK_Features): integer;
+function FSDK_ExtractFaceImage(Image: HImage; FacialFeatures: PFSDK_Features; Width, Height: integer; ExtractedFaceImage: PHImage; ResizedFeatures: PFSDK_Features): integer;
 ```
 
 **C# Syntax:**
 
 ```csharp
-int FSDK.DetectEyes(int Image, out FSDK.TPoint[] FacialFeatures);
+int FSDK.ExtractFaceImage(int Image, FSDK.TPointF[] FacialFeatures, int Width, int Height, out int ExtractedFaceImage, out FSDK.TPointF[] ResizedFeatures);
 ```
 
 **Java Syntax:**
 
 ```java
-int FSDK.DetectEyes(HImage Image, FSDK_Features.ByReference FacialFeatures);
-```
-
-**Android Syntax:**
-
-```java
-int FSDK.DetectEyes(HImage Image, FSDK_Features FacialFeatures);
-```
-
-**CImage Syntax:**
-
-```csharp
-FSDK.TPoint[] Luxand.CImage.DetectEyes();
+int FSDK.ExtractFaceImage(HImage Image, FSDK_Features.ByReference FacialFeatures, int Width, int Height, HImage ExtractedFaceImage, FSDK_Features.ByReference ResizedFeatures);
 ```
 
 **Parameters:**
 
-- **Image** - handle of the image eye centers should be detected in.
-- **FacialFeatures** - pointer to the FSDK_Features array for receiving the detected eye centers.
+- **Image** - handle of the source image.
+- **FacialFeatures** - the facial features of the face to extract, as returned by [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) or [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function).
+- **Width**, **Height** - the dimensions of the extracted image, in pixels.
+- **ExtractedFaceImage** - pointer to HImage receiving the handle of the extracted image. Release it with [FSDK_FreeImage](#fsdk_freeimage-function) when you are done with it.
+- **ResizedFeatures** - pointer to the FSDK_Features array receiving the facial features in the coordinates of the extracted image.
 
 **Return Value:**
 
 Returns FSDKE_OK if successful.
 
-**Python Syntax:**
-
-```python
-class Eyes(Point*2):
-    """ An array of two 2D coordinates for eyes """
-
-def FSDK.DetectEyes(image: Image) -> Eyes:
-
-def Image.DetectEyes(facePosition: FacePosition = None) -> Eyes;
-```
-
-**Return Value:**
-
-The Eyes object.
-
-<a id="fsdk_detecteyesinregion-function"></a>
-## FSDK_DetectEyesInRegion Function
-
-Detects eye centers in an image region returned by FSDK_DetectFace or FSDK_DetectMultipleFaces.
-
-**C++ Syntax:**
+**Example:**
 
 ```cpp
-int FSDK_DetectEyesInRegion(HImage Image, TFacePosition* FacePosition, FSDK_Features* FacialFeatures);
+HImage img, faceImage;
+FSDK_Features features, resizedFeatures;
+
+FSDK_LoadImageFromFile(&img, "photo.jpg");
+if (FSDK_DetectFacialFeatures(img, &features) == FSDKE_OK) {
+    FSDK_ExtractFaceImage(img, &features, 128, 128, &faceImage, &resizedFeatures);
+    FSDK_SaveImageToFile(faceImage, "face.jpg");
+    FSDK_FreeImage(faceImage);
+}
+FSDK_FreeImage(img);
 ```
-
-**Delphi Syntax:**
-
-```pascal
-function FSDK_DetectEyesInRegion(Image: HImage; FacePosition: PFacePosition; FacialFeatures: PFSDK_Features): integer;
-```
-
-**C# Syntax:**
-
-```csharp
-int FSDK.DetectEyesInRegion(int Image, ref FSDK.TFacePosition FacePosition, out FSDK.TPoint[] FacialFeatures);
-```
-
-**Java Syntax:**
-
-```java
-int FSDK.DetectEyesInRegion(HImage Image, TFacePosition FacePosition, FSDK_Features.ByReference FacialFeatures);
-```
-
-**Android Syntax:**
-
-```java
-int FSDK.DetectEyesInRegion(HImage Image, TFacePosition FacePosition, FSDK_Features FacialFeatures);
-```
-
-**CImage Syntax:**
-
-```csharp
-FSDK.TPoint[] Luxand.CImage.DetectEyesInRegion(ref FSDK.TFacePosition FacePosition);
-```
-
-**Parameters:**
-
-- **Image** - handle of the image eye centers should be detected in.
-- **FacePosition** - pointer to the face position structure.
-- **FacialFeatures** - pointer to the FSDK_Features array for receiving the detected eye centers.
-
-**Return Value:**
-
-Returns FSDKE_OK if successful.
 
 **Python Syntax:**
 
 ```python
-def FSDK.DetectEyesInRegion(image: Image, facePosition: FacePosition) -> Eyes:
+def FSDK.ExtractFaceImage(image: Image, facialFeatures: Features, width: int, height: int) -> Tuple[Image, Features];
 
-def Image.DetectEyes(facePosition: FacePosition = None) -> Eyes;
+def Image.ExtractFaceImage(facialFeatures: Features, width: int, height: int) -> Tuple[Image, Features];
 ```
 
 **Return Value:**
 
-The Eyes object.
+A tuple of the extracted Image and the resized Features.
+
+**Python Example:**
+
+```python
+from fsdk import FSDK
+
+image = FSDK.Image("photo.jpg")
+features = image.DetectFacialFeatures()
+face_image, resized = image.ExtractFaceImage(features, 128, 128)
+face_image.Save("face.jpg")
+FSDK.FreeImage(face_image)
+FSDK.FreeImage(image)
+```
 
 <a id="detected-facial-features"></a>
 # Detected Facial Features
 
-Luxand FaceSDK detects 70 facial feature points. These facial feature points can be accessed by their names in the FSDK_Features array.
+Luxand FaceSDK detects 70 facial feature points. These facial feature points can be accessed by their names in the FSDK_Features array, which holds 70 points with sub-pixel, floating-point coordinates (TPointf). See the [Data Types](#facial-feature-data-types) section of the Facial Feature Detection chapter.
 
 ![Detected Features](https://www.luxand.com/facesdk/documentation/images/detected_features_70.jpg)
 
@@ -3806,87 +4233,84 @@ Luxand FaceSDK detects 70 facial feature points. These facial feature points can
 <a id="mask-on-face-detection"></a>
 # Mask-on Face Detection
 
-To detect faces covered by masks, you need to adjust the settings of several parameters. You also need to download a model file trained specifically on masked faces (for visual face detection) and put it into the working directory of your application:
+The face detector handles faces covered by a medical mask, a scarf or a respirator with the default model. No separate model file has to be downloaded, and no dedicated mode has to be switched on: [FSDK_DetectFace](#fsdk_detectface-function), [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function) and [FSDK_FeedFrame](#fsdk_feedframe-function) all report masked faces.
 
-[https://luxand.com/download/fd_masks1.bin](https://luxand.com/download/fd_masks1.bin)
+A mask hides the mouth, the nose and part of the cheeks, so the detector is less certain about such a face than about an uncovered one and gives it a lower `score`. Whether a masked face is reported therefore depends on the `FaceDetectionThreshold` parameter. If masked faces are missed in your imagery, lower it.
 
 <a id="using-fsdk_detectface-or-fsdk_detectmultiplefaces"></a>
 ## Using FSDK_DetectFace or FSDK_DetectMultipleFaces
 
-If you are using FSDK_DetectFace or FSDK_DetectMultipleFaces to detect faces (i.e. you don't use Tracker API), use the following code to set the recommended face detection parameters and use the latest model file:
-
 ```cpp
 int err = 0;
-FSDK_SetFaceDetectionParameters(true, false, 1024);
-FSDK_SetFaceDetectionThreshold(5);
+FSDK_SetParameters("FaceDetectionThreshold=0.4;"
+                   "FaceDetectionPatchSize=512;"
+                   "FaceDetectionPatchMode=full", &err);
+```
 
-if (FSDKE_OK !=
-    FSDK_SetParameters("FaceDetectionModel=fd_masks1.bin;TrimFacesWithUncertainFacialFeatures=false",
-    &err))
-{
-    fprintf(stderr, "Error loading face detection model!\n");
-    exit(3);
+Every detected face carries its own confidence, so an alternative to tuning the threshold is to keep it low and decide per face:
+
+```cpp
+int detectedCount;
+TFace faceArray[50];
+
+FSDK_DetectMultipleFaces(img, &detectedCount, faceArray,
+                         sizeof(faceArray) / sizeof(faceArray[0]));
+
+for (int i = 0; i < detectedCount; i++) {
+    if (faceArray[i].score < 0.5f)
+        continue;   // too uncertain for this application
+    // process faceArray[i]
 }
 ```
 
-<a id="using-tracker-api"></a>
+<a id="mask-on-using-tracker-api"></a>
 ## Using Tracker API
 
-Alternatively, if you are using Tracker API, use the following calls:
-
 ```cpp
 int err = 0;
-FSDK_SetTrackerMultipleParameters(tracker, "RecognizeFaces=false; HandleArbitraryRotations=true;
-    DetermineFaceRotationAngle=false; InternalResizeWidth=1024; FaceDetectionThreshold=5;", &err);
-
-if (FSDKE_OK != FSDK_SetTrackerMultipleParameters(tracker,
-    "FaceDetectionModel=fd_masks1.bin;TrimFacesWithUncertainFacialFeatures=false",
-    &err))
-{
-    fprintf(stderr, "Error loading face detection model!\n");
-    exit(3);
-}
+FSDK_SetTrackerMultipleParameters(tracker,
+    "FaceDetectionThreshold=0.4;"
+    "FaceDetectionPatchSize=256;"
+    "RecognizeFaces=false", &err);
 ```
+
+The tracker already uses 0.4 as its default detection threshold, which is more permissive than the 0.64 used by the still-image functions, so masked faces are usually tracked without any change. Lower it further if faces are still missed.
 
 <a id="important-notes"></a>
 ## Important Notes
 
-In the code above, the `TrimFacesWithUncertainFacialFeatures` parameter is set to false. When it is set to true, faces with uncertain facial features are removed from the detection result. As masks may cover many facial features, this setting was preventing such faces from being detected. You can learn more about this parameter in the [Configuration](#facesdk-parameters) section.
+Face matching on masked faces is not recommended. The recognition model is trained on uncovered faces, and a template extracted from a face whose lower half is hidden carries much less information, which raises the false acceptance rate. Use masked faces for detection, tracking and counting; for identification, ask the subject to uncover the face.
 
-We don't recommend that you use face matching when this parameter is set to false, since it will give a higher amount of false acceptances. We plan to update our face recognition models so they support mask-on face matching soon.
+Recognizing gender, age and expression on a masked face is also unreliable, for the same reason: the attribute models read the whole face, including the mouth region the mask covers.
 
-We recommend setting the `InternalResizeWidth` parameter to 1024 so the faces that are far from the camera are detected. If you don't expect your faces to be that far, you can lower the parameter value to 512 or 256 to increase the speed of detection.
+Raise `FaceDetectionPatchSize` to 512, and set `FaceDetectionPatchMode` to `full`, when the faces are far from the camera in a large still image. If you don't expect faces to be that small, keep the patch size at 256 or lower it to 128 to increase the speed of detection. See the [Face Detection Parameters](#face-detection-parameters) section for the full description of these parameters.
 
 <a id="face-matching"></a>
 # Face Matching
 
 Luxand FaceSDK provides the API to extract face templates and match them. A template extracted from a face can be stored in a database and can then be used to match faces using the [FSDK_MatchFaces](#fsdk_matchfaces-function) function.
 
-To extract a face template, use the [FSDK_GetFaceTemplate](#fsdk_getfacetemplate-function), [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function) or FSDK_GetFaceTemplateUsingFeatures functions. The [FSDK_MatchFaces](#fsdk_matchfaces-function) function returns the facial similarity level. You may consider similarity to be equal to the probability that templates belong to the same person.
+To extract a face template, use the [FSDK_GetFaceTemplate](#fsdk_getfacetemplate-function) or [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function) function. The [FSDK_MatchFaces](#fsdk_matchfaces-function) function returns the facial similarity level, a value in the range 0..1. The higher the value, the more likely the two templates belong to the same person.
 
-*More precisely: if the access control system provides access to a person when similarity is higher of threshold x, the possibility of providing erroneous access to another person is 1-x. For example, if the decision to provide access to a person is based on the code*
+To decide whether two templates belong to the same person, compare the similarity against a threshold of your choice. The threshold sets the trade-off between the false acceptance rate and the false rejection rate of your system; see the [Recognition Accuracy and Thresholds](#recognition-accuracy-and-thresholds) section for measured figures and for guidance on picking a value.
 
 ```cpp
-if (similarity > 0.99)
+if (similarity > MATCHING_THRESHOLD)
    AllowAccess();
 ```
 
-*the possibility of erroneous access to another person is 0.01, or 1%.*
-
 A facial template contains data that describes the face. There is no direct way to re-create the original face image from a template. However, when using Tracker API, it may store the original facial images in Tracker memory (see the Storing original facial images section).
-
-To determine if the matched templates belong to the same person (with a specified error possibility), you can compare the facial similarity value with a threshold calculated by the [FSDK_GetMatchingThresholdAtFAR](#fsdk_getmatchingthresholdatfar-function) or [FSDK_GetMatchingThresholdAtFRR](#fsdk_getmatchingthresholdatfrr-function) functions.
 
 Note: it is recommended to retain both the original face images and their templates in the database. This is because future versions of Luxand FaceSDK may offer an improved template extraction algorithm, together with changes to the template format. If you are using Tracker API, there is an option to convert its memory automatically if the template format changes (see the Storing original facial images section).
 
-A face template is stored in the FSDK_FaceTemplate data structure.
+A face template is stored in the FSDK_FaceTemplate data structure and occupies 1040 bytes.
 
 In .NET, there is no specific data type for a template. Instead, it is stored in an array of bytes of FSDK.TemplateSize length. Below is an example of retrieving facial template in C#.
 
 **C# Example:**
 
 ```csharp
-templateData = new byte[FSDK.TemplateSize];
+byte[] templateData;
 FSDK.GetFaceTemplate(imageHandle, out templateData);
 ```
 
@@ -3912,8 +4336,7 @@ PFSDK_FaceTemplate = ^FSDK_FaceTemplate;
 The class FSDK_FaceTemplate has the following property:
 
 ```java
-FSDK_FaceTemplate = record
-    public byte template[];
+public byte template[];
 ```
 
 **Python Declaration:**
@@ -3927,9 +4350,9 @@ FSDK.FaceTemplate = c_char*const.FSDK_FACE_TEMPLATE_SIZE
 
 This function is used to extract a template from a facial image. The function first detects a face, then detects its facial features and extracts the template.
 
-If there is more than one face in the image, the template is extracted for the face with the most clearly visible details. If there is no clearly visible face, the function returns an error code. To set the threshold determining the accepted quality for faces, use the FSDK_SetFaceDetectionThreshold function.
+If there is more than one face in the image, the template is extracted for the face with the highest detection score. If there is no clearly visible face, the function returns an error code. To control the accepted quality for faces, set the FaceDetectionThreshold parameter with [FSDK_SetParameter](#fsdk_setparameter-function).
 
-If the face position or its features or eye centers are known, it is more efficient to use the [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function) or [FSDK_GetFaceTemplateUsingEyes](#fsdk_getfacetemplateusingeyes-function) functions. To extract the template for a specific face, use the [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function) function.
+To extract the template for a specific face, use the [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function) function, which skips the face detection step.
 
 **C++ Syntax:**
 
@@ -3982,7 +4405,7 @@ Returns FSDKE_OK if successful. If no faces are found, or the quality of the ima
 ```python
 def FSDK.GetFaceTemplate(image: Image) -> FaceTemplate;
 
-def Image.GetFaceTemplate(facePosition: FacePosition = None) -> FaceTemplate;
+def Image.GetFaceTemplate(face: Face = None) -> FaceTemplate;
 ```
 
 **Return Value:**
@@ -3992,53 +4415,51 @@ The FaceTemplate object.
 <a id="fsdk_getfacetemplateinregion-function"></a>
 ## FSDK_GetFaceTemplateInRegion Function
 
-Extracts a template for a face located in a specific region returned by FSDK_DetectFace or FSDK_DetectMultipleFaces.
+Extracts a template for a face returned by FSDK_DetectFace or FSDK_DetectMultipleFaces.
 
-The function detects facial features in a specific region and extracts a template. The face detection stage is not performed. This function can be useful if an approximate face size and position is known, or to process a specific face returned by FSDK_DetectFace or FSDK_DetectMultipleFaces. The function returns no error if the face is not clearly visible. This is because it assumes that if face detection functions return a detected face position, the face is of sufficient quality.
-
-If facial features or eye centers are known, it is more efficient to use the [FSDK_GetFaceTemplateUsingFeatures](#fsdk_getfacetemplateusingfeatures-function) or [FSDK_GetFaceTemplateUsingEyes](#fsdk_getfacetemplateusingeyes-function) function.
+The function detects facial features within the given face and extracts a template. The face detection stage is not performed. This function can be useful when a face has already been detected, or to process a specific face out of several returned by FSDK_DetectMultipleFaces. The function returns no error if the face is not clearly visible. This is because it assumes that if face detection functions return a detected face, the face is of sufficient quality.
 
 **C++ Syntax:**
 
 ```cpp
-int FSDK_GetFaceTemplateInRegion(HImage Image, TFacePosition* FacePosition, FSDK_FaceTemplate* FaceTemplate);
+int FSDK_GetFaceTemplateInRegion(HImage Image, const TFace* Face, FSDK_FaceTemplate* FaceTemplate);
 ```
 
 **Delphi Syntax:**
 
 ```pascal
-function FSDK_GetFaceTemplateInRegion(Image: HImage; FacePosition: PFacePosition; FaceTemplate: PFSDK_FaceTemplate): integer;
+function FSDK_GetFaceTemplateInRegion(Image: HImage; Face: PFace; FaceTemplate: PFSDK_FaceTemplate): integer;
 ```
 
 **C# Syntax:**
 
 ```csharp
-int FSDK.GetFaceTemplateInRegion(int Image, ref FSDK.TFacePosition FacePosition, out byte[] FaceTemplate);
+int FSDK.GetFaceTemplateInRegion(int Image, in FSDK.TFace Face, out byte[] FaceTemplate);
 ```
 
 **Java Syntax:**
 
 ```java
-int FSDK.GetFaceTemplateInRegion(HImage Image, TFacePosition FacePosition, FSDK_FaceTemplate.ByReference FaceTemplate);
+int FSDK.GetFaceTemplateInRegion(HImage Image, TFace Face, FSDK_FaceTemplate.ByReference FaceTemplate);
 ```
 
 **Android Syntax:**
 
 ```java
-int FSDK.GetFaceTemplateInRegion(HImage Image, TFacePosition FacePosition, FSDK_FaceTemplate FaceTemplate);
+int FSDK.GetFaceTemplateInRegion(HImage Image, TFace Face, FSDK_FaceTemplate FaceTemplate);
 ```
 
 **CImage Syntax:**
 
 ```csharp
-byte[] Luxand.CImage.GetFaceTemplateInRegion(ref FSDK.TFacePosition FacePosition);
+byte[] Luxand.CImage.GetFaceTemplateInRegion(in FSDK.TFace Face);
 ```
 
 **Parameters:**
 
 *Image* - handle of the image from which to extract the face template.
 
-*FacePosition* - pointer to the face position structure.
+*Face* - pointer to the TFace structure describing the face.
 
 *FaceTemplate* - pointer to the FSDK_FaceTemplate structure, used to receive the face template.
 
@@ -4049,158 +4470,45 @@ Returns FSDKE_OK if successful.
 **Python Syntax:**
 
 ```python
-def FSDK.GetFaceTemplate(image: Image, facePosition: FacePosition) -> FaceTemplate;
+def FSDK.GetFaceTemplateInRegion(image: Image, face: Face) -> FaceTemplate;
 
-def Image.GetFaceTemplate(facePosition: FacePosition = None) -> FaceTemplate;
+def Image.GetFaceTemplate(face: Face = None) -> FaceTemplate;
 ```
 
 **Return Value:**
 
 The FaceTemplate object.
 
-<a id="fsdk_getfacetemplateusingeyes-function"></a>
-## FSDK_GetFaceTemplateUsingEyes Function
-
-Extracts a face template using the detected eye centers.
-
-The function receives eye centers coordinates detected by the FSDK_DetectFacialFeatures, FSDK_DetectFacialFeaturesInRegion, FSDK_DetectEyes or FSDK_DetectEyesInRegion functions and extracts a face template. Face detection, facial feature detection, and eye centers detection are not performed. This function can be useful when facial features or eye centers for a specific face are already detected. The function returns no error if the face is not clearly visible, since it assumes that if the face and its facial features or eye centers are already detected, the face is of sufficient quality.
-
-Note that the FSDK_GetFaceTemplate, FSDK_GetFaceTemplateInRegion and FSDK_GetFaceTemplateUsingFeatures functions return templates that could be matched with higher accuracy, so it is recommended to use these functions instead.
-
-**C++ Syntax:**
+**Example:**
 
 ```cpp
-int FSDK_GetFaceTemplateUsingEyes(HImage Image, FSDK_Features* eyeCoords, FSDK_FaceTemplate* FaceTemplate);
+HImage img;
+int detectedCount;
+TFace faceArray[50];
+FSDK_FaceTemplate faceTemplate;
+
+FSDK_LoadImageFromFile(&img, "group.jpg");
+FSDK_DetectMultipleFaces(img, &detectedCount, faceArray,
+                         sizeof(faceArray) / sizeof(faceArray[0]));
+
+for (int i = 0; i < detectedCount; i++) {
+    if (FSDK_GetFaceTemplateInRegion(img, &faceArray[i], &faceTemplate) == FSDKE_OK) {
+        // store or match faceTemplate
+    }
+}
+
+FSDK_FreeImage(img);
 ```
-
-**Delphi Syntax:**
-
-```pascal
-function FSDK_ GetFaceTemplateUsingEyes(Image: HImage; eyeCoords: PFSDK_Features; FaceTemplate: PFSDK_FaceTemplate): integer;
-```
-
-**C# Syntax:**
-
-```csharp
-int FSDK.GetFaceTemplateUsingEyes(int Image, ref FSDK.TPoint[] eyeCoords, out byte[] FaceTemplate);
-```
-
-**Java Syntax:**
-
-```java
-int FSDK.GetFaceTemplateUsingEyes(HImage Image, FSDK_Features eyeCoords, FSDK_FaceTemplate.ByReference FaceTemplate);
-```
-
-**Android Syntax:**
-
-```java
-int FSDK.GetFaceTemplateUsingEyes(HImage Image, FSDK_Features eyeCoords, FSDK_FaceTemplate FaceTemplate);
-```
-
-**CImage Syntax:**
-
-```csharp
-byte[] Luxand.CImage.GetFaceTemplateUsingEyes(ref FSDK.TPoint[] eyeCoords);
-```
-
-**Parameters:**
-
-*Image* - handle of the image to extract the face template from.
-
-*eyeCoords* - pointer to the FSDK_Features array containing eye centers coordinates.
-
-*FaceTemplate* - pointer to the FSDK_FaceTemplate structure for receiving the face template.
-
-**Return Value:**
-
-Returns FSDKE_OK if successful.
-
-**Python Syntax:**
-
-```python
-def FSDK.GetFaceTemplateUsingEyes(image: Image, eyesCoord: Eyes) -> FaceTemplate;
-```
-
-**Return Value:**
-
-The FaceTemplate object.
-
-<a id="fsdk_getfacetemplateusingfeatures-function"></a>
-## FSDK_GetFaceTemplateUsingFeatures Function
-
-Extracts a face template using the detected facial feature coordinates.
-
-The function receives facial feature coordinates detected by the FSDK_DetectFacialFeatures or FSDK_DetectFacialFeaturesInRegion functions and extracts a face template. Face detection, facial feature detection, and eye centers detection are not performed. This function can be useful when facial features for a specific face are already detected. The function produces no error if the face is not clearly visible, since it assumes that if the face and its facial features are already detected, the face is of sufficient quality.
-
-The function determines if facial features, starting with the 2nd, are equal to zero or uninitialized. In this case, the functions calls [FSDK_GetFaceTemplateUsingEyes](#fsdk_getfacetemplateusingeyes-function) instead.
-
-**C++ Syntax:**
-
-```cpp
-int FSDK_GetFaceTemplateUsingFeatures(HImage Image, FSDK_Features* FacialFeatures, FSDK_FaceTemplate* FaceTemplate);
-```
-
-**Delphi Syntax:**
-
-```pascal
-function FSDK_ GetFaceTemplateUsingFeatures(Image: HImage; FacialFeatures: PFSDK_Features; FaceTemplate: PFSDK_FaceTemplate): integer;
-```
-
-**C# Syntax:**
-
-```csharp
-int FSDK.GetFaceTemplateUsingFeatures(int Image, ref FSDK.TPoint[]FacialFeatures, out byte[] FaceTemplate);
-```
-
-**Java Syntax:**
-
-```java
-int FSDK.GetFaceTemplateUsingFeatures(HImage Image, FSDK_Features FacialFeatures, FSDK_FaceTemplate.ByReference FaceTemplate);
-```
-
-**Android Syntax:**
-
-```java
-int FSDK.GetFaceTemplateUsingFeatures(HImage Image, FSDK_Features FacialFeatures, FSDK_FaceTemplate FaceTemplate);
-```
-
-**CImage Syntax:**
-
-```csharp
-byte[] Luxand.CImage.GetFaceTemplateUsingFeatures(ref FSDK.TPoint[]FacialFeatures);
-```
-
-**Parameters:**
-
-*Image* - handle of the image to extract the face template from.
-
-*FacialFeatures* - pointer to the FSDK_Features array containing facial feature coordinates.
-
-*FaceTemplate* - pointer to the FSDK_FaceTemplate structure for receiving the face template.
-
-**Return Value:**
-
-Returns FSDKE_OK if successful.
-
-**Python Syntax:**
-
-```python
-def FSDK.GetFaceTemplateUsingFeatures(image: Image, facialFeatures: FacialFeatures) -> FaceTemplate;
-```
-
-**Return Value:**
-
-The FaceTemplate object.
 
 <a id="fsdk_matchfaces-function"></a>
 ## FSDK_MatchFaces Function
 
-Match two face templates. The returned value determines the similarity of the faces.
+Match two face templates. The returned value determines the similarity of the faces, in the range 0..1.
 
 **C++ Syntax:**
 
 ```cpp
-int FSDK_MatchFaces(FSDK_FaceTemplate* FaceTemplate1, FSDK_FaceTemplate* FaceTemplate2, float* Similarity);
+int FSDK_MatchFaces(const FSDK_FaceTemplate* FaceTemplate1, const FSDK_FaceTemplate* FaceTemplate2, float* Similarity);
 ```
 
 **Delphi Syntax:**
@@ -4212,7 +4520,7 @@ function FSDK_MatchFaces(FaceTemplate1, FaceTemplate2: PFSDK_FaceTemplate; Simil
 **C# Syntax:**
 
 ```csharp
-int FSDK.MatchFaces(ref byte[] FaceTemplate1, ref byte[] FaceTemplate2, ref float Similarity);
+int FSDK.MatchFaces(byte[] FaceTemplate1, byte[] FaceTemplate2, out float Similarity);
 ```
 
 **Java Syntax:**
@@ -4253,127 +4561,10 @@ def FaceTemplate.MatchFaces(faceTemplate: FaceTemplate) -> float;
 
 The similarity of the face templates.
 
-<a id="fsdk_getmatchingthresholdatfar-function"></a>
-## FSDK_GetMatchingThresholdAtFAR Function
-
-This function returns the threshold value for similarity to determine if two matched templates belong to the same person at a given FAR (False Acceptance Rate) value. The FAR determines the acceptable error rate when two different people's templates are mistakenly recognized as the same person. Decreasing FAR leads to an increase in FRR - i.e. with low FAR it becomes more probable that two templates from the same person will be determined as belonging to different people.
-
-**C++ Syntax:**
-
-```cpp
-int FSDK_GetMatchingThresholdAtFAR(float FARValue, float* Threshold);
-```
-
-**Delphi Syntax:**
-
-```pascal
-function FSDK_GetMatchingThresholdAtFAR(FARValue: single; var Threshold: single): integer;
-```
-
-**C# Syntax:**
-
-```csharp
-int FSDK.GetMatchingThresholdAtFAR(float FARValue, ref float Threshold);
-```
-
-**Java and Android Syntax:**
-
-```java
-int FSDK.GetMatchingThresholdAtFAR(float FARValue, float Threshold[]);
-```
-
-**Parameters:**
-
-*FARValue* - the desired FAR value. Varies from 0.0 (means 0%) to 1.0 (means 100%).
-
-*Threshold* - pointer to a float variable to store the calculated Threshold value.
-
-**Return Value:**
-
-Returns FSDKE_OK if successful.
-
-**Example:**
-
-```cpp
-FSDK_FaceTemplate template1, template2;
-
-float MatchingThreshold, Similarity;
-FSDK_GetMatchingThresholdAtFAR(0.02, &MatchingThreshold);
-
-FSDK_GetFaceTemplate(img1, &template1);
-FSDK_GetFaceTemplate(img2, &template2);
-FSDK_MatchFaces(&template1, &template2, &Similarity);
-if (Similarity > MatchingThreshold)
-   printf("Same Person\n");
-else
-   printf("Different Person\n");
-```
-
-**Python Syntax:**
-
-```python
-def FSDK.GetMatchingThresholdAtFAR(FRRValue: float) -> float;
-```
-
-**Return Value:**
-
-The calculated Threshold value.
-
-<a id="fsdk_getmatchingthresholdatfrr-function"></a>
-## FSDK_GetMatchingThresholdAtFRR Function
-
-This function returns the threshold value for similarity to determine if two matched templates belong to the same person at a given FRR (False Rejection Rate) value. The FRR determines the acceptable error rate when two templates of the same person are identified as belonging to different people. Decreasing FRR leads to an increase in FAR - i.e. with low FRR it becomes more probable that two different people's templates will be recognized as the same person.
-
-**C++ Syntax:**
-
-```cpp
-int FSDK_GetMatchingThresholdAtFRR(float FRRValue, float* Threshold);
-```
-
-**Delphi Syntax:**
-
-```pascal
-function FSDK_GetMatchingThresholdAtFRR(FRRValue: single; var Threshold: single): integer;
-```
-
-**C# Syntax:**
-
-```csharp
-int FSDK.GetMatchingThresholdAtFRR(float FRRValue, ref float Threshold);
-```
-
-**Java and Android Syntax:**
-
-```java
-int FSDK.GetMatchingThresholdAtFRR(float FRRValue, float Threshold[]);
-```
-
-**Parameters:**
-
-*FRRValue* - the desired FRR value. Varies from 0.0 (means 0%) to 1.0 (means 100%).
-
-*Threshold* - pointer to a float variable, used to store the calculated Threshold value.
-
-**Return Value:**
-
-Returns FSDKE_OK if successful.
-
-**Python Syntax:**
-
-```python
-def FSDK.GetMatchingThresholdAtFRR(FRRValue: float) -> float;
-```
-
-**Return Value:**
-
-The calculated Threshold value.
-
 ---
 
-<a id="managing-recognition-thresholds-for-identity-verification"></a>
-## Managing Recognition Thresholds for Identity Verification
-
-In a critical identity verification system, choosing the right threshold is essential for balancing security (minimizing false positives) against usability (minimizing false negatives).
+<a id="recognition-accuracy-and-thresholds"></a>
+## Recognition Accuracy and Thresholds
 
 <a id="understanding-far-and-frr"></a>
 ### Understanding FAR and FRR
@@ -4381,21 +4572,65 @@ In a critical identity verification system, choosing the right threshold is esse
 - **FAR (False Acceptance Rate)** — the probability of incorrectly accepting an impostor as a genuine user. Lower FAR means higher security.
 - **FRR (False Rejection Rate)** — the probability of incorrectly rejecting a genuine user. Lower FRR means better usability.
 
-FAR and FRR are inversely related: decreasing one increases the other. The optimal threshold depends on your application's security requirements.
+FAR and FRR are inversely related: raising the matching threshold lowers FAR and raises FRR. The optimal threshold depends on your application's security requirements and on the imagery your system actually sees.
+
+<a id="measured-accuracy"></a>
+### Measured accuracy
+
+The figures below were measured on the LFW benchmark (`pairs.txt`, 10 folds of 300 genuine and 300 impostor pairs, 6000 pairs in total), with the detector left at its default settings.
+
+| Metric | Value |
+|---|---|
+| Equal Error Rate (EER) | 3.50 % |
+| Similarity at the equal-error point | 0.5607 |
+| Area Under Curve (AUC) | 0.9833 |
+| FRR at FAR = 1e-3 | 3.97 % |
+| FRR at FAR = 1e-4 | 4.17 % |
+
+The similarity threshold that produces each operating point, measured on the same run:
+
+| False acceptance rate | Similarity threshold | False rejection rate |
+|---|---:|---:|
+| 10 % | 0.542 | 3.3 % |
+| 1 % | 0.581 | 3.8 % |
+| 0.1 % | 0.602 | 3.97 % |
+| below the resolution of the set | 0.614 | 4.17 % |
+
+Genuine and impostor score distributions separate sharply: raising the threshold from 0.542 to 0.614 removes every false acceptance the benchmark can observe while costing less than a percentage point of false rejections.
+
+**ROC curve** (false rejection rate against false acceptance rate, both axes log-scaled; the red dot marks the equal-error point):
+
+![ROC curve](https://www.luxand.com/facesdk/documentation/images/roc_curve_v9_0.png)
+
+**False acceptance and false rejection rates against the matching threshold**, which is the view to read an operating point off:
+
+![FAR and FRR against threshold](https://www.luxand.com/facesdk/documentation/images/roc_far_frr_v9_0.png)
+
+Two limits are worth keeping in mind when reading the last row. The protocol contains 3000 impostor pairs, so it cannot resolve a false acceptance rate below roughly 0.03 %; at a threshold of 0.614 no impostor pair passes at all, and the rates quoted for stricter operating points are bounded by the size of the set rather than measured. And these values characterize LFW imagery — cameras, lighting, pose and image resolution in a deployed system differ from the benchmark, so measure the similarity distribution on your own data and set the threshold from that measurement rather than adopting a benchmark figure unchanged.
 
 <a id="choosing-the-right-threshold"></a>
 ### Choosing the Right Threshold
 
-| Use Case | Recommended FAR | Security Level |
+The operating points in the table above are measured on LFW, which is an example of a very easy case: frontal, well-lit, largely high-quality portraits. Its equal-error point sits near 0.56. Harder imagery — where pose, lighting, camera quality and distance push genuine pairs to lower similarities — needs a higher threshold.
+
+| Use Case | Suggested similarity threshold | Security Level |
 |---|---|---|
-| High-security access control | 0.001 (0.1%) | Very strict — few false accepts, more false rejects |
-| Standard identity verification | 0.01 (1%) | Balanced — good security with acceptable usability |
-| Convenience-focused unlock | 0.05 (5%) | Permissive — minimal false rejects, higher false accept risk |
+| High-security access control | 0.9 | Strict — few false accepts, more false rejects |
+| Standard identity verification | 0.8 | Balanced — good security with acceptable usability |
+| Convenience-focused unlock | 0.7 | Permissive — minimal false rejects, higher false accept risk |
+
+Measure the similarity distribution on your own imagery before settling on a value; these are starting points, not calibrated ones.
+
+When recognizing faces in a video stream, the Tracker API applies its own thresholds instead; see the *Threshold*, *Threshold2* and *ThresholdFeed* parameters in the [Tracker Parameters](#tracker-parameters) section.
 
 <a id="complete-threshold-management-example-c"></a>
 ### Complete Threshold Management Example (C++)
 
 ```cpp
+// The matching threshold for this deployment. Measure the similarity
+// distribution on your own imagery and adjust this constant accordingly.
+const float MATCHING_THRESHOLD = 0.65f;
+
 // Activate and initialize the SDK
 if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
     printf("Failed to activate FaceSDK\n");
@@ -4403,19 +4638,9 @@ if (FSDK_ActivateLibrary("your-license-key-here") != FSDKE_OK) {
 }
 FSDK_Initialize("");
 
-// Identity verification with configurable threshold
 int err;
-float threshold;
 float similarity;
 FSDK_FaceTemplate enrolledTemplate, probeTemplate;
-
-// Set threshold based on security requirements
-// For high-security: FAR = 0.001 (0.1% false acceptance)
-err = FSDK_GetMatchingThresholdAtFAR(0.001f, &threshold);
-if (err != FSDKE_OK) {
-    printf("Error getting threshold: %d\n", err);
-    return;
-}
 
 // Extract templates from both images
 err = FSDK_GetFaceTemplate(enrolledImage, &enrolledTemplate);
@@ -4430,7 +4655,7 @@ if (err != FSDKE_OK) {
     return;
 }
 
-// Match faces and compare against threshold
+// Match faces and compare against the threshold
 err = FSDK_MatchFaces(&enrolledTemplate, &probeTemplate, &similarity);
 if (err != FSDKE_OK) {
     if (err == FSDKE_INVALID_TEMPLATE)
@@ -4441,10 +4666,10 @@ if (err != FSDKE_OK) {
 }
 
 // Make verification decision
-if (similarity >= threshold) {
-    printf("MATCH: Same person (similarity=%.4f, threshold=%.4f)\n", similarity, threshold);
+if (similarity >= MATCHING_THRESHOLD) {
+    printf("MATCH: Same person (similarity=%.4f, threshold=%.4f)\n", similarity, MATCHING_THRESHOLD);
 } else {
-    printf("NO MATCH: Different person (similarity=%.4f, threshold=%.4f)\n", similarity, threshold);
+    printf("NO MATCH: Different person (similarity=%.4f, threshold=%.4f)\n", similarity, MATCHING_THRESHOLD);
 }
 ```
 
@@ -4454,12 +4679,12 @@ if (similarity >= threshold) {
 ```python
 from fsdk import FSDK
 
+# The matching threshold for this deployment.
+MATCHING_THRESHOLD = 0.60
+
 # Activate and initialize the SDK
 FSDK.ActivateLibrary("your-license-key-here")
 FSDK.Initialize()
-
-# Get threshold for desired security level
-threshold = FSDK.GetMatchingThresholdAtFAR(0.01)  # 1% false acceptance rate
 
 # Load images and extract templates
 try:
@@ -4481,10 +4706,10 @@ except FSDK.FaceNotFound:
 similarity = FSDK.MatchFaces(template1, template2)
 
 # Verification decision with confidence reporting
-if similarity >= threshold:
-    print(f"VERIFIED: similarity={similarity:.4f} >= threshold={threshold:.4f}")
+if similarity >= MATCHING_THRESHOLD:
+    print(f"VERIFIED: similarity={similarity:.4f} >= threshold={MATCHING_THRESHOLD:.4f}")
 else:
-    print(f"REJECTED: similarity={similarity:.4f} < threshold={threshold:.4f}")
+    print(f"REJECTED: similarity={similarity:.4f} < threshold={MATCHING_THRESHOLD:.4f}")
 
 # Clean up
 FSDK.FreeImage(img1)
@@ -4495,12 +4720,12 @@ FSDK.FreeImage(img2)
 ### Handling False Positives and False Negatives
 
 **To reduce false positives (impostors accepted):**
-- Use a lower FAR value (e.g., 0.001 instead of 0.01)
+- Raise the matching threshold
 - Require multiple verification attempts and accept only if all pass
 - Combine face recognition with other authentication factors
 
 **To reduce false negatives (genuine users rejected):**
-- Use a higher FAR value if security requirements allow
+- Lower the matching threshold if security requirements allow
 - Ensure enrollment images are high quality with good lighting and frontal pose
 - Store multiple templates per person taken under different conditions
 - Retry with a new probe image before final rejection
@@ -4513,7 +4738,14 @@ FSDK.FreeImage(img2)
 <a id="gender-age-and-facial-expression-recognition"></a>
 # Gender, Age and Facial Expression Recognition
 
-The SDK recognizes the gender, age and facial expressions of subjects. It recognizes if a smile is present and if the eyes are open or closed. To accomplish this, first you must detect facial features in an image, and then pass these features to the [FSDK_DetectFacialAttributeUsingFeatures](#fsdk_detectfacialattributeusingfeatures-function) function, specifying the *"Gender"*, the *"Age"* or the *"Expression"* attribute.
+The SDK recognizes the gender, age, facial expressions and head rotation angles of subjects. It recognizes if a smile is present and if the eyes are open or closed.
+
+There are two ways to ask for an attribute:
+
+- [FSDK_DetectFacialAttributeUsingFace](#fsdk_detectfacialattributeusingface-function) takes a face returned by [FSDK_DetectFace](#fsdk_detectface-function) or [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function) and detects the attribute directly, without a separate facial feature detection step.
+- [FSDK_DetectFacialAttributeUsingFeatures](#fsdk_detectfacialattributeusingfeatures-function) takes the 70 facial features produced by [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function). Use this form when the facial features are needed anyway, so they are detected only once.
+
+When working with a live video stream, use [FSDK_GetTrackerFacialAttribute](#fsdk_gettrackerfacialattribute-function) instead: the Tracker API accumulates attribute values over consecutive frames and smooths them, which yields higher accuracy than a single still image.
 
 <a id="fsdk_detectfacialattributeusingfeatures-function"></a>
 ## FSDK_DetectFacialAttributeUsingFeatures Function
@@ -4531,6 +4763,10 @@ The following attribute names are supported:
 *"Age"* - to detect the age of a face. The attribute has *"Age"* value.
 
 *"Expression"* - to detect the expression of a face. The attribute has *"Smile"* and *"EyesOpen"* values.
+
+*"AgeGroups"* - to obtain the distribution of the age estimate over eight age brackets. The attribute has the values *"0-2"*, *"4-6"*, *"8-13"*, *"15-20"*, *"25-32"*, *"38-43"*, *"48-53"* and *"60-"*, whose confidences sum to 1.
+
+*"Angles"* - to obtain the out-of-plane rotation of the head. The attribute has the values *"Roll"*, *"Pan"* and *"Tilt"*, each given in degrees rather than as a confidence level.
 
 The Values and their Confidences are returned in a string of the following format:
 
@@ -4552,6 +4788,12 @@ When calling the function with the *"Expression"* attribute, the following strin
 
 It means that the subject smiles with a confidence of 98.7%, and the eyes are open with a confidence of 99.5%.
 
+When calling the function with the *"Angles"* attribute, the following string may be returned:
+
+`"Roll=-2.4;Pan=13.7;Tilt=-5.1"`
+
+The three values are the head rotation angles in degrees: *Roll* is the in-plane rotation, *Pan* the left-right turn and *Tilt* the up-down nod. A value of 0 means the head faces the camera along that axis. Parse them with [FSDK_GetValueConfidence](#fsdk_getvalueconfidence-function) just like a confidence level. Refer to the LiveFaceAngles sample application for a working example.
+
 You may use several attributes in a single function call separated by ";". For example, if AttributeName is *"Gender; Age; Expression"*, the result may be the following: `"Male=0.95721;Female=0.04279;Age=37;Smile=0.987;EyesOpen=0.9952"`.
 
 You may use the [FSDK_GetValueConfidence](#fsdk_getvalueconfidence-function) to parse the returned string and retrieve the Confidences for individual Values.
@@ -4571,13 +4813,19 @@ function FSDK_DetectFacialAttributeUsingFeatures(Image: HImage; FacialFeatures: 
 **C# Syntax:**
 
 ```csharp
-int DetectFacialAttributeUsingFeatures(int Image, ref TPoint [] FacialFeatures, string AttributeName, out string AttributeValues, long MaxSizeInBytes);
+int FSDK.DetectFacialAttributeUsingFeatures(int Image, TPointF[] FacialFeatures, string AttributeName, out string AttributeValues, long MaxSizeInBytes);
+```
+
+**CImage Syntax:**
+
+```csharp
+string Luxand.CImage.DetectFacialAttributeUsingFeatures(FSDK.TPointF[] FacialFeatures, string AttributeName);
 ```
 
 **Java and Android Syntax:**
 
 ```java
-int FSDK.DetectFacialAttributeUsingFeatures(int Image, FSDK_Features FacialFeatures, String AttributeName, String AttributeValues[], long MaxSizeInBytes);
+int FSDK.DetectFacialAttributeUsingFeatures(HImage Image, FSDK_Features FacialFeatures, String AttributeName, String AttributeValues[], long MaxSizeInBytes);
 ```
 
 **Parameters:**
@@ -4611,6 +4859,96 @@ If ret_dict is True the return value is a dict object with the attribute Names a
 
 ---
 
+<a id="fsdk_detectfacialattributeusingface-function"></a>
+## FSDK_DetectFacialAttributeUsingFace Function
+
+Detects an attribute of a face described by a [TFace](#data-types) structure, and returns the Values of a particular attribute and the Confidences in these Values.
+
+The function accepts the same attribute names and produces the same output format as [FSDK_DetectFacialAttributeUsingFeatures](#fsdk_detectfacialattributeusingfeatures-function). The difference is the input: it takes a face returned by [FSDK_DetectFace](#fsdk_detectface-function) or [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function), so the 70 facial features do not have to be detected first.
+
+**C++ Syntax:**
+
+```cpp
+int FSDK_DetectFacialAttributeUsingFace(HImage Image, const TFace * Face, const char * AttributeName, char * AttributeValues, long long MaxSizeInBytes);
+```
+
+**Delphi Syntax:**
+
+```delphi
+function FSDK_DetectFacialAttributeUsingFace(Image: HImage; Face: PFace; AttributeName, AttributeValues: PAnsiChar; MaxSizeInBytes: int64): integer;
+```
+
+**C# Syntax:**
+
+```csharp
+int FSDK.DetectFacialAttributeUsingFace(int Image, in TFace Face, string AttributeName, out string AttributeValues, long MaxSizeInBytes = 1024);
+```
+
+**CImage Syntax:**
+
+```csharp
+string Luxand.CImage.DetectFacialAttributeUsingFace(in FSDK.TFace Face, string AttributeName);
+```
+
+**Parameters:**
+
+*Image* - HImage handle in which to detect the attribute.
+
+*Face* - pointer to the TFace structure describing the face.
+
+*AttributeName* - name of the attribute. You may specify several attributes separated by ";".
+
+*AttributeValues* - pointer to the null-terminated string that will receive the attribute Names and their Confidences.
+
+*MaxSizeInBytes* - amount of memory allocated for the output string.
+
+**Return Value:**
+
+Returns FSDKE_OK if successful. Returns FSDKE_INVALID_ARGUMENT if an attribute name is not recognized. Returns FSDKE_INSUFFICIENT_BUFFER_SIZE if there is not enough room to store the output string; however, the output string still fills up all the space available.
+
+**Example:**
+
+```cpp
+HImage image;
+TFace face;
+char attrValues[1024];
+
+FSDK_LoadImageFromFile(&image, "photo.jpg");
+if (FSDK_DetectFace(image, &face) == FSDKE_OK) {
+    FSDK_DetectFacialAttributeUsingFace(image, &face, "Gender;Age;Expression",
+                                        attrValues, sizeof(attrValues));
+    printf("%s\n", attrValues);
+}
+FSDK_FreeImage(image);
+```
+
+**Python Syntax:**
+
+```python
+def FSDK.DetectFacialAttributeUsingFace(image: Image, face: Face, attributeName: str, ret_dict: bool = False) -> str
+
+def Image.DetectFacialAttributeUsingFace(face: Face, attributeName: str, ret_dict: bool = False) -> str
+```
+
+**Return Value:**
+
+If ret_dict is False (default) the return value is a string object with the attribute Names and their Confidence.
+If ret_dict is True the return value is a dict object with the attribute Names as keys and Confidence floats as values.
+
+**Python Example:**
+
+```python
+from fsdk import FSDK
+
+image = FSDK.Image("photo.jpg")
+for face in image.DetectMultipleFaces():
+    attrs = image.DetectFacialAttributeUsingFace(face, "Gender;Age", ret_dict=True)
+    print(attrs)
+FSDK.FreeImage(image)
+```
+
+---
+
 <a id="fsdk_getvalueconfidence-function"></a>
 ## FSDK_GetValueConfidence Function
 
@@ -4631,7 +4969,7 @@ function FSDK_GetValueConfidence(AttributeValues, Value: PAnsiChar; Confidence: 
 **C# Syntax:**
 
 ```csharp
-int GetValueConfidence(string AttributeValues, string Value, ref float Confidence);
+int FSDK.GetValueConfidence(string AttributeValues, string Value, out float Confidence);
 ```
 
 **Java and Android Syntax:**
@@ -4681,7 +5019,7 @@ Use DetectFacialAttributeUsingFeatures function with *ret_dict* argument set to 
 
 To extract gender, age, and expression from a face, you must first initialize the library, load an image, detect facial features, and then call the attribute detection function. Below are complete working examples with error handling.
 
-<a id="complete-example-c"></a>
+<a id="complete-example-c-attributes"></a>
 ### Complete Example (C++)
 
 ```cpp
@@ -4759,7 +5097,7 @@ int main() {
 }
 ```
 
-<a id="complete-example-python"></a>
+<a id="complete-example-python-attributes"></a>
 ### Complete Example (Python)
 
 ```python
@@ -4798,10 +5136,12 @@ FSDK.FreeImage(image)
 - **Smile**: A confidence above **0.5** indicates the subject is likely smiling. Values above 0.9 indicate a clear smile.
 - **EyesOpen**: A confidence above **0.5** indicates the eyes are likely open. Use this for blink detection by monitoring changes across frames.
 
+**Confidence values are not bit-identical across platforms.** The attribute models read the 70 floating-point facial feature points, and those land fractionally differently on different CPU architectures because of the SIMD paths and floating-point contraction each one uses. On the same image the same build can report a Smile confidence of 0.30 on one platform and 0.42 on another, while Gender and EyesOpen stay within a thousandth. The verdict a 0.5 threshold produces is normally unaffected, but a cut-off tuned on one platform should be re-checked on the others rather than assumed to transfer. The value is deterministic on a given platform, so this is not run-to-run noise.
+
 <a id="liveness-detection"></a>
 # Liveness Detection
 
-The SDK offers several approaches to detect spoofing attempts (when a photo or a video is presented to the camera instead of a real person). There are [passive liveness detection](#passive-liveness), [active liveness detection](#active-liveness), and [thermal face detection](#thermal-face-detection). A combination of several approaches provides the best reliability.
+The SDK offers several approaches to detect spoofing attempts (when a photo or a video is presented to the camera instead of a real person). There are [passive liveness detection](#passive-liveness) and [active liveness detection](#active-liveness). A combination of both approaches provides the best reliability.
 
 The SDK provides enhanced passive liveness detection.
 
@@ -4831,11 +5171,6 @@ Note that an RGB color image is required to perform the passive liveness check, 
 
 Active liveness check requires Tracker API, as demonstrated in the [ActiveLiveness samples](#sample-applications). Liveness is verified by asking the user to perform a set of actions in front of the camera.
 
-<a id="thermal-face-detection"></a>
-## Thermal Face Detection
-
-Thermal face detection can also be used to verify liveness. In a typical scenario, the system is equipped with a thermal camera and an ordinary "visual" camera. Both cameras should capture the same field of view. To ensure a face is live, it must be detected in the same place both by the visual and the thermal camera. For more information see the [Face Detection on Thermal Images](#face-detection-on-thermal-images) section.
-
 <a id="ibeta-certified-liveness-add-on"></a>
 # iBeta Certified Liveness Add-on
 
@@ -4862,7 +5197,7 @@ If the key is not present you will be unable to use the iBeta add-on. The licens
 
 ---
 
-<a id="initialization"></a>
+<a id="ibeta-initialization"></a>
 ## Initialization
 
 To initialize the iBeta add-on you should call the following function:
@@ -4919,7 +5254,7 @@ if (string(attributes).find(e) != string::npos) {
 }
 ```
 
-<a id="using-tracker-api"></a>
+<a id="ibeta-using-tracker-api"></a>
 ### Using Tracker API
 
 When using the Tracker API with the iBeta add-on, you should set the following parameters:
@@ -5127,7 +5462,7 @@ Web camera functions are available only for Windows and Linux platforms. IP came
 
 Android and iOS samples include platform-specific code working with cameras on phones and tablets.
 
-<a id="data-types"></a>
+<a id="camera-data-types"></a>
 ## Data Types
 
 There are data types to store the information about video formats. Note that the names of video cameras are stored in wide char format (each char occupies two bytes).
@@ -6034,20 +6369,27 @@ See the [Recognition Performance](#recognition-performance) section to find whic
 
 Each HTracker instance allows setting a number of parameters with the [FSDK_SetTrackerParameter](#fsdk_settrackerparameter-function) or [FSDK_SetTrackerMultipleParameters](#fsdk_settrackermultipleparameters-function) function.
 
+<a id="tracker-face-detection-parameters"></a>
+### Face detection parameters
+
+A tracker keeps its own copy of the face detection, face recognition and model execution parameters described in the [FaceSDK Parameters](#facesdk-parameters) section, so a global [FSDK_SetParameter](#fsdk_setparameter-function) call does not affect an existing tracker. Pass the same parameter names to [FSDK_SetTrackerParameter](#fsdk_settrackerparameter-function) instead. This lets different trackers run with different detection settings.
+
+- **FaceDetectionModel, FaceRecognitionModel, FacialFeaturesModel, LivenessModel** - the model files used by this tracker. The default value of each is `default`, the built-in model.
+
+- **FaceDetectionThreshold** - the minimum detection score a face must reach to be tracked, in the range 0..1. The default value is 0.4, which is lower than the 0.64 used by the still-image detection functions, because a face that is briefly of poor quality in one video frame is usually worth tracking.
+
+- **FaceDetectionPatchSize** - the side, in pixels, of the square patch the detector processes. The default value is 256. Lower it (128, for example) to gain frame rate on a webcam stream; raise it to detect smaller or more distant faces.
+
+- **FaceDetectionPatchMode, FaceDetectionBigFaceSize, FaceDetectionBatchSize, FaceRecognitionBatchSize, FaceRecognitionUseFlipTest, TrimOutOfScreenFaces** - the parameters analogous to ones described in the [FaceSDK Parameters](#facesdk-parameters) section.
+
+- **ComputationDelegate, FaceDetectionComputationDelegate, FaceRecognitionComputationDelegate, FacialFeaturesComputationDelegate, PassiveLivenessComputationDelegate, ModelNumThreads, FaceDetectionNumThreads, FaceRecognitionNumThreads, FacialFeaturesNumThreads, PassiveLivenessNumThreads** - the model execution parameters described in the [Advanced Parameters](#advanced-parameters) section.
+
 <a id="face-tracking-parameters"></a>
 ### Face tracking parameters
 
-Note that the Tracker API does not use the parameters of face detection, set with [FSDK_SetFaceDetectionParameters](#fsdk_setfacedetectionparameters-function) or [FSDK_SetFaceDetectionThreshold](#fsdk_setfacedetectionthreshold-function). Instead, you should use the Tracker API parameters below.
-
-- **FaceDetectionModel, TrimOutOfScreenFaces, TrimFacesWithUncertainFacialFeatures** - the parameters analogous to ones described in the [FaceSDK Parameters](#facesdk-parameters) section. Their default values are (default, true, true).
-
-- **HandleArbitraryRotations, DetermineFaceRotationAngle, InternalResizeWidth** - the parameters analogous to ones in [FSDK_SetFaceDetectionParameters](#fsdk_setfacedetectionparameters-function). Their default values are (false, false, 256).
-
-- **FaceDetectionThreshold** - a parameter analogous to one in [FSDK_SetFaceDetectionThreshold](#fsdk_setfacedetectionthreshold-function). The default value is 5.
-
 - **FaceTrackingDistance** - specifies the maximum distance between faces of one person on consecutive frames, to consider an uninterrupted tracking sequence. The parameter is measured in width of the detected face. The default value is 0.5. You may decrease it when the frame rate is high to lower the probability of false acceptances, or increase it when the frame rate is low and the recognition rate is low due to interrupted tracking.
 
-<a id="face-recognition-parameters"></a>
+<a id="tracker-face-recognition-parameters"></a>
 ### Face recognition parameters
 
 - **RecognizeFaces** - whether to recognize subject's identity. If set to true, the system attempts to assign each subject a unique id, while giving equal identifiers to the same subject across the video. If set to false, the system will return a unique ID value for every uninterrupted sequence of a detected face (that is, when a certain face is detected on every frame of the sequence), regardless of the identity of this face. The default value is true.
@@ -6064,26 +6406,70 @@ Note that the Tracker API does not use the parameters of face detection, set wit
 
 - **MemoryLimit** - the amount of memory available for the storage of facial appearances. See the [Tracker Memory](#tracker-memory) section. The default value is 2150.
 
-- **Threshold** - the threshold used when deciding if two facial appearances belong to the same subject. Each threshold value alters both the false acceptance rate and recognition rate. See the [Recognition Performance](#recognition-performance) section. The default value is 0.992.
+- **Threshold** - the threshold used when deciding if two facial appearances belong to the same subject. Each threshold value alters both the false acceptance rate and recognition rate. See the [Recognition Performance](#recognition-performance) section. The default value is 0.8.
+
+- **Threshold2** - the stricter threshold used when the tracker decides whether two identifiers may be merged into one. It should be set above *Threshold*. The default value is 0.9.
+
+- **ThresholdFeed** - the threshold used when matching a face against the appearances seen on the previous frames of the same uninterrupted tracking sequence. It should be set below *Threshold*. The default value is 0.7.
+
+- **RecognitionPrecision** - the precision of the recognition pipeline. The default value is 1, which selects the slower and more accurate mode. Set it to 0 to gain frame rate at the cost of recognition accuracy.
+
+- **DistinctIDsWithinFrame** - whether two faces present in the same frame are forced to receive different identifiers. Since one person cannot appear twice in a single frame, keeping this enabled removes a class of false acceptances. The default value is true.
+
+- **PurgeIDReassignment** - whether the record of identifier mergers is purged together with an identifier when [FSDK_PurgeID](#fsdk_purgeid-function) is called. The default value is true.
+
+- **ContinuousVideoFeed** - whether the frames passed to [FSDK_FeedFrame](#fsdk_feedframe-function) form a continuous video stream. Set it to false when feeding unrelated still images, so that the tracker does not treat consecutive images as consecutive frames of a video. The default value is true.
+
+- **PrevFrameCount** - the number of previous frames the tracker keeps per camera, used mainly for smoothing. The default value is 50.
+
+- **DetectFaceOnceEvery** - run the face detector only once every N frames, reusing the previous face position in between, provided the facial features have not moved much. 0 disables the optimization. It takes effect only when facial features are detected. The default value is 0.
+
+- **SuppressMisdetectedFaces** - whether to drop detected faces whose facial features deviate from a plausible face geometry by more than *FacialFeatureDeviationThreshold*. The default value is false.
+
+- **FacialFeatureDeviationThreshold** - the deviation above which a face is considered misdetected when *SuppressMisdetectedFaces* is enabled. The default value is 0.12.
 
 - **KeepFaceImages** - whether to store the original facial images in the Tracker memory. See the [Storing original facial images](#storing-original-facial-images) section for details. The default value is true.
 
 <a id="facial-feature-tracking-parameters"></a>
 ### Facial feature tracking parameters
 
-- **DetectEyes** - whether to detect eyes. Eyes will be detected regardless of the value of this parameter when *RecognizeFaces* is set to 1. When eyes are detected, their coordinates can be retrieved with [FSDK_GetTrackerEyes](#fsdk_gettrackereyes-function). The default value is false.
+- **DetectFacialFeatures** - whether to detect the 70 facial features. They are also detected if DetectGender, DetectAge, DetectExpression or DetectAngles are set to true. The default value is false. The coordinates are retrieved with [FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function); the eye centers are the FSDKP_LEFT_EYE and FSDKP_RIGHT_EYE entries of that array.
 
-- **DetectFacialFeatures** - whether to detect facial features. Facial features are detected when *RecognizeFaces* is set to 1, regardless of the value of this parameter. They are also detected if DetectGender, DetectAge or DetectExpression are set to 1. The default value is false.
+  The eye centers of every tracked face are also available without this parameter, in the `features[0]` and `features[1]` key points of the [TFace](#data-types) structure returned by [FSDK_GetTrackerFace](#fsdk_gettrackerface-function).
 
 - **DetectAngles** - whether to estimate out-of-plane face rotation angles by using the detected facial features. Pan and Tilt are returned as the Angles facial attribute. The default value is false.
 
-- **FacialFeatureJitterSuppression** - whether to suppress the jitter of facial features by employing more processor resources. If 0, such jitter suppression is not employed. Set to a higher value for better suppression. A non-zero setting takes effect only when DetectFacialFeatures=true, even if facial features are actually detected due to the setting of the RecognitionPrecision, DetectGender, DetectAge or DetectExpression parameters. The default value depends on NUM_THREADS, the number of threads supported by the CPU, which can be obtained using the [FSDK_GetNumThreads](#fsdk_getnumthreads-function) function.
+- **FacialFeatureJitterSuppression** - whether to suppress the jitter of facial features by employing more processor resources. If 0, such jitter suppression is not employed. Set to a higher value for better suppression. A non-zero setting takes effect only when DetectFacialFeatures=true, even if facial features are actually detected due to the setting of the RecognitionPrecision, DetectGender, DetectAge or DetectExpression parameters. The default value is 0.
 
 - **SmoothFacialFeatures** - whether to smooth facial features from frame to frame to prevent jitter. If set to false, the coordinates of facial features are detected independently of the previous frame, and may jitter because of the noise present in the video. If the parameter is set to true, the API will smooth the coordinates of facial features. The default value is true.
 
 - **FacialFeatureSmoothingSpatial** - a coefficient employed in facial feature smoothing. Controls spatial smoothing of facial features. The default value is 0.5.
 
 - **FacialFeatureSmoothingTemporal** - a coefficient employed in facial feature smoothing. Affects temporal smoothing of facial features (that is, how the smoothed coordinates relate to their coordinates on the previous frame). The default value is 250.
+
+<a id="facial-attribute-smoothing-parameters"></a>
+### Facial attribute smoothing parameters
+
+Attribute values recognized from a single frame fluctuate. The tracker smooths them over the frames of an uninterrupted tracking sequence. Each attribute has a switch and a pair of spatial and temporal coefficients, used the same way as the facial feature smoothing coefficients above.
+
+- **SmoothAttributeExpressionSmile** (default true), **AttributeExpressionSmileSmoothingSpatial** (default 0.5), **AttributeExpressionSmileSmoothingTemporal** (default 15) - smoothing of the Smile expression value.
+
+- **SmoothAttributeExpressionEyesOpen** (default true), **AttributeExpressionEyesOpenSmoothingSpatial** (default 0.1), **AttributeExpressionEyesOpenSmoothingTemporal** (default 10) - smoothing of the EyesOpen expression value.
+
+- **SmoothAttributeAge** (default true), **AttributeAgeSmoothingSpatial** (default 1.0), **AttributeAgeSmoothingTemporal** (default 100) - smoothing of the Age value.
+
+- **SmoothAttributeLiveness** (default true) - whether to combine the passive liveness values of the recent frames with a smooth minimum instead of reporting the value of the current frame.
+
+- **AttributeLivenessSmoothingAlpha** (default 1) - the smooth minimum coefficient. 0 makes the result the mean of the collected values; larger values move it towards their minimum.
+
+- **LivenessFramesCount** (default 15) - the number of frames that must be collected before the Liveness attribute is reported. Until then, [FSDK_GetTrackerFacialAttribute](#fsdk_gettrackerfacialattribute-function) returns FSDKE_ATTRIBUTE_NOT_DETECTED for the attribute.
+
+<a id="camera-stream-parameters"></a>
+### Camera stream parameters
+
+- **VideoFeedDiscontinuity** - a comma-separated list of camera indices whose tracking state should be dropped, because the video feed was interrupted. The tracker will not try to link the faces of the next frame to the faces seen before the break.
+
+- **DeleteCameras** - a comma-separated list of camera indices to remove from the tracker together with everything it remembers about their frames.
 
 ---
 
@@ -6092,7 +6478,7 @@ Note that the Tracker API does not use the parameters of face detection, set wit
 
 The higher the frame rate of [FSDK_FeedFrame](#fsdk_feedframe-function) (i.e., fast processing of frames) usually positively affect the recognition rate for live video, because more facial appearances of a person can be captured per unit of time.
 
-Experiment with face detection parameters, especially with InternalResizeWidth: higher values allow for faces to be detected at greater distance, but require additional time (and lower the frame rate). If you find a high number of false detections (i.e. when faces are detected where they are not present), try increasing the FaceDetectionThreshold parameter.
+Experiment with the face detection parameters, especially with FaceDetectionPatchSize: higher values allow for faces to be detected at greater distance, but require additional time (and lower the frame rate). A value of 128 is a good starting point for a webcam stream. If you find a high number of false detections (i.e. when faces are detected where they are not present), try increasing the FaceDetectionThreshold parameter, or discard the faces whose `score` is low.
 
 Setting DetectGender, DetectAge or DetectExpression to true will lower the frame rate. If you need only to detect gender, age or facial expressions, you may consider setting the RecognizeFaces parameter to false, in order to increase the frame rate.
 
@@ -6144,7 +6530,7 @@ int main() {
         "DetectGender=true;"
         "DetectAge=true;"
         "DetectExpression=true;"
-        "Threshold=0.992",
+        "Threshold=0.8",
         &errpos);
 
     // Step 5: Get camera list and open the first available camera
@@ -6192,8 +6578,8 @@ int main() {
 
         for (int i = 0; i < faceCount; i++) {
             // Get face position
-            TFacePosition facePos;
-            FSDK_GetTrackerFacePosition(tracker, cameraHandle, IDs[i], &facePos);
+            TFace face;
+            FSDK_GetTrackerFace(tracker, cameraHandle, IDs[i], &face);
 
             // Get name (if tagged)
             char name[256];
@@ -6204,9 +6590,9 @@ int main() {
             FSDK_GetTrackerFacialAttribute(tracker, cameraHandle, IDs[i],
                 "Gender;Age;Expression", attrs, sizeof(attrs));
 
-            printf("ID %lld at (%d,%d) size=%d: %s %s\n",
-                IDs[i], facePos.xc, facePos.yc, facePos.w,
-                strlen(name) > 0 ? name : "Unknown", attrs);
+            printf("ID %lld at (%d,%d)-(%d,%d) score=%.3f: %s %s\n",
+                IDs[i], face.bbox.p0.x, face.bbox.p0.y, face.bbox.p1.x, face.bbox.p1.y,
+                face.score, strlen(name) > 0 ? name : "Unknown", attrs);
         }
 
         FSDK_FreeImage(frame);
@@ -6240,15 +6626,15 @@ tracker.SetParameters(
     DetectGender=True,
     DetectAge=True,
     DetectExpression=True,
-    Threshold=0.992
+    Threshold=0.8
 )
 
 # Get camera list and open the first available camera
-camera_names = FSDK.GetCameraList()
+camera_names = FSDK.ListCameraNames()
 if not camera_names:
     raise RuntimeError("No cameras found")
 
-formats = FSDK.GetVideoFormatList(camera_names[0])
+formats = FSDK.ListVideoFormats(camera_names[0])
 if formats:
     FSDK.SetVideoFormat(camera_names[0], formats[0])
 
@@ -6265,13 +6651,13 @@ try:
             time.sleep(0.01)
             continue
 
-        ids = tracker.FeedFrame(frame)
+        ids = tracker.FeedFrame(0, frame)
 
         for face_id in ids:
-            position = tracker.GetFacePosition(face_id)
+            face = tracker.GetFace(0, face_id)
             names = tracker.GetAllNames(face_id)
-            attrs = tracker.GetFacialAttribute(face_id, "Gender;Age;Expression")
-            print(f"ID {face_id}: {names or 'Unknown'} at {position} — {attrs}")
+            attrs = tracker.GetFacialAttribute(0, face_id, "Gender;Age;Expression")
+            print(f"ID {face_id}: {names or 'Unknown'} at {face.rect} — {attrs}")
 
         FSDK.FreeImage(frame)
         processed_frames += 1
@@ -6279,7 +6665,7 @@ except KeyboardInterrupt:
     pass
 
 # Cleanup
-tracker.SaveMemoryToFile("tracker_data.db")
+tracker.SaveToFile("tracker_data.db")
 FSDK.CloseVideoCamera(camera)
 FSDK.FreeTracker(tracker)
 ```
@@ -6352,7 +6738,7 @@ The following scenario is employed when using Tracker API.
    2. Send the image to the [FSDK_FeedFrame](#fsdk_feedframe-function) function.
    3. Display the image on a screen.
    4. For each ID returned by [FSDK_FeedFrame](#fsdk_feedframe-function):
-      - Retrieve its facial coordinates ([FSDK_GetTrackerFacePosition](#fsdk_gettrackerfaceposition-function)), eye center coordinates ([FSDK_GetTrackerEyes](#fsdk_gettrackereyes-function)), facial feature coordinates ([FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function)), gender, age or facial expression ([FSDK_GetTrackerFacialAttribute](#fsdk_gettrackerfacialattribute-function)).
+      - Retrieve its facial coordinates ([FSDK_GetTrackerFace](#fsdk_gettrackerface-function)), facial feature coordinates ([FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function)), gender, age or facial expression ([FSDK_GetTrackerFacialAttribute](#fsdk_gettrackerfacialattribute-function)).
       - Retrieve the list of possible names ([FSDK_GetAllNames](#fsdk_getallnames-function)).
       - If, relying on coordinates, you found that user has clicked on a face, call [FSDK_LockID](#fsdk_lockid-function) on that identifier, display an input box and ask the user for a name of the subject. You may continue to run [FSDK_FeedFrame](#fsdk_feedframe-function) in parallel.
       - If the user entered a name, set it using [FSDK_SetName](#fsdk_setname-function). If the user chose to erase the subject, call [FSDK_SetName](#fsdk_setname-function) with an empty name. In any case, call [FSDK_UnlockID](#fsdk_unlockid-function) to unlock the identifier.
@@ -6457,49 +6843,35 @@ where N is the number of subjects. For example, at FAR=0.001, N=10, we have a 4.
 <a id="choosing-threshold-value"></a>
 ### Choosing Threshold value
 
-To choose the Threshold value, refer to the tables below. You should consider the maximum number of subjects to be tagged within your system, and the maximum memory per subject.
+Three thresholds drive the identification logic, and they must keep their relative order:
 
-Generally, the higher the MemoryLimit is set, the higher the FAR will be (once all available memory has been used).
+| Parameter | Default | Role |
+|---|---|---|
+| **ThresholdFeed** | 0.7 | Matching a face against the appearances of the same uninterrupted tracking sequence. The lowest of the three. |
+| **Threshold** | 0.8 | Deciding that two facial appearances belong to the same subject. |
+| **Threshold2** | 0.9 | Deciding that two identifiers may be merged into one. The strictest of the three. |
 
-Note that higher Threshold values together with a higher memory amount allow higher recognition rate *only* when enough facial appearances of an identifier have been accumulated. If there are sudden changes in facial appearance (due to low frame rate or environmental factors, for example), it may require more time to capture enough facial appearances with a higher Threshold value.
+Raising **Threshold** lowers FAR and lowers the recognition rate; lowering it does the opposite. Generally, the higher the MemoryLimit is set, the higher the FAR will be (once all available memory has been used), so a larger memory limit calls for a higher threshold.
 
-The tables below show the expected false acceptance rate and recognition rate.
+Note that higher Threshold values together with a higher memory amount allow a higher recognition rate *only* when enough facial appearances of an identifier have been accumulated. If there are sudden changes in facial appearance (due to low frame rate or environmental factors, for example), it may require more time to capture enough facial appearances with a higher Threshold value.
 
-**Note:** it is not recommended to use Threshold higher than 0.999, since it will make Tracker API recognize faces less often.
+<a id="measuring-far-and-r-in-your-setting"></a>
+### Measuring FAR and R in your setting
 
-<a id="false-acceptance-rate-at-threshold-and-memorylimit"></a>
-### False Acceptance Rate at Threshold and MemoryLimit
+FAR and R depend on the imagery your cameras produce, on the number of subjects, and on the memory limit, so they are best measured on your own footage:
 
-| Threshold | 350 | 700 | 1750 | 3500 | 5250 | 7500 |
-|---|---|---|---|---|---|---|
-| 0.992000 | 0.000081 | 0.000130 | 0.000231 | 0.000266 | 0.000277 | 0.000277 |
-| 0.993141 | 0.000066 | 0.000107 | 0.000183 | 0.000209 | 0.000216 | 0.000216 |
-| 0.994283 | 0.000062 | 0.000089 | 0.000144 | 0.000166 | 0.000170 | 0.000170 |
-| 0.995424 | 0.000052 | 0.000068 | 0.000101 | 0.000114 | 0.000118 | 0.000118 |
-| 0.996566 | 0.000042 | 0.000050 | 0.000072 | 0.000077 | 0.000081 | 0.000081 |
-| 0.997707 | 0.000036 | 0.000040 | 0.000054 | 0.000055 | 0.000056 | 0.000056 |
-| 0.998849 | 0.000030 | 0.000034 | 0.000045 | 0.000039 | 0.000039 | 0.000039 |
-| 0.999990 | 0.000002 | 0.000007 | 0.000009 | 0.000012 | 0.000014 | 0.000023 |
+1. Record a representative video sequence containing the subjects your system will see, and note the ground-truth identity of each appearance.
+2. Run the sequence through [FSDK_FeedFrame](#fsdk_feedframe-function) with the MemoryLimit you intend to deploy, and let the tracker run until its memory is full (see [How to measure your rate of storage events](#how-to-measure-your-rate-of-storage-events)).
+3. For each frame, compare the identifiers and names returned by [FSDK_GetAllNames](#fsdk_getallnames-function) against the ground truth. The share of frames in which the correct name appears is R; the share of appearances receiving the identifier of another subject is FAR.
+4. Repeat with different Threshold values and pick the one whose FAR meets the requirement derived in the [Understanding FAR](#understanding-far) section, while R stays acceptable.
 
-<a id="recognition-rate-at-threshold-and-memory-per-subject"></a>
-### Recognition Rate at Threshold and Memory per subject
+Keep **Threshold2** above **Threshold** and **ThresholdFeed** below it when you change any of them. Setting Threshold very close to 1 makes the tracker recognize faces rarely, because almost no pair of appearances reaches the threshold.
 
-| Threshold | 5 | 10 | 15 | 21 |
-|---|---|---|---|---|
-| 0.992000 | 0.995 | 0.999 | 0.999 | 0.999 |
-| 0.993141 | 0.994 | 0.999 | 0.999 | 0.999 |
-| 0.994283 | 0.993 | 0.998 | 0.999 | 0.999 |
-| 0.995424 | 0.991 | 0.998 | 0.998 | 0.998 |
-| 0.996566 | 0.986 | 0.997 | 0.997 | 0.997 |
-| 0.997707 | 0.978 | 0.995 | 0.996 | 0.996 |
-| 0.998849 | 0.956 | 0.986 | 0.988 | 0.988 |
-| 0.999990 | 0.073 | 0.087 | 0.107 | 0.138 |
-
-For example, let us assume that you have 30 subjects in an office setting, your frame rate is 12 per second, and you decide to allow 21 units of memory per subject. Therefore, your memory limit is (30+1)*21 = 651 (see formula in the [Memory available for each subject](#memory-available-for-each-subject) section). You decide to have a FAR of 0.000050 and calculate that with 30 subjects, there will be 2.2% rate that a subject will be given with an ID of any other subject (see the formula in the [Understanding FAR](#understanding-far) section) during 2000 storage events (approximately 5 hours in an office setting). To have a FAR of 0.000050 with MemoryLimit=700 (the value closest to 651 in the table), you choose Threshold=0.996566. You note that at such a threshold and 21 units of memory per subject, you have a 0.997 recognition rate (meaning subjects will be recognized in 99.7% of frames in the video).
+For a still-image accuracy reference measured on a public benchmark, see the [Recognition Accuracy and Thresholds](#recognition-accuracy-and-thresholds) section. Those figures apply to [FSDK_MatchFaces](#fsdk_matchfaces-function) on single image pairs, not to the identification logic of the tracker, which accumulates many appearances per subject and therefore behaves differently.
 
 ---
 
-<a id="gender-age-and-facial-expression-recognition"></a>
+<a id="tracker-gender-age-and-facial-expression-recognition"></a>
 ## Gender, Age and Facial Expression Recognition
 
 The API allows for identifying gender and age of a face and its expressions by using the [FSDK_GetTrackerFacialAttribute](#fsdk_gettrackerfacialattribute-function) function.
@@ -6523,7 +6895,7 @@ Note that gender, age and expression recognition requires the detection of facia
 <a id="face-eye-and-facial-feature-tracking"></a>
 ## Face, Eye and Facial Feature Tracking
 
-Tracker API supports the tracking of face, eye centers, and facial features in addition to the recognition of a subject's identity. You need to use the [FSDK_GetTrackerFacePosition](#fsdk_gettrackerfaceposition-function), [FSDK_GetTrackerEyes](#fsdk_gettrackereyes-function) and [FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function) to retrieve the corresponding coordinates. You also need to set the parameter DetectEyes or DetectFacialFeatures to true when tracking eyes or facial features, respectively. Tracker API performs smoothing of facial features (see the SmoothFacialFeatures parameter).
+Tracker API supports the tracking of face, eye centers, and facial features in addition to the recognition of a subject's identity. Use [FSDK_GetTrackerFace](#fsdk_gettrackerface-function) and [FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function) to retrieve the corresponding coordinates. Set the DetectFacialFeatures parameter to true to track the 70 facial features, whose FSDKP_LEFT_EYE and FSDKP_RIGHT_EYE entries give the eye centers in sub-pixel coordinates. The eye centers are also available without any parameter, as the `features[0]` and `features[1]` key points of the TFace structure returned by [FSDK_GetTrackerFace](#fsdk_gettrackerface-function). Tracker API performs smoothing of facial features (see the SmoothFacialFeatures parameter).
 
 When you only need to track faces, and do not need to recognize subjects' identities, you can disable face recognition to improve performance. To accomplish that, you need to set the RecognizeFaces parameter to false.
 
@@ -6536,10 +6908,10 @@ If each subject captured by the camera appears only once, you may consider not d
 
 ---
 
-<a id="thread-safety"></a>
+<a id="tracker-thread-safety"></a>
 ## Thread Safety
 
-All tracker functions are thread safe. Note that you should avoid calling [FSDK_FeedFrame](#fsdk_feedframe-function) simultaneously on the same tracker and camera (the CameraIdx parameter) from several threads, since it will disrupt the [FSDK_GetTrackerEyes](#fsdk_gettrackereyes-function), [FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function), [FSDK_GetTrackerFacePosition](#fsdk_gettrackerfaceposition-function), [FSDK_GetTrackerFacialAttribute](#fsdk_gettrackerfacialattribute-function), [FSDK_GetSimilarIDCount](#fsdk_getsimilaridcount-function), [FSDK_GetSimilarIDList](#fsdk_getsimilaridlist-function) and [FSDK_GetAllNames](#fsdk_getallnames-function) functions. The reason is that the ID received from [FSDK_FeedFrame](#fsdk_feedframe-function) must be passed to these functions before the next [FSDK_FeedFrame](#fsdk_feedframe-function) is executed with the following frame; otherwise these functions may not perform correctly.
+All tracker functions are thread safe. Note that you should avoid calling [FSDK_FeedFrame](#fsdk_feedframe-function) simultaneously on the same tracker and camera (the CameraIdx parameter) from several threads, since it will disrupt the [FSDK_GetTrackerFacialFeatures](#fsdk_gettrackerfacialfeatures-function), [FSDK_GetTrackerFace](#fsdk_gettrackerface-function), [FSDK_GetTrackerFacialAttribute](#fsdk_gettrackerfacialattribute-function), [FSDK_GetSimilarIDCount](#fsdk_getsimilaridcount-function), [FSDK_GetSimilarIDList](#fsdk_getsimilaridlist-function) and [FSDK_GetAllNames](#fsdk_getallnames-function) functions. The reason is that the ID received from [FSDK_FeedFrame](#fsdk_feedframe-function) must be passed to these functions before the next [FSDK_FeedFrame](#fsdk_feedframe-function) is executed with the following frame; otherwise these functions may not perform correctly.
 
 <a id="tracker-functions"></a>
 # Tracker Functions
@@ -6794,7 +7166,7 @@ Returns FSDKE_OK if successful. In case of syntax error returns FSDKE_SYNTAX_ERR
 
 ```cpp
 int err = 0;
-FSDK_SetTrackerMultipleParameters(tracker, "HandleArbitraryRotations=false; DetermineFaceRotationAngle=false; InternalResizeWidth=100; FaceDetectionThreshold=5;", &err);
+FSDK_SetTrackerMultipleParameters(tracker, "FaceDetectionPatchSize=128; FaceDetectionThreshold=0.4; Threshold=0.8; Threshold2=0.9;", &err);
 ```
 
 **Python Syntax:**
@@ -6856,7 +7228,7 @@ Returns FSDKE_OK if successful. Returns FSDKE_INSUFFICIENT_BUFFER_SIZE if there 
 ```python
 def FSDK.GetTrackerParameter(tracker: Tracker, parameterName: str) -> str;
 
-def Tracker.GetParameters(parameterName: str) -> str;
+def Tracker.GetParameter(parameterName: str) -> str;
 ```
 
 **Return Value:**
@@ -6925,74 +7297,12 @@ The list of identifiers of the tracked faces.
 
 ---
 
-<a id="fsdk_gettrackereyes-function"></a>
-## FSDK_GetTrackerEyes Function
-
-Retrieves the coordinates of the eye centers of a tracked face. The function accepts the identifier returned by FSDK_FeedFrame. This identifier should be passed to FSDK_GetTrackerEyes before the next call of FSDK_FeedFrame using the same tracker.
-
-For the function to return the eye center coordinates, at least one of the parameters DetectEyes, DetectFacialFeatures, RecognizeFaces, DetectGender, DetectAge or DetectExpression must be set to true.
-
-**C++ Syntax:**
-
-```cpp
-int FSDK_GetTrackerEyes(HTracker Tracker, long long CameraIdx, long long ID, FSDK_Features * FacialFeatures);
-```
-
-**Delphi Syntax:**
-
-```pascal
-function FSDK_GetTrackerEyes(Tracker: HTracker; CameraIdx, ID: int64; FacialFeatures: PFSDK_Features): integer;
-```
-
-**C# Syntax:**
-
-```csharp
-int FSDK.GetTrackerEyes(int Tracker, long CameraIdx, long ID, out TPoint[] FacialFeatures);
-```
-
-**Java Syntax:**
-
-```java
-int FSDK.GetTrackerEyes(HTracker Tracker, long CameraIdx, long ID, FSDK_Features.ByReference FacialFeatures);
-```
-
-**Android Syntax:**
-
-```java
-int FSDK.GetTrackerEyes(HTracker Tracker, long CameraIdx, long ID, FSDK_Features FacialFeatures);
-```
-
-**Parameters:**
-
-- **Tracker** - handle of the tracker where the coordinates of the eye centers will be retrieved.
-- **CameraIdx** - index of the camera; should be equal to 0 in the current release.
-- **ID** - identifier of the subject returned by FSDK_FeedFrame, whose eye center coordinates will be received.
-- **FacialFeatures** - pointer to the FSDK_Features variable that will receive the eye center coordinates.
-
-**Return Value:**
-
-Returns FSDKE_OK if successful. Returns FSDKE_ID_NOT_FOUND if the specified ID was not returned by the previous FSDK_FeedFrame call. Returns FSDKE_ATTRIBUTE_NOT_DETECTED if eye centers were not tracked on the previous FSDK_FeedFrame call.
-
-**Python Syntax:**
-
-```python
-def FSDK.GetTrackerEyes(tracker: Tracker, cameraIdx: int, ID: int) -> Eyes;
-
-def Tracker.GetEyes(cameraIdx: int, ID: int) -> Eyes;
-```
-
-**Return Value:**
-
-The Eyes object.
-
----
-
 <a id="fsdk_gettrackerfacialfeatures-function"></a>
 ## FSDK_GetTrackerFacialFeatures Function
 
 Retrieves the coordinates of a tracked face's features. The function accepts the identifier returned by FSDK_FeedFrame. This identifier should be passed to FSDK_GetTrackerFacialFeatures before the next call of FSDK_FeedFrame with the same tracker.
 
-For the function to return the facial feature coordinates, either of the parameters DetectFacialFeatures, DetectGender, DetectAge or DetectExpression should be set to true. See the Tracker Parameters section for details.
+For the function to return the facial feature coordinates, either of the parameters DetectFacialFeatures, DetectGender, DetectAge, DetectExpression or DetectAngles should be set to true. See the Tracker Parameters section for details. The coordinates are sub-pixel values.
 
 **C++ Syntax:**
 
@@ -7009,7 +7319,7 @@ function FSDK_GetTrackerFacialFeatures(Tracker: HTracker; CameraIdx, ID: int64; 
 **C# Syntax:**
 
 ```csharp
-int FSDK.GetTrackerFacialFeatures(int Tracker, long CameraIdx, long ID, out TPoint[] FacialFeatures);
+int FSDK.GetTrackerFacialFeatures(int Tracker, long CameraIdx, long ID, out TPointF[] FacialFeatures);
 ```
 
 **Java Syntax:**
@@ -7054,67 +7364,100 @@ The Features object.
 
 ---
 
-<a id="fsdk_gettrackerfaceposition-function"></a>
-## FSDK_GetTrackerFacePosition Function
+<a id="fsdk_gettrackerface-function"></a>
+## FSDK_GetTrackerFace Function
 
-Retrieves the position of a tracked face. The function accepts the identifier returned by FSDK_FeedFrame. This identifier should be passed to FSDK_GetTrackerFacePosition before the next call of FSDK_FeedFrame with the same tracker.
+Retrieves the position of a tracked face, together with its detection score, in-plane rotation angle and five key points. The function accepts the identifier returned by FSDK_FeedFrame. This identifier should be passed to FSDK_GetTrackerFace before the next call of FSDK_FeedFrame with the same tracker.
+
+The returned structure is the same [TFace](#data-types) that the still-image detection functions produce, so `features[0]` and `features[1]` hold the eye centers of the tracked face and are available without enabling any tracker parameter.
 
 **C++ Syntax:**
 
 ```cpp
-int FSDK_GetTrackerFacePosition(HTracker Tracker, long long CameraIdx, long long ID, TFacePosition * FacePosition);
+int FSDK_GetTrackerFace(HTracker Tracker, long long CameraIdx, long long ID, TFace * Face);
 ```
 
 **Delphi Syntax:**
 
 ```pascal
-function FSDK_GetTrackerFacePosition(Tracker: HTracker; CameraIdx, ID: int64; FacePosition: PFacePosition): integer;
+function FSDK_GetTrackerFace(Tracker: HTracker; CameraIdx, ID: int64; Face: PFace): integer;
 ```
 
 **C# Syntax:**
 
 ```csharp
-int FSDK.GetTrackerFacePosition(int Tracker, long CameraIdx, long ID, ref TFacePosition FacePosition);
+int FSDK.GetTrackerFace(int Tracker, long CameraIdx, long ID, out TFace Face);
 ```
 
 **Java Syntax:**
 
 ```java
-int FSDK.GetTrackerFacePosition(HTracker Tracker, long CameraIdx, long ID, TFacePosition.ByReference FacePosition);
+int FSDK.GetTrackerFace(HTracker Tracker, long CameraIdx, long ID, TFace.ByReference Face);
 ```
 
 **Android Syntax:**
 
 ```java
-int FSDK.GetTrackerFacePosition(HTracker Tracker, long CameraIdx, long ID, TFacePosition FacePosition);
+int FSDK.GetTrackerFace(HTracker Tracker, long CameraIdx, long ID, TFace Face);
 ```
 
 **Parameters:**
 
-- **Tracker** - handle of the tracker from which to retrieve the face position.
+- **Tracker** - handle of the tracker from which to retrieve the face.
 - **CameraIdx** - index of the camera; should be equal to 0 in the current release.
-- **ID** - identifier of the subject returned by FSDK_FeedFrame whose face position will be received.
-- **FacePosition** - pointer to the TFacePosition variable that will receive the face position.
+- **ID** - identifier of the subject returned by FSDK_FeedFrame whose face will be received.
+- **Face** - pointer to the TFace variable that will receive the face.
 
 **Return Value:**
 
 Returns FSDKE_OK if successful. Returns FSDKE_ID_NOT_FOUND if the specified ID was not returned by the previous FSDK_FeedFrame call.
 
+**C# Example:**
+
+```csharp
+long[] ids;
+tracker.FeedFrame(frame, out ids);
+
+foreach (long id in ids)
+{
+    FSDK.TFace face = tracker.GetFace(0, id);
+
+    // the bounding box is not square - draw it with separate width and height
+    graphics.DrawRectangle(pen, face.left, face.top, face.width, face.height);
+}
+```
+
 **Python Syntax:**
 
 ```python
-def FSDK.GetTrackerFacePosition(tracker: Tracker, cameraIdx: int, ID: int) -> FacePosition;
+def FSDK.GetTrackerFace(tracker: Tracker, cameraIdx: int, ID: int) -> Face;
 
-def Tracker.GetFacePosition(cameraIdx: int, ID: int) -> FacePosition;
+def Tracker.GetFace(cameraIdx: int, ID: int) -> Face;
 ```
 
 **Return Value:**
 
-The FacePosition object.
+The Face object.
 
 **Exceptions:**
 
 FSDK.IdNotFound
+
+**Example:**
+
+```cpp
+long long IDs[256], faceCount;
+FSDK_FeedFrame(tracker, 0, frame, &faceCount, IDs, sizeof(IDs));
+
+for (int i = 0; i < faceCount; i++) {
+    TFace face;
+    if (FSDK_GetTrackerFace(tracker, 0, IDs[i], &face) == FSDKE_OK) {
+        printf("ID %lld: box (%d,%d)-(%d,%d), score %.3f, left eye (%d,%d)\n",
+            IDs[i], face.bbox.p0.x, face.bbox.p0.y, face.bbox.p1.x, face.bbox.p1.y,
+            face.score, face.features[0].x, face.features[0].y);
+    }
+}
+```
 
 ---
 
@@ -7279,9 +7622,9 @@ Returns FSDKE_OK if successful. Returns FSDKE_ID_NOT_FOUND if the specified ID i
 **Python Syntax:**
 
 ```python
-def FSDK.UnLockID(tracker: Tracker, ID: int);
+def FSDK.UnlockID(tracker: Tracker, ID: int);
 
-def Tracker.UnLockID(ID: int);
+def Tracker.UnlockID(ID: int);
 ```
 
 **Exceptions:**
@@ -8184,8 +8527,8 @@ FSDK.IdNotFound
 
 ---
 
-<a id="fsdk_gettrackeridbyfaceiid-function"></a>
-## FSDK_GetTrackerIDByFaceIID Function
+<a id="fsdk_gettrackeridbyfaceid-function"></a>
+## FSDK_GetTrackerIDByFaceID Function
 
 Returns the person's ID by its FaceID.
 
@@ -8353,9 +8696,9 @@ Returns FSDKE_OK if successful.
 **Python Syntax:**
 
 ```python
-def FSDK.TrackerCreateID(tracker: Tracker, FaceID: int) -> Tuple[int]; # (ID, FaceID)
+def FSDK.TrackerCreateID(tracker: Tracker, faceTemplate: FaceTemplate) -> Tuple[int]; # (ID, FaceID)
 
-def Tracker.CreateID(FaceID: int) -> Tuple[int]; # (ID, FaceID)
+def Tracker.CreateID(faceTemplate: FaceTemplate) -> Tuple[int]; # (ID, FaceID)
 ```
 
 **Return Value:**
@@ -8684,7 +9027,7 @@ public struct IDSimilarity {
     public float similarity;
 }
 
-int FSDK.TrackerMatchFaces(ref int Tracker, ref byte[] FaceTemplate, float Threshold, out IDSimilarity[] Buffer, out long Count, long MaxSizeInBytes);
+int FSDK.TrackerMatchFaces(int Tracker, byte[] FaceTemplate, float Threshold, out IDSimilarity[] Buffer, long MaxSizeInBytes);
 ```
 
 **Java and Android Syntax:**
@@ -8738,16 +9081,14 @@ FSDK.IdNotFound
 The following FaceSDK functions use multiple CPU cores, thus speeding up the calculations:
 
 ```text
-FSDK_DetectEyes
-FSDK_DetectEyesInRegion
 FSDK_DetectFace
 FSDK_DetectMultipleFaces
 FSDK_DetectFacialFeatures
 FSDK_DetectFacialFeaturesInRegion
+FSDK_DetectFacialAttributeUsingFace
+FSDK_DetectFacialAttributeUsingFeatures
 FSDK_GetFaceTemplate
 FSDK_GetFaceTemplateInRegion
-FSDK_GetFaceTemplateUsingFeatures
-FSDK_GetFaceTemplateUsingEyes
 FSDK_FeedFrame
 FSDK_TrackerMatchFaces
 ```
@@ -8902,13 +9243,14 @@ for (int i = 0; i < imageCount; i++) {
 <a id="tuning-face-detection-for-different-scenarios"></a>
 ### Tuning Face Detection for Different Scenarios
 
-Use [FSDK_SetFaceDetectionParameters](#fsdk_setfacedetectionparameters-function) to optimize detection for your specific use case:
+Use [FSDK_SetParameters](#fsdk_setparameters-function) to optimize detection for your specific use case:
 
 **Webcam / real-time detection (prioritize speed):**
 
 ```cpp
 // Fast detection for real-time video at close range
-FSDK_SetFaceDetectionParameters(false, false, 128);
+int err = 0;
+FSDK_SetParameters("FaceDetectionPatchSize=128; FaceDetectionPatchMode=fast", &err);
 FSDK_SetNumThreads(1);  // Single-threaded for lowest latency per frame
 ```
 
@@ -8916,20 +9258,23 @@ FSDK_SetNumThreads(1);  // Single-threaded for lowest latency per frame
 
 ```cpp
 // Thorough detection for high-res images
-FSDK_SetFaceDetectionParameters(true, true, 512);
+int err = 0;
+FSDK_SetParameters("FaceDetectionPatchSize=512; FaceDetectionPatchMode=full", &err);
 // Use all available cores for maximum throughput
 int numCores;
 FSDK_GetNumThreads(&numCores);
 FSDK_SetNumThreads(numCores);
 ```
 
-**Thermal / infrared camera images:**
+**Low-contrast or noisy images:**
 
 ```cpp
-// Thermal cameras produce lower-contrast images
-// Use lower detection threshold and higher resolution
-FSDK_SetFaceDetectionParameters(false, false, 384);
-FSDK_SetFaceDetectionThreshold(3);  // Lower threshold for low-contrast images
+// Lower the detection threshold so faces of poorer quality are still reported,
+// then discard the weakest results by inspecting TFace.score
+int err = 0;
+FSDK_SetParameters("FaceDetectionPatchSize=384;"
+                   "FaceDetectionThreshold=0.4;"
+                   "TrimOutOfScreenFaces=false", &err);
 ```
 
 <a id="performance-tips"></a>
@@ -8937,7 +9282,8 @@ FSDK_SetFaceDetectionThreshold(3);  // Lower threshold for low-contrast images
 
 - **Single-threaded per call is faster for real-time video** — set `FSDK_SetNumThreads(1)` when processing one frame at a time, as thread overhead can exceed the parallelism benefit for a single operation.
 - **Multi-threaded is faster for batch processing** — use all cores when processing many images in a single FaceSDK call or when each call processes a large image.
-- **Reduce InternalResizeWidth for speed** — lower values (e.g., 128) detect faces faster but may miss faces that are small relative to the image. Use higher values (e.g., 512) only when detecting distant or small faces.
+- **Reduce FaceDetectionPatchSize for speed** — lower values (e.g., 128) detect faces faster but may miss faces that are small relative to the image. Use higher values (e.g., 512), and `FaceDetectionPatchMode=full`, only when detecting distant or small faces.
+- **Tune the per-model thread count separately** — [FSDK_SetNumThreads](#fsdk_setnumthreads-function) controls how FaceSDK parallelizes its own work, while `ModelNumThreads` and its per-model variants control threading inside neural inference. See the [Advanced Parameters](#advanced-parameters) section.
 - **Free images promptly** — call [FSDK_FreeImage](#fsdk_freeimage-function) as soon as processing is complete to keep memory usage low during batch operations.
 - **Avoid nested parallelism** — do not use OpenMP or other parallelism inside threads that already call multi-core FaceSDK functions. Instead, limit FaceSDK threads with [FSDK_SetNumThreads](#fsdk_setnumthreads-function) and manage parallelism at the application level.
 
@@ -8971,8 +9317,8 @@ FSDK_GrabFrame
 The following functions set global parameters that have effect on each thread:
 
 ```text
-FSDK_SetFaceDetectionParameters
-FSDK_SetFaceDetectionThreshold
+FSDK_SetParameter
+FSDK_SetParameters
 FSDK_SetJpegCompressionQuality
 FSDK_SetCameraNaming
 FSDK_SetHTTPProxy
@@ -8985,6 +9331,278 @@ For more information on thread safety of Tracker API, see the Thread Safety sect
 
 <a id="migration"></a>
 # Migration
+
+<a id="migration-from-facesdk-83-to-facesdk-90"></a>
+## Migration from FaceSDK 8.3 to FaceSDK 9.0
+
+FaceSDK 9.0 introduces a new face detection and recognition pipeline. The face structure, the facial feature coordinates and the configuration of the detector all changed with it, and the functions built on the previous eye-pair face model were withdrawn.
+
+<a id="summary"></a>
+### Summary
+
+| Area | Change |
+|---|---|
+| Face structure | `TFacePosition` is replaced by `TFace`, which carries a detection score, a rotation angle, a bounding box and five key points. |
+| Facial features | `FSDK_Features` is an array of `TPointf`, with floating-point coordinates. |
+| Detection settings | `FSDK_SetFaceDetectionParameters` and `FSDK_SetFaceDetectionThreshold` are replaced by named parameters passed to `FSDK_SetParameter` / `FSDK_SetParameters`. |
+| Eye detection | The dedicated eye detection functions are withdrawn; the eye centers come with every detected face. |
+| Matching thresholds | `FSDK_GetMatchingThresholdAtFAR` and `FSDK_GetMatchingThresholdAtFRR` are withdrawn; choose a threshold for your deployment. |
+| Tracker | `FSDK_GetTrackerFacePosition` becomes `FSDK_GetTrackerFace`. Several tracker parameters were removed and the recognition thresholds changed. |
+| Templates | The template size is unchanged at 1040 bytes, but templates carry a version and the recognition model changed. |
+
+<a id="tfaceposition-becomes-tface"></a>
+### TFacePosition becomes TFace
+
+The face structure describes a rectangle rather than a square region, and reports the confidence of the detector:
+
+```cpp
+typedef struct {
+    float score;                    // detection confidence, 0..1
+    float angle;                    // in-plane rotation, degrees
+    struct { TPoint p0, p1; } bbox; // p0 top-left, p1 bottom-right
+    TPoint features[5];             // left eye, right eye, nose tip, two mouth corners
+} TFace;
+```
+
+Code that computed the face rectangle from the center and the width translates as follows:
+
+```cpp
+// was
+int left = fp.xc - fp.w / 2;
+int top  = fp.yc - fp.w / 2;
+int size = fp.w;
+
+// now
+int left = face.bbox.p0.x;
+int top  = face.bbox.p0.y;
+int w    = face.bbox.p1.x - face.bbox.p0.x;
+int h    = face.bbox.p1.y - face.bbox.p0.y;   // the box is not square
+```
+
+`angle` is a `float`. In .NET and Java the structure also exposes `left`, `top`, `right`, `bottom`, `width`, `height`, `center` and `empty`; the Python wrapper keeps `xc`, `yc`, `w`, `h` and `rect` as properties of `FSDK.Face`, and the name `FSDK.FacePosition` remains as an alias, so much of the existing Python code keeps working.
+
+These functions take a `TFace` where they used to take a `TFacePosition`:
+
+- [FSDK_DetectFace](#fsdk_detectface-function)
+- [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function)
+- [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function)
+- [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function)
+
+<a id="facial-features-are-floating-point"></a>
+### Facial features are floating point
+
+`FSDK_Features` is `TPointf[70]`, where `TPointf` holds `float x, y`. The bounding box and the five key points of `TFace` keep whole-pixel `TPoint` coordinates.
+
+```cpp
+typedef struct { int   x, y; } TPoint;    // TFace.bbox, TFace.features
+typedef struct { float x, y; } TPointf;   // the 70 facial features
+```
+
+Every function carrying the 70-feature array is affected: `FSDK_DetectFacialFeatures`, `FSDK_DetectFacialFeaturesInRegion`, `FSDK_GetTrackerFacialFeatures`, `FSDK_DetectFacialAttributeUsingFeatures` and `FSDK_ExtractFaceImage`. In .NET they return `TPointF[]`, in Java `TPointf[]`, in Python `PointF`.
+
+Both point types are 8 bytes wide, so a wrapper declaring the wrong one still compiles and still links, and produces meaningless coordinates at run time. Check the point type in any hand-written binding.
+
+Watch for arithmetic that relied on integer division. An expression such as `(f1.x + f2.x) / 2` used to truncate and now yields a fractional value. Round the coordinates before handing them to a drawing API that takes whole pixels; `TPointF.ToTPoint()` in .NET and `toTPoint()` in Java do this.
+
+<a id="detectmultiplefaces-takes-a-face-count"></a>
+### DetectMultipleFaces takes a face count
+
+The last argument of [FSDK_DetectMultipleFaces](#fsdk_detectmultiplefaces-function) is the capacity of the buffer measured in faces, not in bytes:
+
+```cpp
+// was
+FSDK_DetectMultipleFaces(img, &count, faceArray, sizeof(faceArray));
+
+// now
+FSDK_DetectMultipleFaces(img, &count, faceArray,
+                         sizeof(faceArray) / sizeof(faceArray[0]));
+```
+
+The faces are returned sorted by detection score in descending order.
+
+<a id="face-detection-settings"></a>
+### Face detection settings
+
+`FSDK_SetFaceDetectionParameters` and `FSDK_SetFaceDetectionThreshold` are withdrawn. The detector handles rotation on its own and always reports the rotation angle, so the first two arguments of the old call have no successor. The remaining settings are named parameters of [FSDK_SetParameter](#fsdk_setparameter-function) and [FSDK_SetParameters](#fsdk_setparameters-function):
+
+| Was | Now |
+|---|---|
+| `HandleArbitraryRotations` | no longer needed; rotation is handled by the detector |
+| `DetermineFaceRotationAngle` | no longer needed; `TFace.angle` is always filled in |
+| `InternalResizeWidth` | `FaceDetectionPatchSize`, together with `FaceDetectionPatchMode` |
+| `FSDK_SetFaceDetectionThreshold(n)`, an integer from 1 upwards | `FaceDetectionThreshold`, a float in the range 0..1, default 0.64 |
+| `TrimFacesWithUncertainFacialFeatures` | withdrawn; filter on `TFace.score` instead |
+
+```cpp
+// was
+FSDK_SetFaceDetectionParameters(true, true, 512);
+FSDK_SetFaceDetectionThreshold(3);
+
+// now
+int err = 0;
+FSDK_SetParameters("FaceDetectionPatchSize=512;"
+                   "FaceDetectionPatchMode=full;"
+                   "FaceDetectionThreshold=0.5", &err);
+```
+
+Setting `TrimFacesWithUncertainFacialFeatures` through `FSDK_SetParameter` now returns FSDKE_INVALID_ARGUMENT, and `FSDK_SetParameters` reports the error at that position. Remove it from any parameter string.
+
+The full set of parameters, including the new model, batching and computation backend settings, is described in the [Configuration](#facesdk-parameters) chapter.
+
+<a id="eye-detection"></a>
+### Eye detection
+
+`FSDK_DetectEyes` and `FSDK_DetectEyesInRegion` are withdrawn. The eye centers are available in two other ways:
+
+- `TFace.features[0]` and `TFace.features[1]` hold the left and the right eye of every detected face, with no extra call and no parameter to enable.
+- The 70 facial features hold them at `FSDKP_LEFT_EYE` and `FSDKP_RIGHT_EYE`, in sub-pixel coordinates.
+
+```cpp
+// was
+FSDK_Features eyes;
+FSDK_DetectEyes(img, &eyes);
+
+// now
+TFace face;
+FSDK_DetectFace(img, &face);
+TPoint leftEye  = face.features[0];
+TPoint rightEye = face.features[1];
+```
+
+<a id="template-extraction"></a>
+### Template extraction
+
+`FSDK_GetFaceTemplateUsingEyes` and `FSDK_GetFaceTemplateUsingFeatures` are withdrawn. Use [FSDK_GetFaceTemplateInRegion](#fsdk_getfacetemplateinregion-function), which takes the detected face directly:
+
+```cpp
+// was
+FSDK_GetFaceTemplateUsingFeatures(img, &features, &tmpl);
+
+// now
+FSDK_GetFaceTemplateInRegion(img, &face, &tmpl);
+```
+
+<a id="matching-thresholds"></a>
+### Matching thresholds
+
+`FSDK_GetMatchingThresholdAtFAR` and `FSDK_GetMatchingThresholdAtFRR` are withdrawn. Compare the similarity returned by [FSDK_MatchFaces](#fsdk_matchfaces-function) against a threshold constant chosen for your deployment:
+
+```cpp
+// was
+float threshold;
+FSDK_GetMatchingThresholdAtFAR(0.001f, &threshold);
+if (similarity >= threshold) ...
+
+// now
+const float MATCHING_THRESHOLD = 0.65f;
+if (similarity >= MATCHING_THRESHOLD) ...
+```
+
+The recognition model changed, so the similarity values it produces sit on a different scale than before: a threshold carried over from an earlier version will not behave the same way. Measure the similarity distribution on your own imagery and set the threshold from that measurement. The [Recognition Accuracy and Thresholds](#recognition-accuracy-and-thresholds) section gives the accuracy measured on a public benchmark, along with the thresholds that correspond to it.
+
+<a id="facial-attributes"></a>
+### Facial attributes
+
+[FSDK_DetectFacialAttributeUsingFace](#fsdk_detectfacialattributeusingface-function) reads an attribute straight off a detected face, so the 70 facial features no longer have to be detected first just to ask for gender, age or expression:
+
+```cpp
+TFace face;
+char attrs[1024];
+FSDK_DetectFace(img, &face);
+FSDK_DetectFacialAttributeUsingFace(img, &face, "Gender;Age", attrs, sizeof(attrs));
+```
+
+`FSDK_DetectFacialAttributeUsingFeatures` remains available and now takes floating-point features.
+
+<a id="tracker-api"></a>
+### Tracker API
+
+`FSDK_GetTrackerFacePosition` is replaced by [FSDK_GetTrackerFace](#fsdk_gettrackerface-function), which fills a `TFace`:
+
+```cpp
+// was
+TFacePosition pos;
+FSDK_GetTrackerFacePosition(tracker, 0, id, &pos);
+
+// now
+TFace face;
+FSDK_GetTrackerFace(tracker, 0, id, &face);
+```
+
+In .NET the tracker method is `tracker.GetFace(0, id)`, in Python `tracker.GetFace(0, id)`.
+
+`FSDK_DeleteTrackerFaceTemplate` is withdrawn. Use [FSDK_DeleteTrackerFace](#fsdk_deletetrackerface-function).
+
+These tracker parameters were removed. Remove them from your parameter strings:
+
+| Removed | Replacement |
+|---|---|
+| `HandleArbitraryRotations`, `DetermineFaceRotationAngle` | none needed |
+| `InternalResizeWidth` | `FaceDetectionPatchSize` |
+| `DetectEyes` | none needed; the eye centers come with `FSDK_GetTrackerFace`. Set `DetectFacialFeatures` when you want the sub-pixel eye centers from the 70 facial features. |
+| `DetectAsianFeatures` | none |
+| `TrimFacesWithUncertainFacialFeatures` | filter on `TFace.score` |
+
+The recognition thresholds and the detection threshold of a tracker have new defaults, on a different scale:
+
+| Parameter | Was | Now |
+|---|---|---|
+| `FaceDetectionThreshold` | 5 (integer) | 0.4 (float, 0..1) |
+| `Threshold` | 0.992 | 0.8 |
+| `Threshold2` | 0.998 | 0.9 |
+| `ThresholdFeed` | 0.97 | 0.7 |
+| `FaceDetectionPatchSize` | — | 256 |
+
+A tracker parameter string is not validated against a list of known names: an unrecognized name is accepted and stored, and never reported as an error. A parameter left over from an earlier version therefore fails silently rather than loudly. Check every parameter name against the [Tracker Parameters](#tracker-parameters) section when porting.
+
+<a id="android-fsdk_initialize-is-required"></a>
+### Android: FSDK_Initialize is required
+
+On Android, call [FSDK_Initialize](#fsdk_initialize-function) after [FSDK_ActivateLibrary](#fsdk_activatelibrary-function) and before any other function. Code that relied on being able to skip it has to add the call:
+
+```java
+FSDK.ActivateLibrary(licenseKey);
+FSDK.Initialize();
+```
+
+<a id="new-error-codes"></a>
+### New error codes
+
+Five error codes were added:
+
+| Error Name | Value | Meaning |
+|---|---|---|
+| FSDKE_TENSORFLOW_NOT_INITIALIZED | -29 | The inference runtime could not be started. |
+| FSDKE_PLUGIN_NOT_LOADED | -30 | An external plugin, such as the iBeta liveness add-on, could not be loaded. |
+| FSDKE_PLUGIN_NO_PERMISSION | -31 | The license key does not carry the entitlement for the requested plugin. |
+| FSDKE_FACEID_NOT_FOUND | -32 | No face with the given FaceID exists in the tracker's memory. |
+| FSDKE_FACEIMAGE_NOT_FOUND | -33 | No stored image exists for the given FaceID. |
+
+<a id="stored-templates"></a>
+### Stored templates
+
+The template size is unchanged at 1040 bytes, so existing storage schemas do not need to change. Whether stored templates still match depends on the template version recorded inside them: if [FSDK_MatchFaces](#fsdk_matchfaces-function) returns FSDKE_UNSUPPORTED_TEMPLATE_VERSION against your stored data, re-enroll it from the original images. This is the reason the documentation recommends keeping the original face images alongside their templates.
+
+Tracker memory files carry their templates in the same way. When the tracker memory of an earlier version cannot be loaded, re-enroll it from the stored face images, which the tracker keeps when `KeepFaceImages` is true.
+
+<a id="migration-checklist"></a>
+### Migration checklist
+
+- [ ] Replace every `TFacePosition` with `TFace`, and `fp.xc` / `fp.yc` / `fp.w` arithmetic with the bounding box corners
+- [ ] Treat `TFace.angle` as a float
+- [ ] Change the 70 facial features to the floating-point point type, and re-check arithmetic that relied on integer division
+- [ ] Change the last argument of `FSDK_DetectMultipleFaces` from bytes to a face count
+- [ ] Replace `FSDK_SetFaceDetectionParameters` and `FSDK_SetFaceDetectionThreshold` with `FSDK_SetParameter` / `FSDK_SetParameters`
+- [ ] Remove `TrimFacesWithUncertainFacialFeatures` from every parameter string
+- [ ] Replace `FSDK_DetectEyes` and `FSDK_DetectEyesInRegion` with the key points of `TFace`
+- [ ] Replace `FSDK_GetFaceTemplateUsingEyes` and `FSDK_GetFaceTemplateUsingFeatures` with `FSDK_GetFaceTemplateInRegion`
+- [ ] Replace `FSDK_GetMatchingThresholdAtFAR` and `FSDK_GetMatchingThresholdAtFRR` with a threshold constant, and re-measure it
+- [ ] Replace `FSDK_GetTrackerFacePosition` with `FSDK_GetTrackerFace`, and `FSDK_DeleteTrackerFaceTemplate` with `FSDK_DeleteTrackerFace`
+- [ ] Remove the withdrawn tracker parameters and review the new threshold defaults
+- [ ] Handle the new error codes -29, -30 and -31
+- [ ] Verify stored templates and tracker memory still load, and re-enroll what does not
+
+.NET applications should also read `Wrappers\dotNet\MigrationGuide.txt`, which covers the same ground for the managed wrapper.
 
 <a id="migration-from-facesdk-82-to-facesdk-83"></a>
 ## Migration from FaceSDK 8.2 to FaceSDK 8.3
@@ -9022,7 +9640,7 @@ NEW: in (input), out (output), or no modifier (simple input)
 
 Examples:
 
-- ref TFacePosition -> in TFacePosition
+- ref TFacePosition -> in TFacePosition (the structure became TFace in 9.0, see above)
 - ref float similarity -> out float similarity
 - ref string cameraName -> string cameraName (no modifier)
 - ref byte[] template -> byte[] template (no modifier)
@@ -9282,7 +9900,7 @@ The minimum supported Windows version is Windows Vista.
 <a id="migration-from-facesdk-651-to-facesdk-70-71"></a>
 ## Migration from FaceSDK 6.5.1 to FaceSDK 7.0, 7.1
 
-<a id="face-detection"></a>
+<a id="migration-face-detection"></a>
 ### Face Detection
 
 Version 7.0 introduces a new face detection engine, which is more accurate when detecting faces that are rotated out of plane, blurred, backlit, or in low lighting conditions.
@@ -9323,7 +9941,7 @@ If you were using Tracker API with the KeepFaceImages parameter set to true, the
 <a id="migration-from-facesdk-63-631-64-to-facesdk-65"></a>
 ## Migration from FaceSDK 6.3, 6.3.1, 6.4 to FaceSDK 6.5
 
-<a id="template-format-changes"></a>
+<a id="template-format-changes-65"></a>
 ### Template format changes
 
 The 6.5 version improves face matching accuracy. It achieves a true acceptance rate of 99.83% and a false acceptance rate of 0.1% for the NIST FRGC protocol, ROC1 (compared to the 93.9% true acceptance rate achieved by the 6.4 version).

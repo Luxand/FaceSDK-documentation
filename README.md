@@ -1,6 +1,6 @@
-# Luxand FaceSDK 8.3 — Documentation
+# Luxand FaceSDK 9.0 — Documentation
 
-Official developer documentation for **Luxand FaceSDK 8.3**, a cross-platform face detection and recognition library.
+Official developer documentation for **Luxand FaceSDK 9.0**, a cross-platform face detection and recognition library.
 
 ## What is FaceSDK?
 
@@ -29,7 +29,7 @@ C/C++, C# .NET, VB .NET, Delphi (RAD Studio 12+), Java, Python, Swift/Objective-
 
 ## Documentation
 
-The full developer guide is in [`Luxand_FaceSDK_v8_3.md`](Luxand_FaceSDK_v8_3.md) and covers:
+The full developer guide is in [`Luxand_FaceSDK_v9_0.md`](Luxand_FaceSDK_v9_0.md) and covers:
 
 - Getting started and library activation
 - Configuration and initialization

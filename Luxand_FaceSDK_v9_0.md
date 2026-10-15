@@ -257,7 +257,7 @@ FaceSDK is distributed with the following sample applications:
 
 This application receives video from a camera, allows tagging any subject with a name, and then display the name (recognizing the subject). The application utilizes Tracker API. The iOS/Android versions are published in the Apple AppStore and in Google Play ("Luxand Face Recognition" application).
 
-**Try online:** [Live Recognition](https://www.luxand.com/download/wasm/LiveRecognition.html)
+**Try online:** [Live Recognition](https://www.luxand.com/download/samples/wasm/LiveRecognition/LiveRecognition.html)
 
 **Source code is available on:**
 - [Microsoft C# 2010+](https://www.luxand.com/download/samples/LiveRecognition-VisualStudio-CSharp.zip)
@@ -364,7 +364,7 @@ This application is for the command line. The application receives a picture, de
 
 This application asks a subject looking into a camera to rotate their head and smile in a certain way to detect liveness. The active liveness detection helps prevent spoofing attacks with photos or videos by requiring user interaction.
 
-**Try online:** [Active Liveness](https://www.luxand.com/download/wasm/ActiveLiveness.html)
+**Try online:** [Active Liveness](https://www.luxand.com/download/samples/wasm/ActiveLiveness/ActiveLiveness.html)
 
 **Source code is available on:**
 - [Microsoft C# 2010+](https://www.luxand.com/download/samples/ActiveLiveness-VisualStudio-CSharp.zip)
@@ -373,7 +373,7 @@ This application asks a subject looking into a camera to rotate their head and s
 - [Android (Android Studio)](https://www.luxand.com/download/samples/ActiveLiveness-Android.zip)
 - [Java (NetBeans)](https://www.luxand.com/download/samples/ActiveLiveness-Java-NetBeans.zip)
 - [WebAssembly (Wasm)](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip)
-- [React + WebAssembly (Vite, TypeScript)](https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip)
+- [React + WebAssembly (Vite, TypeScript)](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly-React.zip)
 
 The React version wraps the whole check in a reusable `<LivenessCheck>` component with `onPass` and `onFail` callbacks. It asks for a random sequence of actions at one of three difficulty levels (3, 5 or 8 commands), speaks each prompt aloud, verifies with the tracker that the same person stays in front of the camera for the whole session, and fails the check if the face is lost or a second face appears. Head angles and the face oval are smoothed with an exponential moving average so the overlay does not jitter. Everything runs client-side; no frame leaves the browser.
 
@@ -399,15 +399,15 @@ This sample demonstrates IBeta-compliant liveness detection that analyzes faces 
 - [Windows (C++)](https://www.luxand.com/download/samples/iBeta_Liveness-Windows-CPP.zip)
 - [Windows (C#)](https://www.luxand.com/download/samples/iBeta_Liveness-Windows-CSharp.zip)
 - [Windows (C# WinUI)](https://www.luxand.com/download/samples/iBeta_Liveness-Windows-CSharp-WinUI.zip)
-- [Linux (C++)](https://www.luxand.com/download/samples/iBeta_Liveness-Linux-CPP.zip)
+- [Linux (C++)](https://www.luxand.com/download/samples/iBeta_Liveness-Linux-CPP-GTK.zip)
 
 **Mobile:**
 - [iOS (Swift)](https://www.luxand.com/download/samples/iBeta_Liveness-iOS-Swift.zip)
 - [Android (Java)](https://www.luxand.com/download/samples/iBeta_Liveness-Android-Java.zip)
 
 **Advanced:**
-- [Python (Windows)](https://www.luxand.com/download/samples/iBeta_Liveness-Python_Windows.zip)
-- [Python (Linux)](https://www.luxand.com/download/samples/iBeta_Liveness-Python_Linux.zip)
+- [Python (Windows)](https://www.luxand.com/download/samples/iBeta_Liveness-Python-Windows.zip)
+- [Python (Linux)](https://www.luxand.com/download/samples/iBeta_Liveness-Python-Linux.zip)
 - [Flutter (iOS, Android)](https://www.luxand.com/download/samples/iBeta_Liveness-Flutter.zip)
 - [React Native (iOS, Android)](https://www.luxand.com/download/samples/iBeta_Liveness-ReactNative.zip)
 
@@ -417,8 +417,9 @@ This sample demonstrates IBeta-compliant liveness detection that analyzes faces 
 This sample provides comprehensive Python implementations demonstrating various FaceSDK capabilities. The sample includes multiple Python scripts for active liveness, passive liveness, facial features detection, facial attribute and head angle recognition, live recognition, lookalikes search, portrait cropping, and tracker memory management. The Python wrapper allows dynamic linking with .dll/.so/.dylib and provides cross-platform support for Windows, Linux (x86, ARM), and macOS.
 
 **Source code is available on:**
-- [Python 3.x (Windows)](https://www.luxand.com/download/samples/Advanced-Python-Windows.zip)
-- [Python 3.x (Linux)](https://www.luxand.com/download/samples/Advanced-Python-Linux.zip)
+- [Python 3.x (Windows)](https://www.luxand.com/download/samples/Python-Windows.zip)
+- [Python 3.x (Linux)](https://www.luxand.com/download/samples/Python-Linux.zip)
+- [Python 3.x (macOS)](https://www.luxand.com/download/samples/Python-macOS.zip)
 
 **Included Python scripts:**
 - `ActiveLiveness.py` — Active liveness detection with user interaction.
@@ -441,8 +442,8 @@ This sample provides comprehensive Python implementations demonstrating various 
 These samples provide multi-platform implementations for Flutter and React Native, matching the LiveRecognition capabilities for face tracking and recognition.
 
 **Source code is available on:**
-- [Flutter (iOS, Android)](https://www.luxand.com/download/samples/Advanced-Flutter.zip)
-- [React Native (iOS, Android)](https://www.luxand.com/download/samples/Advanced-ReactNative.zip)
+- [Flutter (iOS, Android)](https://www.luxand.com/download/samples/Liveness-Flutter.zip)
+- [React Native (iOS, Android)](https://www.luxand.com/download/samples/Liveness-ReactNative.zip)
 
 <a id="14-tracker-db-editor"></a>
 ## 14. Tracker DB Editor
@@ -460,9 +461,9 @@ What it is for:
 It is written in Python with PySide6 and runs on Windows, Linux and macOS. A FaceSDK licence key is needed only for importing people from photographs and for the similarity figure in the inspector; opening, viewing, naming, editing, merging, exporting and saving work without a key.
 
 **Source code is available on:**
-- [Windows](https://www.luxand.com/download/samples/TrackerDBEditor-Windows.zip)
-- [Linux](https://www.luxand.com/download/samples/TrackerDBEditor-Linux.zip)
-- [macOS](https://www.luxand.com/download/samples/TrackerDBEditor-macOS.zip)
+- [Windows](https://www.luxand.com/download/TrackerDBEditor-Windows.zip)
+- [Linux](https://www.luxand.com/download/TrackerDBEditor-Linux.zip)
+- [macOS](https://www.luxand.com/download/TrackerDBEditor-macOS.zip)
 
 <a id="15-liveness-server"></a>
 ## 15. Liveness Server
@@ -479,8 +480,8 @@ Both variants target Debian 11/12 or Ubuntu 20.04/22.04/24.04 on x86-64, and bot
 Two separate credentials are required, and the service will not start with either one missing: a FaceSDK activation key licensed for Linux and for the iBeta liveness plugin, and the iBeta plugin licence file, which carries an expiry date. A FaceSDK key without the plugin entitlement activates the SDK but fails every liveness call.
 
 **Source code is available on:**
-- [Docker](https://www.luxand.com/download/samples/LivenessServer-Docker.zip)
-- [systemd (native Python)](https://www.luxand.com/download/samples/LivenessServer-systemd.zip)
+- [Docker](https://www.luxand.com/download/luxand-liveness-server-docker.zip)
+- [systemd (native Python)](https://www.luxand.com/download/luxand-liveness-server-systemd.zip)
 
 <a id="16-live-recognition-php"></a>
 ## 16. Live Recognition (PHP)
@@ -492,7 +493,7 @@ Face tracking, recognition and on-device liveness all run in the browser through
 It requires nginx with PHP-FPM 8.1 or newer, a domain with TLS (the camera is only available in a secure context), and a FaceSDK key issued for web use and registered for the domain being served. See the [Using with WebAssembly](#using-with-web-assembly) chapter for how web keys are bound to origins.
 
 **Source code is available on:**
-- [PHP + WebAssembly](https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip)
+- [PHP + WebAssembly](https://www.luxand.com/download/samples/LiveRecognition-WebAssembly-PHP.zip)
 
 <a id="17-head-coupled-cubes"></a>
 ## 17. Head-Coupled Cubes
@@ -766,18 +767,19 @@ tracker.SetParameters(RecognizeFaces=False, DetectFacialFeatures=True)
 ## Sample Code
 
 Try python samples at:
-- Windows: https://www.luxand.com/download/samples/Advanced-Python-Windows.zip
-- Linux: https://www.luxand.com/download/samples/Advanced-Python-Linux.zip
+- Windows: https://www.luxand.com/download/samples/Python-Windows.zip
+- Linux: https://www.luxand.com/download/samples/Python-Linux.zip
+- macOS: https://www.luxand.com/download/samples/Python-macOS.zip
 
 <a id="using-with-flutter"></a>
 # Using with Flutter
 
-Please refer to the sample at [https://www.luxand.com/download/samples/Advanced-Flutter.zip](https://www.luxand.com/download/samples/Advanced-Flutter.zip) and follow the instructions in the readme.md file within that directory.
+Please refer to the sample at [https://www.luxand.com/download/samples/Liveness-Flutter.zip](https://www.luxand.com/download/samples/Liveness-Flutter.zip) and follow the instructions in the readme.md file within that directory.
 
 <a id="using-with-react-native"></a>
 # Using with React Native
 
-Please refer to the sample at [https://www.luxand.com/download/samples/Advanced-ReactNative.zip](https://www.luxand.com/download/samples/Advanced-ReactNative.zip) and follow the instructions in the readme.md file within that directory.
+Please refer to the sample at [https://www.luxand.com/download/samples/Liveness-ReactNative.zip](https://www.luxand.com/download/samples/Liveness-ReactNative.zip) and follow the instructions in the readme.md file within that directory.
 
 <a id="using-with-web-assembly"></a>
 # Using with Web Assembly
@@ -827,9 +829,9 @@ Request a key for web use at [https://luxand.com/facesdk/requestkey/](https://lu
 Please refer to the samples at:
 
 - [https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip)
-- [https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip](https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip)
+- [https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly-React.zip](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly-React.zip)
 - [https://www.luxand.com/download/samples/LiveRecognition-WebAssembly.zip](https://www.luxand.com/download/samples/LiveRecognition-WebAssembly.zip)
-- [https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip](https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip)
+- [https://www.luxand.com/download/samples/LiveRecognition-WebAssembly-PHP.zip](https://www.luxand.com/download/samples/LiveRecognition-WebAssembly-PHP.zip)
 - [https://www.luxand.com/download/samples/LiveFacialFeatures-WebAssembly.zip](https://www.luxand.com/download/samples/LiveFacialFeatures-WebAssembly.zip)
 - [https://www.luxand.com/download/samples/FacialFeatures-WebAssembly.zip](https://www.luxand.com/download/samples/FacialFeatures-WebAssembly.zip)
 - [https://www.luxand.com/download/samples/HeadCoupledCubes-WebAssembly.zip](https://www.luxand.com/download/samples/HeadCoupledCubes-WebAssembly.zip)

@@ -1,6 +1,6 @@
-# Luxand FaceSDK 9.0 — Documentation
+# Luxand FaceSDK 9.0.1 — Documentation
 
-Official developer documentation for **Luxand FaceSDK 9.0**, a cross-platform face detection and recognition library.
+Official developer documentation for **Luxand FaceSDK 9.0.1**, a cross-platform face detection and recognition library.
 
 ## What is FaceSDK?
 
@@ -20,7 +20,7 @@ Luxand FaceSDK provides an API to:
 | Windows 7/8/10/11, Server 2008R2–2022 | x86, x64 |
 | Linux (glibc 2.28+) | x86_64, armv7, arm64 |
 | macOS 10.13+ | arm64, x86_64 |
-| iOS 12.0+ | arm64, armv7, x86_64, x86 |
+| iOS 15.0+ | arm64 (device), arm64/x86_64 (simulator) |
 | Android 5.0+ (API 21+) | arm64-v8a, armeabi-v7a, x86, x86_64 |
 
 ## Language Support
@@ -29,7 +29,7 @@ C/C++, C# .NET, VB .NET, Delphi (RAD Studio 12+), Java, Python, Swift/Objective-
 
 ## Documentation
 
-The full developer guide is in [`Luxand_FaceSDK_v9_0.md`](Luxand_FaceSDK_v9_0.md) and covers:
+The full developer guide is in [`Luxand_FaceSDK_v9_0_1.md`](Luxand_FaceSDK_v9_0_1.md) and covers:
 
 - Getting started and library activation
 - Configuration and initialization

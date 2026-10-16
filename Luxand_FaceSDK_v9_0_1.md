@@ -12,7 +12,7 @@
 <br>
 <div align="center">
   <h1>Luxand FaceSDK</h1>
-  <h2>9.0</h2>
+  <h2>9.0.1</h2>
   <h3>Face Detection and Recognition Library</h3>
   <h3>Developer’s Guide</h3>
 </div>
@@ -41,7 +41,7 @@ The FaceSDK library supports the following platforms:
 - Linux (RHEL 8+, CentOS 8+ and other with glibc 2.28+)
 - Linux armv7/arm64 (Raspberry Pi2+)
 - macOS 10.13+, arm64/x86_64
-- iOS 12.0+, arm64/ armv7/ x86_64/ x86(iPhone, iPad, simulator)
+- iOS 15.0+, arm64 (iPhone, iPad), arm64/ x86_64 (simulator)
 - Android 5.0+ (platform version 21+), arm64 (arm64-v8a)/ armv7 (armeabi-v7a)/ x86/ x86_64
 
 An Intel Xeon or AMD Ryzen processor is recommended for better performance.
@@ -257,7 +257,7 @@ FaceSDK is distributed with the following sample applications:
 
 This application receives video from a camera, allows tagging any subject with a name, and then display the name (recognizing the subject). The application utilizes Tracker API. The iOS/Android versions are published in the Apple AppStore and in Google Play ("Luxand Face Recognition" application).
 
-**Try online:** [Live Recognition](https://www.luxand.com/download/wasm/LiveRecognition.html)
+**Try online:** [Live Recognition](https://www.luxand.com/download/samples/wasm/LiveRecognition/LiveRecognition.html)
 
 **Source code is available on:**
 - [Microsoft C# 2010+](https://www.luxand.com/download/samples/LiveRecognition-VisualStudio-CSharp.zip)
@@ -364,7 +364,7 @@ This application is for the command line. The application receives a picture, de
 
 This application asks a subject looking into a camera to rotate their head and smile in a certain way to detect liveness. The active liveness detection helps prevent spoofing attacks with photos or videos by requiring user interaction.
 
-**Try online:** [Active Liveness](https://www.luxand.com/download/wasm/ActiveLiveness.html)
+**Try online:** [Active Liveness](https://www.luxand.com/download/samples/wasm/ActiveLiveness/ActiveLiveness.html)
 
 **Source code is available on:**
 - [Microsoft C# 2010+](https://www.luxand.com/download/samples/ActiveLiveness-VisualStudio-CSharp.zip)
@@ -373,7 +373,7 @@ This application asks a subject looking into a camera to rotate their head and s
 - [Android (Android Studio)](https://www.luxand.com/download/samples/ActiveLiveness-Android.zip)
 - [Java (NetBeans)](https://www.luxand.com/download/samples/ActiveLiveness-Java-NetBeans.zip)
 - [WebAssembly (Wasm)](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip)
-- [React + WebAssembly (Vite, TypeScript)](https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip)
+- [React + WebAssembly (Vite, TypeScript)](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly-React.zip)
 
 The React version wraps the whole check in a reusable `<LivenessCheck>` component with `onPass` and `onFail` callbacks. It asks for a random sequence of actions at one of three difficulty levels (3, 5 or 8 commands), speaks each prompt aloud, verifies with the tracker that the same person stays in front of the camera for the whole session, and fails the check if the face is lost or a second face appears. Head angles and the face oval are smoothed with an exponential moving average so the overlay does not jitter. Everything runs client-side; no frame leaves the browser.
 
@@ -399,15 +399,15 @@ This sample demonstrates IBeta-compliant liveness detection that analyzes faces 
 - [Windows (C++)](https://www.luxand.com/download/samples/iBeta_Liveness-Windows-CPP.zip)
 - [Windows (C#)](https://www.luxand.com/download/samples/iBeta_Liveness-Windows-CSharp.zip)
 - [Windows (C# WinUI)](https://www.luxand.com/download/samples/iBeta_Liveness-Windows-CSharp-WinUI.zip)
-- [Linux (C++)](https://www.luxand.com/download/samples/iBeta_Liveness-Linux-CPP.zip)
+- [Linux (C++)](https://www.luxand.com/download/samples/iBeta_Liveness-Linux-CPP-GTK.zip)
 
 **Mobile:**
 - [iOS (Swift)](https://www.luxand.com/download/samples/iBeta_Liveness-iOS-Swift.zip)
 - [Android (Java)](https://www.luxand.com/download/samples/iBeta_Liveness-Android-Java.zip)
 
 **Advanced:**
-- [Python (Windows)](https://www.luxand.com/download/samples/iBeta_Liveness-Python_Windows.zip)
-- [Python (Linux)](https://www.luxand.com/download/samples/iBeta_Liveness-Python_Linux.zip)
+- [Python (Windows)](https://www.luxand.com/download/samples/iBeta_Liveness-Python-Windows.zip)
+- [Python (Linux)](https://www.luxand.com/download/samples/iBeta_Liveness-Python-Linux.zip)
 - [Flutter (iOS, Android)](https://www.luxand.com/download/samples/iBeta_Liveness-Flutter.zip)
 - [React Native (iOS, Android)](https://www.luxand.com/download/samples/iBeta_Liveness-ReactNative.zip)
 
@@ -417,8 +417,9 @@ This sample demonstrates IBeta-compliant liveness detection that analyzes faces 
 This sample provides comprehensive Python implementations demonstrating various FaceSDK capabilities. The sample includes multiple Python scripts for active liveness, passive liveness, facial features detection, facial attribute and head angle recognition, live recognition, lookalikes search, portrait cropping, and tracker memory management. The Python wrapper allows dynamic linking with .dll/.so/.dylib and provides cross-platform support for Windows, Linux (x86, ARM), and macOS.
 
 **Source code is available on:**
-- [Python 3.x (Windows)](https://www.luxand.com/download/samples/Advanced-Python-Windows.zip)
-- [Python 3.x (Linux)](https://www.luxand.com/download/samples/Advanced-Python-Linux.zip)
+- [Python 3.x (Windows)](https://www.luxand.com/download/samples/Python-Windows.zip)
+- [Python 3.x (Linux)](https://www.luxand.com/download/samples/Python-Linux.zip)
+- [Python 3.x (macOS)](https://www.luxand.com/download/samples/Python-macOS.zip)
 
 **Included Python scripts:**
 - `ActiveLiveness.py` — Active liveness detection with user interaction.
@@ -441,8 +442,8 @@ This sample provides comprehensive Python implementations demonstrating various 
 These samples provide multi-platform implementations for Flutter and React Native, matching the LiveRecognition capabilities for face tracking and recognition.
 
 **Source code is available on:**
-- [Flutter (iOS, Android)](https://www.luxand.com/download/samples/Advanced-Flutter.zip)
-- [React Native (iOS, Android)](https://www.luxand.com/download/samples/Advanced-ReactNative.zip)
+- [Flutter (iOS, Android)](https://www.luxand.com/download/samples/Liveness-Flutter.zip)
+- [React Native (iOS, Android)](https://www.luxand.com/download/samples/Liveness-ReactNative.zip)
 
 <a id="14-tracker-db-editor"></a>
 ## 14. Tracker DB Editor
@@ -460,9 +461,9 @@ What it is for:
 It is written in Python with PySide6 and runs on Windows, Linux and macOS. A FaceSDK licence key is needed only for importing people from photographs and for the similarity figure in the inspector; opening, viewing, naming, editing, merging, exporting and saving work without a key.
 
 **Source code is available on:**
-- [Windows](https://www.luxand.com/download/samples/TrackerDBEditor-Windows.zip)
-- [Linux](https://www.luxand.com/download/samples/TrackerDBEditor-Linux.zip)
-- [macOS](https://www.luxand.com/download/samples/TrackerDBEditor-macOS.zip)
+- [Windows](https://www.luxand.com/download/TrackerDBEditor-Windows.zip)
+- [Linux](https://www.luxand.com/download/TrackerDBEditor-Linux.zip)
+- [macOS](https://www.luxand.com/download/TrackerDBEditor-macOS.zip)
 
 <a id="15-liveness-server"></a>
 ## 15. Liveness Server
@@ -479,8 +480,8 @@ Both variants target Debian 11/12 or Ubuntu 20.04/22.04/24.04 on x86-64, and bot
 Two separate credentials are required, and the service will not start with either one missing: a FaceSDK activation key licensed for Linux and for the iBeta liveness plugin, and the iBeta plugin licence file, which carries an expiry date. A FaceSDK key without the plugin entitlement activates the SDK but fails every liveness call.
 
 **Source code is available on:**
-- [Docker](https://www.luxand.com/download/samples/LivenessServer-Docker.zip)
-- [systemd (native Python)](https://www.luxand.com/download/samples/LivenessServer-systemd.zip)
+- [Docker](https://www.luxand.com/download/luxand-liveness-server-docker.zip)
+- [systemd (native Python)](https://www.luxand.com/download/luxand-liveness-server-systemd.zip)
 
 <a id="16-live-recognition-php"></a>
 ## 16. Live Recognition (PHP)
@@ -492,7 +493,7 @@ Face tracking, recognition and on-device liveness all run in the browser through
 It requires nginx with PHP-FPM 8.1 or newer, a domain with TLS (the camera is only available in a secure context), and a FaceSDK key issued for web use and registered for the domain being served. See the [Using with WebAssembly](#using-with-web-assembly) chapter for how web keys are bound to origins.
 
 **Source code is available on:**
-- [PHP + WebAssembly](https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip)
+- [PHP + WebAssembly](https://www.luxand.com/download/samples/LiveRecognition-WebAssembly-PHP.zip)
 
 <a id="17-head-coupled-cubes"></a>
 ## 17. Head-Coupled Cubes
@@ -766,18 +767,19 @@ tracker.SetParameters(RecognizeFaces=False, DetectFacialFeatures=True)
 ## Sample Code
 
 Try python samples at:
-- Windows: https://www.luxand.com/download/samples/Advanced-Python-Windows.zip
-- Linux: https://www.luxand.com/download/samples/Advanced-Python-Linux.zip
+- Windows: https://www.luxand.com/download/samples/Python-Windows.zip
+- Linux: https://www.luxand.com/download/samples/Python-Linux.zip
+- macOS: https://www.luxand.com/download/samples/Python-macOS.zip
 
 <a id="using-with-flutter"></a>
 # Using with Flutter
 
-Please refer to the sample at [https://www.luxand.com/download/samples/Advanced-Flutter.zip](https://www.luxand.com/download/samples/Advanced-Flutter.zip) and follow the instructions in the readme.md file within that directory.
+Please refer to the sample at [https://www.luxand.com/download/samples/Liveness-Flutter.zip](https://www.luxand.com/download/samples/Liveness-Flutter.zip) and follow the instructions in the readme.md file within that directory.
 
 <a id="using-with-react-native"></a>
 # Using with React Native
 
-Please refer to the sample at [https://www.luxand.com/download/samples/Advanced-ReactNative.zip](https://www.luxand.com/download/samples/Advanced-ReactNative.zip) and follow the instructions in the readme.md file within that directory.
+Please refer to the sample at [https://www.luxand.com/download/samples/Liveness-ReactNative.zip](https://www.luxand.com/download/samples/Liveness-ReactNative.zip) and follow the instructions in the readme.md file within that directory.
 
 <a id="using-with-web-assembly"></a>
 # Using with Web Assembly
@@ -827,9 +829,9 @@ Request a key for web use at [https://luxand.com/facesdk/requestkey/](https://lu
 Please refer to the samples at:
 
 - [https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly.zip)
-- [https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip](https://www.luxand.com/download/samples/ActiveLiveness-React-WebAssembly.zip)
+- [https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly-React.zip](https://www.luxand.com/download/samples/ActiveLiveness-WebAssembly-React.zip)
 - [https://www.luxand.com/download/samples/LiveRecognition-WebAssembly.zip](https://www.luxand.com/download/samples/LiveRecognition-WebAssembly.zip)
-- [https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip](https://www.luxand.com/download/samples/LiveRecognition-PHP-WebAssembly.zip)
+- [https://www.luxand.com/download/samples/LiveRecognition-WebAssembly-PHP.zip](https://www.luxand.com/download/samples/LiveRecognition-WebAssembly-PHP.zip)
 - [https://www.luxand.com/download/samples/LiveFacialFeatures-WebAssembly.zip](https://www.luxand.com/download/samples/LiveFacialFeatures-WebAssembly.zip)
 - [https://www.luxand.com/download/samples/FacialFeatures-WebAssembly.zip](https://www.luxand.com/download/samples/FacialFeatures-WebAssembly.zip)
 - [https://www.luxand.com/download/samples/HeadCoupledCubes-WebAssembly.zip](https://www.luxand.com/download/samples/HeadCoupledCubes-WebAssembly.zip)
@@ -3293,7 +3295,7 @@ To switch back to the built-in model, set FaceDetectionModel to `default`. See t
 Luxand FaceSDK stores the information about a detected face in the TFace data type.
 
 - `score` — the confidence of the detector, in the range 0..1. Faces are returned sorted by score in descending order.
-- `angle` — the in-plane rotation angle of the face, in degrees.
+- `angle` — the in-plane rotation angle of the face, in radians; a face rotated counter-clockwise in the image gives a negative angle. Multiply by 180/π for degrees.
 - `bbox` — the bounding box of the face: `p0` is its top-left corner and `p1` its bottom-right corner. The box is not necessarily square.
 - `features` — five key points found by the detector: the left eye center, the right eye center, the nose tip and the two mouth corners, in this order. These are *not* the 70 facial features; to obtain those, call [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) or [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function).
 
@@ -4112,7 +4114,7 @@ int FSDK.ExtractFaceImage(HImage Image, FSDK_Features.ByReference FacialFeatures
 
 - **Image** — handle of the source image.
 - **FacialFeatures** — the facial features of the face to extract, as returned by [FSDK_DetectFacialFeatures](#fsdk_detectfacialfeatures-function) or [FSDK_DetectFacialFeaturesInRegion](#fsdk_detectfacialfeaturesinregion-function).
-- **Width**, **Height** — the dimensions of the extracted image, in pixels.
+- **Width**, **Height** — the size of the extracted image, in pixels. The extracted image is square: its width and height both equal **Width**; **Height** does not change the size of the result.
 - **ExtractedFaceImage** — pointer to HImage receiving the handle of the extracted image. Release it with [FSDK_FreeImage](#fsdk_freeimage-function) when you are done with it.
 - **ResizedFeatures** — pointer to the FSDK_Features array receiving the facial features in the coordinates of the extracted image.
 
@@ -4805,7 +4807,7 @@ When calling the function with the *"Angles"* attribute, the following string ma
 
 `"Roll=-2.4;Pan=13.7;Tilt=-5.1"`
 
-The three values are the head rotation angles in degrees: *Roll* is the in-plane rotation, *Pan* the left-right turn and *Tilt* the up-down nod. A value of 0 means the head faces the camera along that axis. Parse them with [FSDK_GetValueConfidence](#fsdk_getvalueconfidence-function) just like a confidence level. Refer to the LiveFaceAngles sample application for a working example.
+The three values are the head rotation angles in degrees: *Roll* is the in-plane rotation, *Pan* the left-right turn and *Tilt* the up-down nod. A value of 0 means the head faces the camera along that axis. Computed from the 70 facial features, the angles are reliable within -45..45 degrees of roll and pan: beyond that the facial features are placed incorrectly and *Roll* stops growing while *Pan* and *Tilt* get false values. For a strongly tilted head use [FSDK_DetectFacialAttributeUsingFace](#fsdk_detectfacialattributeusingface-function), whose roll stays accurate up to about -90..90 degrees. Parse them with [FSDK_GetValueConfidence](#fsdk_getvalueconfidence-function) just like a confidence level. Refer to the LiveFaceAngles sample application for a working example.
 
 You may use several attributes in a single function call separated by ";". For example, if AttributeName is *"Gender; Age; Expression"*, the result may be the following: `"Male=0.95721;Female=0.04279;Age=37;Smile=0.987;EyesOpen=0.9952"`.
 
@@ -5385,7 +5387,7 @@ The iBeta Liveness add-on processes the area around the face, so the optimal res
 - The minimum size of a face box that can be processed is 150x150 pixels.
 - The padding between the face box and the image's borders should be at least 15 pixels.
 - The distance between the pupils on the face should be at least 50 pixels.
-- The out-of-plane rotation angle (face pitch and yaw) should be no more than В±30 degrees.
+- The out-of-plane rotation angle (face pitch and yaw) should be no more than ±30 degrees.
 
 Images that do not meet these conditions will be rejected. Other factors that can affect accuracy include:
 
@@ -6425,9 +6427,9 @@ A tracker keeps its own copy of the face detection, face recognition and model e
 
 - **MemoryLimit** — the amount of memory available for the storage of facial appearances. See the [Tracker Memory](#tracker-memory) section. The default value is 2150.
 
-- **Threshold** — the threshold used when deciding if two facial appearances belong to the same subject. Each threshold value alters both the false acceptance rate and recognition rate. See the [Recognition Performance](#recognition-performance) section. The default value is 0.8.
+- **Threshold** — the threshold used when deciding if two facial appearances belong to the same subject. Each threshold value alters both the false acceptance rate and recognition rate. See the [Recognition Performance](#recognition-performance) section. The default value is 0.75.
 
-- **Threshold2** — the stricter threshold used when the tracker decides whether two identifiers may be merged into one. It should be set above *Threshold*. The default value is 0.9.
+- **Threshold2** — the stricter threshold used when the tracker decides whether two identifiers may be merged into one. It should be set above *Threshold*. The default value is 0.8.
 
 - **ThresholdFeed** — the threshold used when matching a face against the appearances seen on the previous frames of the same uninterrupted tracking sequence. It should be set below *Threshold*. The default value is 0.7.
 
@@ -6549,7 +6551,7 @@ int main() {
         "DetectGender=true;"
         "DetectAge=true;"
         "DetectExpression=true;"
-        "Threshold=0.8",
+        "Threshold=0.75",
         &errpos);
 
     // Step 5: Get camera list and open the first available camera
@@ -6645,7 +6647,7 @@ tracker.SetParameters(
     DetectGender=True,
     DetectAge=True,
     DetectExpression=True,
-    Threshold=0.8
+    Threshold=0.75
 )
 
 # Get camera list and open the first available camera
@@ -6867,8 +6869,8 @@ Three thresholds drive the identification logic, and they must keep their relati
 | Parameter | Default | Role |
 |---|---|---|
 | **ThresholdFeed** | 0.7 | Matching a face against the appearances of the same uninterrupted tracking sequence. The lowest of the three. |
-| **Threshold** | 0.8 | Deciding that two facial appearances belong to the same subject. |
-| **Threshold2** | 0.9 | Deciding that two identifiers may be merged into one. The strictest of the three. |
+| **Threshold** | 0.75 | Deciding that two facial appearances belong to the same subject. |
+| **Threshold2** | 0.8 | Deciding that two identifiers may be merged into one. The strictest of the three. |
 
 Raising **Threshold** lowers FAR and lowers the recognition rate; lowering it does the opposite. Generally, the higher the MemoryLimit is set, the higher the FAR will be (once all available memory has been used), so a larger memory limit calls for a higher threshold.
 
@@ -7185,7 +7187,7 @@ Returns FSDKE_OK if successful. In case of syntax error returns FSDKE_SYNTAX_ERR
 
 ```cpp
 int err = 0;
-FSDK_SetTrackerMultipleParameters(tracker, "FaceDetectionPatchSize=128; FaceDetectionThreshold=0.4; Threshold=0.8; Threshold2=0.9;", &err);
+FSDK_SetTrackerMultipleParameters(tracker, "FaceDetectionPatchSize=128; FaceDetectionThreshold=0.4; Threshold=0.75; Threshold2=0.8;", &err);
 ```
 
 **Python Syntax:**
@@ -8851,7 +8853,7 @@ FSDK.FaceIdNotFound
 <a id="fsdk_gettrackerfaceimage-function"></a>
 ## FSDK_GetTrackerFaceImage Function
 
-This function returns Image of a face with given FaceID.
+This function returns Image of a face with given FaceID: the 112x112 grayscale image of the face, upright, stored in the tracker (see the KeepFaceImages parameter).
 
 **C++ Syntax:**
 
@@ -8908,7 +8910,7 @@ FSDK.FaceIdNotFound
 <a id="fsdk_settrackerfaceimage-function"></a>
 ## FSDK_SetTrackerFaceImage Function
 
-This function places an Image for a face with given FaceID to the tracker. The Image should be 96x96 pixels in grey mode (8 bpp). If an image with this FaceID is already exists, it is replaced by the new one.
+This function places an Image for a face with given FaceID to the tracker. The Image must be 112x112 pixels; a color image is converted to grayscale. If an image with this FaceID already exists, it is replaced by the new one. The facial feature points of the face are reset; set them with [FSDK_SetTrackerFaceFeatures](#fsdk_settrackerfacefeatures-function).
 
 **C++ Syntax:**
 
@@ -8942,7 +8944,7 @@ int FSDK.SetTrackerFaceImage(HTracker Tracker, long FaceID, HImage Image);
 
 **Return Value:**
 
-Returns FSDKE_OK if successful. If the FaceID is not found, the function returns the FSDKE_FACEID_NOT_FOUND code.
+Returns FSDKE_OK if successful. If the FaceID is not found, the function returns the FSDKE_FACEID_NOT_FOUND code. If the Image is not 112x112 pixels, the code FSDKE_INVALID_ARGUMENT is returned.
 
 **Python Syntax:**
 
@@ -8955,6 +8957,118 @@ def Tracker.SetFaceImage(FaceID: int, image: Image);
 **Exceptions:**
 
 FSDK.FaceIdNotFound
+
+---
+
+<a id="fsdk_gettrackerfacefeatures-function"></a>
+## FSDK_GetTrackerFaceFeatures Function
+
+This function returns the 5 facial feature points (eye centers, nose tip, mouth corners) of the face image stored in the tracker for a face with given FaceID. The coordinates refer to that 112x112 image (see [FSDK_GetTrackerFaceImage](#fsdk_gettrackerfaceimage-function)).
+
+**C++ Syntax:**
+
+```cpp
+int FSDK_GetTrackerFaceFeatures(HTracker Tracker, long long FaceID, TPoint * Features);
+```
+
+**Delphi Syntax:**
+
+```pascal
+function FSDK_GetTrackerFaceFeatures(Tracker: HTracker; FaceID: int64; Features: PPoint): integer;
+```
+
+**C# Syntax:**
+
+```csharp
+int FSDK.GetTrackerFaceFeatures(int Tracker, long FaceID, out FSDK.TPoint[] Features);
+```
+
+**Java and Android Syntax:**
+
+```java
+int FSDK.GetTrackerFaceFeatures(HTracker Tracker, long FaceID, TPoint[] Features);
+```
+
+**Parameters:**
+
+- **Tracker** — handle of a tracker.
+- **FaceID** — the FaceID of existing face template whose feature points to return.
+- **Features** — pointer to an array of 5 TPoint receiving the feature points (Java and Android: an array of 5 elements).
+
+**Return Value:**
+
+Returns FSDKE_OK if successful. If the FaceID is not found, the function returns the FSDKE_FACEID_NOT_FOUND code. If face template has no image, the code FSDKE_FACEIMAGE_NOT_FOUND is returned.
+
+**Python Syntax:**
+
+```python
+def FSDK.GetTrackerFaceFeatures(tracker: Tracker, FaceID: int) -> List[Point];
+
+def Tracker.GetFaceFeatures(FaceID: int) -> List[Point];
+```
+
+**Return Value:**
+
+A list of 5 points.
+
+**Exceptions:**
+
+FSDK.FaceIdNotFound, FSDK.FaceImageNotFound
+
+---
+
+<a id="fsdk_settrackerfacefeatures-function"></a>
+## FSDK_SetTrackerFaceFeatures Function
+
+This function replaces the 5 facial feature points of the face image stored in the tracker for a face with given FaceID. The points are given in the coordinates of the stored 112x112 image, in the order returned by [FSDK_GetTrackerFaceFeatures](#fsdk_gettrackerfacefeatures-function). [FSDK_SetTrackerFaceImage](#fsdk_settrackerfaceimage-function) resets the feature points of the face; set them with this function after replacing the image.
+
+**C++ Syntax:**
+
+```cpp
+int FSDK_SetTrackerFaceFeatures(HTracker Tracker, long long FaceID, const TPoint * Features);
+```
+
+**Delphi Syntax:**
+
+```pascal
+function FSDK_SetTrackerFaceFeatures(Tracker: HTracker; FaceID: int64; Features: PPoint): integer;
+```
+
+**C# Syntax:**
+
+```csharp
+int FSDK.SetTrackerFaceFeatures(int Tracker, long FaceID, FSDK.TPoint[] Features);
+```
+
+**Java and Android Syntax:**
+
+```java
+int FSDK.SetTrackerFaceFeatures(HTracker Tracker, long FaceID, TPoint[] Features);
+```
+
+**Parameters:**
+
+- **Tracker** — handle of a tracker.
+- **FaceID** — the FaceID of existing face template whose feature points to replace.
+- **Features** — pointer to an array of 5 TPoint (Java, Android and C#: an array of 5 elements).
+
+**Return Value:**
+
+Returns FSDKE_OK if successful. If the FaceID is not found, the function returns the FSDKE_FACEID_NOT_FOUND code. If face template has no image, the code FSDKE_FACEIMAGE_NOT_FOUND is returned. In C#, Java and Android an array of other length gives FSDKE_INVALID_ARGUMENT.
+
+**Python Syntax:**
+
+```python
+def FSDK.SetTrackerFaceFeatures(tracker: Tracker, FaceID: int, features: List[Point]);
+
+def Tracker.SetFaceFeatures(FaceID: int, features: List[Point]);
+```
+
+`features` — 5 Point objects or (x, y) pairs.
+
+**Exceptions:**
+
+FSDK.FaceIdNotFound, FSDK.FaceImageNotFound, ValueError (not 5 points)
 
 ---
 
@@ -9351,6 +9465,38 @@ For more information on thread safety of Tracker API, see the Thread Safety sect
 <a id="migration"></a>
 # Migration
 
+<a id="migration-from-facesdk-90-to-facesdk-901"></a>
+## Migration from FaceSDK 9.0 to FaceSDK 9.0.1
+
+FaceSDK 9.0.1 is a maintenance release. Code written for 9.0 compiles and runs without changes: the API only gains two functions. The default recognition thresholds of the tracker are lower, and the tracker stores and returns face images consistently.
+
+<a id="summary"></a>
+### Summary
+
+| Area | Change |
+|---|---|
+| Tracker thresholds | The default of *Threshold* is lowered from 0.8 to 0.75, the default of *Threshold2* from 0.9 to 0.8. *ThresholdFeed* stays at 0.7. |
+| Face images in the tracker | [FSDK_GetTrackerFaceImage](#fsdk_gettrackerfaceimage-function) returns the stored face as an upright 112x112 grayscale image. [FSDK_SetTrackerFaceImage](#fsdk_settrackerfaceimage-function) requires a 112x112 image and resets the feature points of the face. |
+| Face feature points | New [FSDK_GetTrackerFaceFeatures](#fsdk_gettrackerfacefeatures-function) and [FSDK_SetTrackerFaceFeatures](#fsdk_settrackerfacefeatures-function) read and replace the 5 feature points of a stored face image. |
+| Platform | iOS 15.0 or later is required (was 12.0). |
+| Tracker memory | Saving and loading of the stored face images is fixed. When the tracker memory of an earlier version is converted and a stored face has no feature points, the face is detected again in its stored image. |
+
+<a id="tracker-thresholds"></a>
+### Tracker thresholds
+
+With the new defaults the tracker accepts two facial appearances as the same subject at a lower similarity, so known subjects are recognized more often. If your application was tuned for the previous defaults, set them explicitly:
+
+```cpp
+FSDK_SetTrackerMultipleParameters(tracker, "Threshold=0.8; Threshold2=0.9;", &err);
+```
+
+See [Choosing Threshold value](#choosing-threshold-value) for how the thresholds relate to each other.
+
+<a id="face-images-and-feature-points"></a>
+### Face images and feature points
+
+Along with every facial appearance the tracker keeps a 112x112 grayscale image of the face (when *KeepFaceImages* is true) and the 5 feature points of the face in that image. FSDK_SetTrackerFaceImage replaces the image and clears the feature points; set them with FSDK_SetTrackerFaceFeatures. A face without feature points is detected again in its stored image when the tracker memory is converted.
+
 <a id="migration-from-facesdk-83-to-facesdk-90"></a>
 ## Migration from FaceSDK 8.3 to FaceSDK 9.0
 
@@ -9377,7 +9523,7 @@ The face structure describes a rectangle rather than a square region, and report
 ```cpp
 typedef struct {
     float score;                    // detection confidence, 0..1
-    float angle;                    // in-plane rotation, degrees
+    float angle;                    // in-plane rotation, radians
     struct { TPoint p0, p1; } bbox; // p0 top-left, p1 bottom-right
     TPoint features[5];             // left eye, right eye, nose tip, two mouth corners
 } TFace;
